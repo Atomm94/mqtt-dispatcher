@@ -9,10 +9,6 @@ import MQTTBroker from '../app/mqtt/mqtt'
 (async () => {
     try {
         await MQTTBroker.init()
-        MQTTBroker.subscribe((topic:string, message:string) => {
-            console.log(1111, topic, ':--', message.toString())
-        })
-        MQTTBroker.publishMessage('topic', 'y')
         app.listen(
             config.server.port, () => console.log('APP listening at port %d', config.server.port)
         )

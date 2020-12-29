@@ -19,8 +19,8 @@ export interface IConfig {
     };
     mqtt: {
         protocol: string,
-        user: string,
-        pass: string,
+        username: string,
+        password: string,
         host: string,
         port: number | boolean
     };
@@ -55,10 +55,10 @@ const config: IConfig = {
     },
     mqtt: {
         protocol: _.defaultTo(process.env.MQTT_PROTOCOL, 'wxs'),
-        user: _.defaultTo(process.env.DB_USER, 'unimacs'),
-        pass: _.defaultTo(process.env.DB_PASS, '123456'),
-        host: _.defaultTo(process.env.DB_HOST, 'localhost'),
-        port: normalizePort(_.defaultTo(process.env.DB_PORT, 5432))
+        host: _.defaultTo(process.env.MQTT_HOST, 'localhost'),
+        port: normalizePort(_.defaultTo(process.env.MQTT_PORT, 5432)),
+        username: _.defaultTo(process.env.MQTT_USERNAME, 'unimacs'),
+        password: _.defaultTo(process.env.MQTT_PASSWORD, '123456')
     },
     cors: {
         origin: process.env.ORIGIN ? process.env.ORIGIN : 'http://localhost:8080',
