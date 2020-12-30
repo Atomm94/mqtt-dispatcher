@@ -24,6 +24,9 @@ export interface IConfig {
         host: string,
         port: number | boolean
     };
+    logs:{
+        url:string
+    };
     cors: {
         origin: string,
         credentials: boolean
@@ -59,6 +62,9 @@ const config: IConfig = {
         port: normalizePort(_.defaultTo(process.env.MQTT_PORT, 5432)),
         username: _.defaultTo(process.env.MQTT_USERNAME, 'unimacs'),
         password: _.defaultTo(process.env.MQTT_PASSWORD, '123456')
+    },
+    logs: {
+        url: _.defaultTo(process.env.LOG_SERVER_HOST, 'http://localhost:4142')
     },
     cors: {
         origin: process.env.ORIGIN ? process.env.ORIGIN : 'http://localhost:8080',
