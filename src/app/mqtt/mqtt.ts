@@ -42,6 +42,12 @@ export default class MQTTBroker {
         })
     }
 
+    public static unsubscribe (topic: string | number) {
+        this.client.unsubscribe(topic, (err: any) => {
+            if (err) logger.error('subscribe error', err)
+        })
+    }
+
     public static getMessage (callback: Function) {
         this.client.on('message', function (topic: string, message: string) {
             if (topic && message) {
