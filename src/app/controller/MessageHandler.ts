@@ -1,39 +1,30 @@
 import MQTTBroker from '../mqtt/mqtt'
-import deviceOperations from '../mqtt/deviceOperations'
-import { TopicCodes } from '../mqtt/Topics'
-import { OperatorType } from '../mqtt/Operators'
+import Parse from '../mqtt/Parse'
+import { ReceiveTopics, SendTopics } from '../mqtt/Topics'
+// import { OperatorType } from '../mqtt/Operators'
 import UserLog from './UserLogMessages'
 
 export default class MessageHandler {
     constructor () {
-        MQTTBroker.getMessage((topic: TopicCodes, message: string) => {
-            var data = JSON.parse(message)
+        MQTTBroker.getMessage((topic: string, message: string) => {
+            console.log('getMessage topic', topic, message)
+            var data
             switch (topic) {
                 case 'PING':
                     console.log(topic, '-', message)
                     break
-                case TopicCodes.USER_LOG:
+                case ReceiveTopics.CRUD_MQTT:
+                    data = JSON.parse(message)
+                    Parse.crudData(topic, data)
+                    break
+                case SendTopics.MQTT_CRUD:
+                    break
+                case ReceiveTopics.USER_LOG:
                     UserLog.saveLog(message)
                     break
-                case TopicCodes.SUB_TOPIC:
-                case TopicCodes.UNSUB_TOPIC:
-                    switch (data.operator) {
-                        case OperatorType.REGISTRATION:
-                            deviceOperations.registration(data, topic)
-                            break
-                        case OperatorType.LOGIN:
-
-                            MQTTBroker.subscribe(message)
-                            break
-                        case OperatorType.LOGOUT:
-
-                            MQTTBroker.subscribe(message)
-                            break
-                        default:
-                            break
-                    }
-                    break
                 default:
+                    data = JSON.parse(message)
+                    Parse.deviceData(topic, data)
                     break
             }
         })

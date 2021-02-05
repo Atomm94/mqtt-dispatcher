@@ -2,7 +2,7 @@ import { connect } from 'mqtt'
 import { logger } from '../../../modules/winston/logger'
 import config from '../../config'
 import MessageHandler from '../controller/MessageHandler'
-import { TopicCodes } from './Topics'
+// import { TopicCodes } from './Topics'
 
 export default class MQTTBroker {
     public static client: any = null
@@ -30,7 +30,8 @@ export default class MQTTBroker {
         })
     }
 
-    public static publishMessage (msg: string, topic: string): void {
+    public static publishMessage (topic: string, msg: string): void {
+        console.log('publishMessage topic', topic, msg)
         this.client.publish(topic, msg, (error: any) => {
             if (error) logger.error('publish error', error)
         })
@@ -57,11 +58,13 @@ export default class MQTTBroker {
     }
 
     private static subscribeAll () {
-        const topicList = Object.values(TopicCodes)
-        for (let i = 0; i < topicList.length; i++) {
-            const topic = topicList[i]
-            this.subscribe(topic)
-        }
+        // const topicList = Object.values(TopicCodes)
+        // for (let i = 0; i < topicList.length; i++) {
+        //     const topic = topicList[i]
+        //     this.subscribe('topic')
+        // }
+
+        this.subscribe('#')
         // eslint-disable-next-line no-new
         new MessageHandler()
     }
