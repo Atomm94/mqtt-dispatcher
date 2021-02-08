@@ -3,7 +3,18 @@ export enum OperatorType {
     ACCEPT = 'accept',
     ACCEPT_ACK = 'accept-ack',
     LOGIN = 'login',
+    LOGIN_ACK = 'login-Ack',
     LOGOUT = 'logout',
+    LOGOUT_ACK = 'logout-Ack',
     SET_PASS = 'SetPass',
+    SET_PASS_ACK = 'SetPass-Ack',
+    LOGOUT_EVENT = 'logout-event',
     SET_NET_SETTINGS = 'SetNetSettings',
+    SET_NET_SETTINGS_ACK = 'SetNetSettings-Ack',
+    GET_NET_SETTINGS = 'GetNetSettings',
+    GET_NET_SETTINGS_ACK = 'GetNetSettings-Ack',
+    SET_DATE_TIME = 'SetDateTime',
+    SET_DATE_TIME_ACK = 'SetDateTime-Ack',
+    SET_MQTT_SETTINGS = 'SetMQTTSettings',
+    SET_MQTT_SETTINGS_ACK = 'SetMQTTSettings-Ack'
 }
