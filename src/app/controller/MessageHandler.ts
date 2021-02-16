@@ -1,5 +1,6 @@
 import MQTTBroker from '../mqtt/mqtt'
-import Parse from '../mqtt/Parse'
+import ParseCrud from '../mqtt/ParseCrud'
+import ParseDevice from '../mqtt/ParseDevice'
 import { ReceiveTopics, SendTopics } from '../mqtt/Topics'
 // import { OperatorType } from '../mqtt/Operators'
 import UserLog from './UserLogMessages'
@@ -15,7 +16,7 @@ export default class MessageHandler {
                     break
                 case ReceiveTopics.CRUD_MQTT:
                     data = JSON.parse(message)
-                    Parse.crudData(topic, data)
+                    ParseCrud.crudData(topic, data)
                     break
                 case SendTopics.MQTT_CRUD:
                     break
@@ -24,7 +25,7 @@ export default class MessageHandler {
                     break
                 default:
                     data = JSON.parse(message)
-                    Parse.deviceData(topic, data)
+                    ParseDevice.deviceData(topic, data)
                     break
             }
         })
