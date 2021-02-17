@@ -68,11 +68,18 @@ export default class ParseDevice {
             case OperatorType.EVENT:
                 this.deviceEvent(topic, data)
                 break
+
+            case OperatorType.SET_EVENTS_MOD_ACK:
+                this.deviceSetEventsModAck(topic, data)
+                break
             case OperatorType.GET_EVENTS_MOD_ACK:
                 this.deviceGetEventsModAck(topic, data)
                 break
             case OperatorType.GET_EVENTS_ACK:
                 this.deviceGetEventsAck(topic, data)
+                break
+            case OperatorType.SET_ACCESS_MODE_ACK:
+                this.deviceSetAccessModeAck(topic, data)
                 break
             case OperatorType.GET_ACCESS_MODE_ACK:
                 this.deviceGetAccessModeAck(topic, data)
@@ -250,12 +257,22 @@ export default class ParseDevice {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
+    public static deviceSetEventsModAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
     public static deviceGetEventsModAck (topic: string, data: any): void {
         data.topic = topic
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
     public static deviceGetEventsAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceSetAccessModeAck (topic: string, data: any): void {
         data.topic = topic
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
