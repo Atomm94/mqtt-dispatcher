@@ -56,6 +56,9 @@ export default class ParseDevice {
             case OperatorType.GET_OUTPUT_ACK:
                 this.deviceGetOutputAck(topic, data)
                 break
+            case OperatorType.SET_OUTPUT_ACK:
+                this.deviceSetOutputAck(topic, data)
+                break
             case OperatorType.GET_INPUT_ACK:
                 this.deviceGetInputAck(topic, data)
                 break
@@ -76,6 +79,54 @@ export default class ParseDevice {
                 break
             case OperatorType.SINGLE_PASS_ACK:
                 this.deviceSinglePassAck(topic, data)
+                break
+            case OperatorType.SET_CARD_KEYS_ACK:
+                this.setCardKeysAck(topic, data)
+                break
+            case OperatorType.ADD_CARD_KEY_ACK:
+                this.addCardKeyAck(topic, data)
+                break
+            case OperatorType.EDIT_KEY_ACK:
+                this.editKeyAck(topic, data)
+                break
+            case OperatorType.DELL_KEYS_ACK:
+                this.dellKeysAck(topic, data)
+                break
+            case OperatorType.DELL_ALL_KEYS_ACK:
+                this.dellAllKeysAck(topic, data)
+                break
+            case OperatorType.SET_SDL_DAILY_ACK:
+                this.setSdlDailyAck(topic, data)
+                break
+            case OperatorType.SET_SDL_WEEKLY_ACK:
+                this.setSdlWeeklyAck(topic, data)
+                break
+            case OperatorType.SET_SDL_FLEXI_TIME_ACK:
+                this.setSdlFlexiTimeAck(topic, data)
+                break
+            case OperatorType.ADD_DAY_FLEXI_TIME_ACK:
+                this.addDayFlexiTimeAck(topic, data)
+                break
+            case OperatorType.END_SDL_FLEXI_TIME_ACK:
+                this.endSdlFlexiTimeAck(topic, data)
+                break
+            case OperatorType.DEL_DAY_FLEXI_TIME_ACK:
+                this.delDayFlexiTimeAck(topic, data)
+                break
+            case OperatorType.SET_SDL_SPECIFIED_ACK:
+                this.setSdlSpecifiedAck(topic, data)
+                break
+            case OperatorType.ADD_DAY_SPECIFIED_ACK:
+                this.addDaySpecifiedAck(topic, data)
+                break
+            case OperatorType.END_SDL_SPECIFIED_ACK:
+                this.endSdlSpecifiedAck(topic, data)
+                break
+            case OperatorType.DELL_DAY_SPECIFIED_ACK:
+                this.dellDaySpecifiedAck(topic, data)
+                break
+            case OperatorType.DELL_SHEDULE_ACK:
+                this.dellSheduleAck(topic, data)
                 break
             case OperatorType.DEV_TEST_ACK:
                 this.deviceDevTestAck(topic, data)
@@ -179,6 +230,11 @@ export default class ParseDevice {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
+    public static deviceSetOutputAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
     public static deviceGetInputAck (topic: string, data: any): void {
         data.topic = topic
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
@@ -210,6 +266,86 @@ export default class ParseDevice {
     }
 
     public static deviceSinglePassAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static setCardKeysAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static addCardKeyAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static editKeyAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static dellKeysAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static dellAllKeysAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static setSdlDailyAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static setSdlWeeklyAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static setSdlFlexiTimeAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static addDayFlexiTimeAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static endSdlFlexiTimeAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static delDayFlexiTimeAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static setSdlSpecifiedAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static addDaySpecifiedAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static endSdlSpecifiedAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static dellDaySpecifiedAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static dellSheduleAck (topic: string, data: any): void {
         data.topic = topic
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }

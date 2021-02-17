@@ -121,6 +121,9 @@ export default class ParseCrud {
             case OperatorType.END_SDL_SPECIFIED:
                 this.endSdlSpecified(data)
                 break
+            case OperatorType.DELL_DAY_SPECIFIED:
+                this.dellDaySpecified(data)
+                break
             case OperatorType.DELL_SHEDULE:
                 this.dellShedule(data)
                 break
@@ -696,6 +699,20 @@ export default class ParseCrud {
         const topic = `${data.location}/Registration/${data.device_id}/Operate`
         const send_data = {
             operator: OperatorType.END_SDL_SPECIFIED,
+            session_id: data.session_id,
+            message_id: '222222222222',
+            info: data.info
+        }
+        console.log('EndSdlSpecified send data', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+    }
+
+    public static dellDaySpecified (data: any): void {
+        // console.log('EndSdlSpecified', data)
+        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const send_data = {
+            operator: OperatorType.DELL_DAY_SPECIFIED,
             session_id: data.session_id,
             message_id: '222222222222',
             info: data.info
