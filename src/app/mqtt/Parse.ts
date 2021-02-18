@@ -1,11 +1,49 @@
 import MQTTBroker from './mqtt'
+import { SendTopics } from './Topics'
 import { OperatorType } from './Operators'
 
-export default class ParseCrud {
+export default class Parse {
+    public static deviceData (topic: string, data: any): void {
+        switch (data.operator) {
+            case OperatorType.REGISTRATION:
+                this.deviceRegistration(topic, data)
+                break
+            case OperatorType.ACCEPT_ACK:
+                this.deviceAcceptAck(topic, data)
+                break
+            case OperatorType.LOGIN_ACK:
+                this.deviceLoginAck(topic, data)
+                break
+            case OperatorType.LOGOUT_ACK:
+                this.deviceLogOutAck(topic, data)
+                break
+            case OperatorType.LOGOUT_EVENT:
+                this.deviceLogOutEvent(topic, data)
+                break
+            case OperatorType.SET_PASS_ACK:
+                this.deviceSetPassAck(topic, data)
+                break
+            case OperatorType.SET_NET_SETTINGS_ACK:
+                this.deviceSetNetSettingsAck(topic, data)
+                break
+            case OperatorType.GET_NET_SETTINGS_ACK:
+                this.deviceGetNetSettingsAck(topic, data)
+                break
+            case OperatorType.SET_DATE_TIME_ACK:
+                this.deviceSetDateTimeAck(topic, data)
+                break
+            case OperatorType.SET_MQTT_SETTINGS_ACK:
+                this.deviceSetMqttSettingsAck(topic, data)
+                break
+            default:
+                break
+        }
+    }
+
     public static crudData (topic: string, data: any): void {
         switch (data.operator) {
             case OperatorType.ACCEPT:
-                this.accept(data)
+                this.deviceAccept(data)
                 break
             case OperatorType.LOGIN:
                 this.login(data)
@@ -17,55 +55,25 @@ export default class ParseCrud {
                 this.setPass(data)
                 break
             case OperatorType.SET_NET_SETTINGS:
-                this.setNetSettings(data)
+                this.deviceSetNetSettings(data)
                 break
             case OperatorType.GET_NET_SETTINGS:
-                this.getNetSettings(data)
+                this.deviceGetNetSettings(data)
                 break
             case OperatorType.SET_DATE_TIME:
-                this.setDateTime(data)
+                this.deviceSetDateTime(data)
                 break
             case OperatorType.SET_MQTT_SETTINGS:
-                this.setMqttSettings(data)
-                break
-            case OperatorType.GET_MQTT_SETTINGS:
-                this.getMqttSettings(data)
-                break
-            case OperatorType.GET_STATUS_ACU:
-                this.getStatusAcu(data)
-                break
-            case OperatorType.SET_EXT_BRD:
-                this.setExtBrd(data)
-                break
-            case OperatorType.GET_EXT_BRD:
-                this.getExtBrd(data)
-                break
-            case OperatorType.SET_RD:
-                this.setRd(data)
-                break
-            case OperatorType.GET_RD:
-                this.getRd(data)
-                break
-            case OperatorType.SET_OUTPUT:
-                this.setOutput(data)
-                break
-            case OperatorType.GET_OUTPUT:
-                this.getOutput(data)
-                break
-            case OperatorType.GET_INPUT:
-                this.getInput(data)
-                break
-            case OperatorType.CARD_PROTECTION:
-                this.cardProtection(data)
-                break
-            case OperatorType.SET_CTP_DOOR:
-                this.setCtpDoor(data)
+                this.deviceSetMqttSettings(data)
                 break
             case OperatorType.SET_EVENTS_MOD:
                 this.setEventsMod(data)
                 break
             case OperatorType.GET_EVENTS_MOD:
                 this.getEventsMod(data)
+                break
+            case OperatorType.EVENT:
+                this.event(data)
                 break
             case OperatorType.GET_EVENTS:
                 this.getEvents(data)
@@ -121,22 +129,20 @@ export default class ParseCrud {
             case OperatorType.END_SDL_SPECIFIED:
                 this.endSdlSpecified(data)
                 break
-            case OperatorType.DELL_DAY_SPECIFIED:
-                this.dellDaySpecified(data)
-                break
             case OperatorType.DELL_SHEDULE:
                 this.dellShedule(data)
                 break
-            case OperatorType.DEV_TEST:
-                this.devTest(data)
-                break
-
             default:
                 break
         }
     }
 
-    public static accept (data: any): void {
+    public static deviceRegistration (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceAccept (data: any): void {
         const topic = `${data.location}/Registration/${data.device_id}/Operate`
         const send_data = {
             operator: OperatorType.ACCEPT,
@@ -148,21 +154,69 @@ export default class ParseCrud {
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
 
+    public static deviceAcceptAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceLoginAck (topic: string, data: any): void {
+        data.topic = topic
+        console.log('datalogin', data)
+
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceLogOutAck (topic: string, data: any): void {
+        data.topic = topic
+        console.log('datalogout', data)
+
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceLogOutEvent (topic: string, data: any): void {
+        data.topic = topic
+        console.log('deviceLogOutEvent', data)
+
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceSetPassAck (topic: string, data: any): void {
+        data.topic = topic
+        console.log('deviceSetPassAck', data)
+
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceSetNetSettingsAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceGetNetSettingsAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceSetDateTimeAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceSetMqttSettingsAck (topic: string, data: any): void {
+        data.topic = topic
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
     public static login (data: any): void {
         console.log('login', data)
 
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate`
         const send_data = {
             operator: OperatorType.LOGIN,
-            session_id: '0',
-            message_id: '1111111111',
-            info:
-            {
-                username: data.username,
-                password: data.password
-            }
+            session_Id: '0',
+            message_Id: `${data.message_id}`,
+            info: data.info
         }
-
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
@@ -175,7 +229,7 @@ export default class ParseCrud {
             operator: OperatorType.LOGOUT,
             session_Id: 2222222222,
             message_Id: 1111111111,
-            info: data.info
+            info: 'none'
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
@@ -187,14 +241,18 @@ export default class ParseCrud {
             operator: OperatorType.SET_PASS,
             session_id: data.session_id,
             message_id: 1111111111,
-            info: data.info
+            info:
+            {
+                username: data.username,
+                password: data.password
+            }
         }
         console.log('setpasss send data', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
 
-    public static setNetSettings (data: any): void {
+    public static deviceSetNetSettings (data: any): void {
         const topic = `${data.location}/Registration/${data.device_id}/Operate`
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
@@ -205,7 +263,7 @@ export default class ParseCrud {
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
 
-    public static getNetSettings (data: any): void {
+    public static deviceGetNetSettings (data: any): void {
         // send data to device
         // {
         //     "operator": "GetNetSettings",
@@ -219,12 +277,12 @@ export default class ParseCrud {
             operator: OperatorType.SET_DATE_TIME,
             sessionId: data.session_id,
             messageId: data.message_id,
-            info: data.info
+            info: 'none'
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
 
-    public static setDateTime (data: any): void {
+    public static deviceSetDateTime (data: any): void {
         // data from crud
         // {
         //     operator: 'SetDateTime',
@@ -239,194 +297,37 @@ export default class ParseCrud {
             operator: OperatorType.SET_DATE_TIME,
             sessionId: data.session_id,
             messageId: data.message_id,
-            info: data.info
-            // info:
-            // {
-            //     DateTime: ~~(Date.now() / 1000),
-            //     GMT: data.gmt
-            // }
+            info:
+            {
+                DateTime: ~~(Date.now() / 1000),
+                GMT: data.gmt
+            }
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
 
-    public static setMqttSettings (data: any): void {
+    public static deviceSetMqttSettings (data: any): void {
         // console.log('deviceSetMqttSettings', data)
         const topic = `${data.location}/Registration/${data.device_id}/Operate`
         const send_data = {
             operator: OperatorType.SET_MQTT_SETTINGS,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
-        }
-
-        console.log('deviceSetMqttSettings send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static getMqttSettings (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.GET_MQTT_SETTINGS,
-            session_id: data.session_id,
-            message_id: '222222222222',
-            info: data.info
-        }
-
-        console.log('deviceGetMqttSettings send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static getStatusAcu (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.GET_STATUS_ACU,
-            session_id: data.session_id,
-            message_id: '222222222222',
-            info: data.info
-        }
-
-        console.log('deviceGetStatusAcu send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static setExtBrd (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.SET_EXT_BRD,
-            session_id: data.session_id,
-            message_id: '222222222222',
-            info: data.info
-        }
-
-        console.log('deviceSetExtBrd send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static getExtBrd (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.GET_EXT_BRD,
-            session_id: data.session_id,
-            message_id: '222222222222',
-            info: {
-                Brd_idx: 1
+            info:
+            {
+                BrokerAdr: 'lumiring.msg.th',
+                BrokerPort: 3285,
+                ClientID: '101FRE1111325665454RETV123355',
+                Use_SSL: false,
+                User_Name: 'TR2584567452121TFD',
+                User_Pass: 'ASTR565VFDF8787fdtrtJ76p',
+                Location: `${data.location}/main_perimeter_group`,
+                DeviceID: data.device_id,
+                'use_ enryption': false
             }
         }
 
-        console.log('deviceGetExtBrd send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static setRd (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.SET_RD,
-            session_id: data.session_id,
-            message_id: data.message_id,
-            info: data.info
-        }
-
-        console.log('deviceSetRd send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static getRd (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.GET_RD,
-            session_id: data.session_id,
-            message_id: data.message_id,
-            info: data.info
-        }
-
-        console.log('deviceGetRd send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static setOutput (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.SET_OUTPUT,
-            session_id: data.session_id,
-            message_id: data.message_id,
-            info: data.info
-        }
-
-        console.log('deviceSetOutput send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static getOutput (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.GET_OUTPUT,
-            session_id: data.session_id,
-            message_id: data.message_id,
-            info: data.info
-        }
-
-        console.log('deviceSetOutput send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static getInput (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.GET_INPUT,
-            session_id: data.session_id,
-            message_id: data.message_id,
-            info: data.info
-        }
-
-        console.log('deviceSetOutput send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static cardProtection (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.CARD_PROTECTION,
-            session_id: data.session_id,
-            message_id: data.message_id,
-            info: data.info
-        }
-
-        console.log('deviceCardProtection send data', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static setCtpDoor (data: any): void {
-        // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.SET_CTP_DOOR,
-            session_id: data.session_id,
-            message_id: data.message_id,
-            info: data.info
-        }
-
-        console.log('deviceSetCtpDoor send data', send_data)
+        console.log('deviceSetMqttSettings send data', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
@@ -438,7 +339,10 @@ export default class ParseCrud {
             operator: OperatorType.SET_EVENTS_MOD,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('SetEventsMod send data', send_data)
 
@@ -452,9 +356,29 @@ export default class ParseCrud {
             operator: OperatorType.GET_EVENTS_MOD,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('GetEventsMod send data', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+    }
+
+    public static event (data: any): void {
+        // console.log('Event', data)
+        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const send_data = {
+            operator: OperatorType.EVENT,
+            session_id: data.session_id,
+            message_id: '222222222222',
+            info:
+            {
+
+            }
+        }
+        console.log('Event send data', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
@@ -466,7 +390,10 @@ export default class ParseCrud {
             operator: OperatorType.GET_EVENTS,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('GetEvents send data', send_data)
 
@@ -480,7 +407,10 @@ export default class ParseCrud {
             operator: OperatorType.SET_ACCESS_MODE,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('SetAccessMode send data', send_data)
 
@@ -494,7 +424,10 @@ export default class ParseCrud {
             operator: OperatorType.GET_ACCESS_MODE,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('GetAccessMode send data', send_data)
 
@@ -508,7 +441,10 @@ export default class ParseCrud {
             operator: OperatorType.SINGLE_PASS,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('Single_pass send data', send_data)
 
@@ -522,7 +458,10 @@ export default class ParseCrud {
             operator: OperatorType.SET_CARD_KEYS,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('SetCardKeys send data', send_data)
 
@@ -536,7 +475,10 @@ export default class ParseCrud {
             operator: OperatorType.ADD_CARD_KEY,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('AddCardKey send data', send_data)
 
@@ -550,7 +492,10 @@ export default class ParseCrud {
             operator: OperatorType.EDIT_KEY,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('EditKey send data', send_data)
 
@@ -564,7 +509,10 @@ export default class ParseCrud {
             operator: OperatorType.DELL_KEYS,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('DellKeys send data', send_data)
 
@@ -578,7 +526,10 @@ export default class ParseCrud {
             operator: OperatorType.DELL_ALL_KEYS,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('DellAllKeys send data', send_data)
 
@@ -592,7 +543,10 @@ export default class ParseCrud {
             operator: OperatorType.SET_SDL_DAILY,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('SetSdlDaily send data', send_data)
 
@@ -606,7 +560,10 @@ export default class ParseCrud {
             operator: OperatorType.SET_SDL_WEEKLY,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('SetSdlWeekly send data', send_data)
 
@@ -620,7 +577,10 @@ export default class ParseCrud {
             operator: OperatorType.SET_SDL_FLEXI_TIME,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('SetSdlFlexiTime send data', send_data)
 
@@ -634,7 +594,10 @@ export default class ParseCrud {
             operator: OperatorType.ADD_DAY_FLEXI_TIME,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('AddDayFlexiTime send data', send_data)
 
@@ -648,7 +611,10 @@ export default class ParseCrud {
             operator: OperatorType.END_SDL_FLEXI_TIME,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('EndSdlFlexiTime send data', send_data)
 
@@ -662,7 +628,10 @@ export default class ParseCrud {
             operator: OperatorType.DEL_DAY_FLEXI_TIME,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('DelDayFlexiTime send data', send_data)
 
@@ -676,7 +645,10 @@ export default class ParseCrud {
             operator: OperatorType.SET_SDL_SPECIFIED,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('SetSdlSpecified send data', send_data)
 
@@ -690,7 +662,10 @@ export default class ParseCrud {
             operator: OperatorType.ADD_DAY_SPECIFIED,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
+            info:
+            {
+
+            }
         }
         console.log('AddDaySpecified send data', send_data)
 
@@ -704,21 +679,10 @@ export default class ParseCrud {
             operator: OperatorType.END_SDL_SPECIFIED,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
-        }
-        console.log('EndSdlSpecified send data', send_data)
+            info:
+            {
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static dellDaySpecified (data: any): void {
-        // console.log('EndSdlSpecified', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.DELL_DAY_SPECIFIED,
-            session_id: data.session_id,
-            message_id: '222222222222',
-            info: data.info
+            }
         }
         console.log('EndSdlSpecified send data', send_data)
 
@@ -732,37 +696,29 @@ export default class ParseCrud {
             operator: OperatorType.DELL_SHEDULE,
             session_id: data.session_id,
             message_id: '222222222222',
-            info: data.info
-        }
-        console.log('DellShedule send data', send_data)
+            info:
+            {
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
-    }
-
-    public static devTest (data: any): void {
-        // console.log('DellShedule', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
-        const send_data = {
-            operator: OperatorType.DEV_TEST,
-            session_id: data.session_id,
-            message_id: '222222222222',
-            info: data.info
+            }
         }
         console.log('DellShedule send data', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
 }
-
 function handleCallback (send_topic: any, send_data: any): any {
     send_data = JSON.parse(send_data)
-    setTimeout(() => {
-        MQTTBroker.client.removeListener('message', cb)
-    }, 20000)
-    function cb (topicAck: any, messageAck: any) {
+    console.log('send_data', send_data)
+
+    // setTimeout(() => {
+    //     MQTTBroker.client.removeListener('message', cb)
+    // }, 20000)
+    function cb (topic: any, message: any) {
         try {
-            messageAck = JSON.parse(messageAck.toString())
-            if (topicAck === `${send_topic}/Ack` && send_data.message_id === messageAck.message_id) {
+            console.log('topic', topic, typeof message)
+            console.log('message', message)
+            message = JSON.parse(message.toString())
+            if (topic === `${send_topic}/Ack` && send_data.message_id === message.message_id) {
                 MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
@@ -777,3 +733,11 @@ function handleCallback (send_topic: any, send_data: any): any {
     // }
     // return callBack([...arguments])
 }
+// function callBack () {
+//     console.log(arguments)
+
+//     // if (topicAck === `${topic}/Ack` && send_data.message_id === message.message_id) {
+//     //     // console.log('00000000000000', topic, message)
+//     //     MQTTBroker.client.removeListener('message', handleCallback)
+//     // }
+// }

@@ -1,11 +1,11 @@
-import { connect } from 'mqtt'
+import { connect, MqttClient } from 'mqtt'
 import { logger } from '../../../modules/winston/logger'
 import config from '../../config'
 import MessageHandler from '../controller/MessageHandler'
 // import { TopicCodes } from './Topics'
 
 export default class MQTTBroker {
-    public static client: any = null
+    public static client: MqttClient
     public static async init () {
         this.client = connect(config.mqtt)
         return await new Promise((resolve, reject) => {
@@ -30,21 +30,26 @@ export default class MQTTBroker {
         })
     }
 
-    public static publishMessage (topic: string, msg: string): void {
+    public static publishMessage (topic: string, msg: string, cb?: Function): void {
         console.log('publishMessage topic', topic, msg)
         this.client.publish(topic, msg, (error: any) => {
-            if (error) logger.error('publish error', error)
+            if (error) { logger.error('publish error', error) } else {
+                if (cb) {
+                    // eslint-disable-next-line standard/no-callback-literal
+                    cb(topic, msg)
+                }
+            }
         })
     }
 
     public static subscribe (topic: string | number) {
-        this.client.subscribe(topic, (err: any) => {
+        this.client.subscribe(topic as string, (err: any) => {
             if (err) logger.error('subscribe error', err)
         })
     }
 
     public static unsubscribe (topic: string | number) {
-        this.client.unsubscribe(topic, (err: any) => {
+        this.client.unsubscribe(topic as string, (err: any) => {
             if (err) logger.error('subscribe error', err)
         })
     }

@@ -8,136 +8,136 @@ export default class ParseDevice {
             case OperatorType.REGISTRATION:
                 this.deviceRegistration(topic, data)
                 break
-            case OperatorType.ACCEPT_ACK:
-                this.deviceAcceptAck(topic, data)
-                break
-            case OperatorType.LOGIN_ACK:
-                this.deviceLoginAck(topic, data)
-                break
-            case OperatorType.LOGOUT_ACK:
-                this.deviceLogOutAck(topic, data)
-                break
+            // case OperatorType.ACCEPT_ACK:
+            //     this.deviceAcceptAck(topic, data)
+            //     break
+            // case OperatorType.LOGIN_ACK:
+            //     this.deviceLoginAck(topic, data)
+            //     break
+            // case OperatorType.LOGOUT_ACK:
+            //     this.deviceLogOutAck(topic, data)
+            //     break
             case OperatorType.LOGOUT_EVENT:
                 this.deviceLogOutEvent(topic, data)
                 break
-            case OperatorType.SET_PASS_ACK:
-                this.deviceSetPassAck(topic, data)
-                break
-            case OperatorType.SET_NET_SETTINGS_ACK:
-                this.deviceSetNetSettingsAck(topic, data)
-                break
-            case OperatorType.GET_NET_SETTINGS_ACK:
-                this.deviceGetNetSettingsAck(topic, data)
-                break
-            case OperatorType.SET_DATE_TIME_ACK:
-                this.deviceSetDateTimeAck(topic, data)
-                break
-            case OperatorType.SET_MQTT_SETTINGS_ACK:
-                this.deviceSetMqttSettingsAck(topic, data)
-                break
-            case OperatorType.GET_MQTT_SETTINGS_ACK:
-                this.deviceGetMqttSettingsAck(topic, data)
-                break
-            case OperatorType.GET_STATUS_ACU_ACK:
-                this.deviceGetStatusAcuAck(topic, data)
-                break
-            case OperatorType.SET_EXT_BRD_ACK:
-                this.deviceSetExtBrdAck(topic, data)
-                break
-            case OperatorType.GET_EXT_BRD_ACK:
-                this.deviceGetExtBrdAck(topic, data)
-                break
-            case OperatorType.SET_RD_ACK:
-                this.deviceSetRdAck(topic, data)
-                break
-            case OperatorType.GET_RD_ACK:
-                this.deviceGetRdAck(topic, data)
-                break
-            case OperatorType.GET_OUTPUT_ACK:
-                this.deviceGetOutputAck(topic, data)
-                break
-            case OperatorType.SET_OUTPUT_ACK:
-                this.deviceSetOutputAck(topic, data)
-                break
-            case OperatorType.GET_INPUT_ACK:
-                this.deviceGetInputAck(topic, data)
-                break
-            case OperatorType.SET_CTP_DOOR_ACK:
-                this.deviceSetCtpDoorAck(topic, data)
-                break
+            // case OperatorType.SET_PASS_ACK:
+            //     this.deviceSetPassAck(topic, data)
+            //     break
+            // case OperatorType.SET_NET_SETTINGS_ACK:
+            //     this.deviceSetNetSettingsAck(topic, data)
+            //     break
+            // case OperatorType.GET_NET_SETTINGS_ACK:
+            //     this.deviceGetNetSettingsAck(topic, data)
+            //     break
+            // case OperatorType.SET_DATE_TIME_ACK:
+            //     this.deviceSetDateTimeAck(topic, data)
+            //     break
+            // case OperatorType.SET_MQTT_SETTINGS_ACK:
+            //     this.deviceSetMqttSettingsAck(topic, data)
+            //     break
+            // case OperatorType.GET_MQTT_SETTINGS_ACK:
+            //     this.deviceGetMqttSettingsAck(topic, data)
+            //     break
+            // case OperatorType.GET_STATUS_ACU_ACK:
+            //     this.deviceGetStatusAcuAck(topic, data)
+            //     break
+            // case OperatorType.SET_EXT_BRD_ACK:
+            //     this.deviceSetExtBrdAck(topic, data)
+            //     break
+            // case OperatorType.GET_EXT_BRD_ACK:
+            //     this.deviceGetExtBrdAck(topic, data)
+            //     break
+            // case OperatorType.SET_RD_ACK:
+            //     this.deviceSetRdAck(topic, data)
+            //     break
+            // case OperatorType.GET_RD_ACK:
+            //     this.deviceGetRdAck(topic, data)
+            //     break
+            // case OperatorType.GET_OUTPUT_ACK:
+            //     this.deviceGetOutputAck(topic, data)
+            //     break
+            // case OperatorType.SET_OUTPUT_ACK:
+            //     this.deviceSetOutputAck(topic, data)
+            //     break
+            // case OperatorType.GET_INPUT_ACK:
+            //     this.deviceGetInputAck(topic, data)
+            //     break
+            // case OperatorType.SET_CTP_DOOR_ACK:
+            //     this.deviceSetCtpDoorAck(topic, data)
+            //     break
             case OperatorType.EVENT:
                 this.deviceEvent(topic, data)
                 break
 
-            case OperatorType.SET_EVENTS_MOD_ACK:
-                this.deviceSetEventsModAck(topic, data)
-                break
-            case OperatorType.GET_EVENTS_MOD_ACK:
-                this.deviceGetEventsModAck(topic, data)
-                break
-            case OperatorType.GET_EVENTS_ACK:
-                this.deviceGetEventsAck(topic, data)
-                break
-            case OperatorType.SET_ACCESS_MODE_ACK:
-                this.deviceSetAccessModeAck(topic, data)
-                break
-            case OperatorType.GET_ACCESS_MODE_ACK:
-                this.deviceGetAccessModeAck(topic, data)
-                break
-            case OperatorType.SINGLE_PASS_ACK:
-                this.deviceSinglePassAck(topic, data)
-                break
-            case OperatorType.SET_CARD_KEYS_ACK:
-                this.setCardKeysAck(topic, data)
-                break
-            case OperatorType.ADD_CARD_KEY_ACK:
-                this.addCardKeyAck(topic, data)
-                break
-            case OperatorType.EDIT_KEY_ACK:
-                this.editKeyAck(topic, data)
-                break
-            case OperatorType.DELL_KEYS_ACK:
-                this.dellKeysAck(topic, data)
-                break
-            case OperatorType.DELL_ALL_KEYS_ACK:
-                this.dellAllKeysAck(topic, data)
-                break
-            case OperatorType.SET_SDL_DAILY_ACK:
-                this.setSdlDailyAck(topic, data)
-                break
-            case OperatorType.SET_SDL_WEEKLY_ACK:
-                this.setSdlWeeklyAck(topic, data)
-                break
-            case OperatorType.SET_SDL_FLEXI_TIME_ACK:
-                this.setSdlFlexiTimeAck(topic, data)
-                break
-            case OperatorType.ADD_DAY_FLEXI_TIME_ACK:
-                this.addDayFlexiTimeAck(topic, data)
-                break
-            case OperatorType.END_SDL_FLEXI_TIME_ACK:
-                this.endSdlFlexiTimeAck(topic, data)
-                break
-            case OperatorType.DEL_DAY_FLEXI_TIME_ACK:
-                this.delDayFlexiTimeAck(topic, data)
-                break
-            case OperatorType.SET_SDL_SPECIFIED_ACK:
-                this.setSdlSpecifiedAck(topic, data)
-                break
-            case OperatorType.ADD_DAY_SPECIFIED_ACK:
-                this.addDaySpecifiedAck(topic, data)
-                break
-            case OperatorType.END_SDL_SPECIFIED_ACK:
-                this.endSdlSpecifiedAck(topic, data)
-                break
-            case OperatorType.DELL_DAY_SPECIFIED_ACK:
-                this.dellDaySpecifiedAck(topic, data)
-                break
-            case OperatorType.DELL_SHEDULE_ACK:
-                this.dellSheduleAck(topic, data)
-                break
-            case OperatorType.DEV_TEST_ACK:
-                this.deviceDevTestAck(topic, data)
-                break
+            // case OperatorType.SET_EVENTS_MOD_ACK:
+            //     this.deviceSetEventsModAck(topic, data)
+            //     break
+            // case OperatorType.GET_EVENTS_MOD_ACK:
+            //     this.deviceGetEventsModAck(topic, data)
+            //     break
+            // case OperatorType.GET_EVENTS_ACK:
+            //     this.deviceGetEventsAck(topic, data)
+            //     break
+            // case OperatorType.SET_ACCESS_MODE_ACK:
+            //     this.deviceSetAccessModeAck(topic, data)
+            //     break
+            // case OperatorType.GET_ACCESS_MODE_ACK:
+            //     this.deviceGetAccessModeAck(topic, data)
+            //     break
+            // case OperatorType.SINGLE_PASS_ACK:
+            //     this.deviceSinglePassAck(topic, data)
+            //     break
+            // case OperatorType.SET_CARD_KEYS_ACK:
+            //     this.setCardKeysAck(topic, data)
+            //     break
+            // case OperatorType.ADD_CARD_KEY_ACK:
+            //     this.addCardKeyAck(topic, data)
+            //     break
+            // case OperatorType.EDIT_KEY_ACK:
+            //     this.editKeyAck(topic, data)
+            //     break
+            // case OperatorType.DELL_KEYS_ACK:
+            //     this.dellKeysAck(topic, data)
+            //     break
+            // case OperatorType.DELL_ALL_KEYS_ACK:
+            //     this.dellAllKeysAck(topic, data)
+            //     break
+            // case OperatorType.SET_SDL_DAILY_ACK:
+            //     this.setSdlDailyAck(topic, data)
+            //     break
+            // case OperatorType.SET_SDL_WEEKLY_ACK:
+            //     this.setSdlWeeklyAck(topic, data)
+            //     break
+            // case OperatorType.SET_SDL_FLEXI_TIME_ACK:
+            //     this.setSdlFlexiTimeAck(topic, data)
+            //     break
+            // case OperatorType.ADD_DAY_FLEXI_TIME_ACK:
+            //     this.addDayFlexiTimeAck(topic, data)
+            //     break
+            // case OperatorType.END_SDL_FLEXI_TIME_ACK:
+            //     this.endSdlFlexiTimeAck(topic, data)
+            //     break
+            // case OperatorType.DEL_DAY_FLEXI_TIME_ACK:
+            //     this.delDayFlexiTimeAck(topic, data)
+            //     break
+            // case OperatorType.SET_SDL_SPECIFIED_ACK:
+            //     this.setSdlSpecifiedAck(topic, data)
+            //     break
+            // case OperatorType.ADD_DAY_SPECIFIED_ACK:
+            //     this.addDaySpecifiedAck(topic, data)
+            //     break
+            // case OperatorType.END_SDL_SPECIFIED_ACK:
+            //     this.endSdlSpecifiedAck(topic, data)
+            //     break
+            // case OperatorType.DELL_DAY_SPECIFIED_ACK:
+            //     this.dellDaySpecifiedAck(topic, data)
+            //     break
+            // case OperatorType.DELL_SHEDULE_ACK:
+            //     this.dellSheduleAck(topic, data)
+            //     break
+            // case OperatorType.DEV_TEST_ACK:
+            //     this.deviceDevTestAck(topic, data)
+            //     break
 
             default:
                 break
