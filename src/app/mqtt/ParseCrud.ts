@@ -137,7 +137,7 @@ export default class ParseCrud {
     }
 
     public static accept (data: any): void {
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.ACCEPT,
             session_id: '0',
@@ -151,7 +151,7 @@ export default class ParseCrud {
     public static login (data: any): void {
         console.log('login', data)
 
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.LOGIN,
             session_id: '0',
@@ -170,7 +170,7 @@ export default class ParseCrud {
 
     public static logOut (data: any): void {
         // console.log('logOut', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.LOGOUT,
             session_Id: 2222222222,
@@ -182,7 +182,7 @@ export default class ParseCrud {
 
     public static setPass (data: any): void {
         // console.log('setPass', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_PASS,
             session_id: data.session_id,
@@ -195,7 +195,7 @@ export default class ParseCrud {
     }
 
     public static setNetSettings (data: any): void {
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
             sessionId: data.session_id,
@@ -214,7 +214,7 @@ export default class ParseCrud {
         //     "info":"none"
         // }
 
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
             sessionId: data.session_id,
@@ -234,7 +234,7 @@ export default class ParseCrud {
         //     message_id: '11111111',
         //     gmt: 4
         // }
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
             sessionId: data.session_id,
@@ -251,7 +251,7 @@ export default class ParseCrud {
 
     public static setMqttSettings (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_MQTT_SETTINGS,
             session_id: data.session_id,
@@ -266,7 +266,7 @@ export default class ParseCrud {
 
     public static getMqttSettings (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_MQTT_SETTINGS,
             session_id: data.session_id,
@@ -281,7 +281,7 @@ export default class ParseCrud {
 
     public static getStatusAcu (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_STATUS_ACU,
             session_id: data.session_id,
@@ -296,7 +296,7 @@ export default class ParseCrud {
 
     public static setExtBrd (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_EXT_BRD,
             session_id: data.session_id,
@@ -311,7 +311,7 @@ export default class ParseCrud {
 
     public static getExtBrd (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_EXT_BRD,
             session_id: data.session_id,
@@ -328,7 +328,7 @@ export default class ParseCrud {
 
     public static setRd (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_RD,
             session_id: data.session_id,
@@ -343,7 +343,7 @@ export default class ParseCrud {
 
     public static getRd (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_RD,
             session_id: data.session_id,
@@ -358,7 +358,7 @@ export default class ParseCrud {
 
     public static setOutput (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_OUTPUT,
             session_id: data.session_id,
@@ -373,7 +373,7 @@ export default class ParseCrud {
 
     public static getOutput (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_OUTPUT,
             session_id: data.session_id,
@@ -388,7 +388,7 @@ export default class ParseCrud {
 
     public static getInput (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_INPUT,
             session_id: data.session_id,
@@ -403,7 +403,7 @@ export default class ParseCrud {
 
     public static cardProtection (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.CARD_PROTECTION,
             session_id: data.session_id,
@@ -418,7 +418,7 @@ export default class ParseCrud {
 
     public static setCtpDoor (data: any): void {
         // console.log('deviceSetMqttSettings', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_CTP_DOOR,
             session_id: data.session_id,
@@ -433,7 +433,7 @@ export default class ParseCrud {
 
     public static setEventsMod (data: any): void {
         // console.log('SetEventsMod', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_EVENTS_MOD,
             session_id: data.session_id,
@@ -447,7 +447,7 @@ export default class ParseCrud {
 
     public static getEventsMod (data: any): void {
         // console.log('GetEventsMod', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_EVENTS_MOD,
             session_id: data.session_id,
@@ -461,7 +461,7 @@ export default class ParseCrud {
 
     public static getEvents (data: any): void {
         // console.log('GetEvents', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_EVENTS,
             session_id: data.session_id,
@@ -475,7 +475,7 @@ export default class ParseCrud {
 
     public static setAccessMode (data: any): void {
         // console.log('SetAccessMode', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_ACCESS_MODE,
             session_id: data.session_id,
@@ -489,7 +489,7 @@ export default class ParseCrud {
 
     public static getAccessMode (data: any): void {
         // console.log('GetAccessMode', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.GET_ACCESS_MODE,
             session_id: data.session_id,
@@ -503,7 +503,7 @@ export default class ParseCrud {
 
     public static single_pass (data: any): void {
         // console.log('Single_pass', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SINGLE_PASS,
             session_id: data.session_id,
@@ -517,7 +517,7 @@ export default class ParseCrud {
 
     public static setCardKeys (data: any): void {
         // console.log('SetCardKeys', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_CARD_KEYS,
             session_id: data.session_id,
@@ -531,7 +531,7 @@ export default class ParseCrud {
 
     public static addCardKey (data: any): void {
         // console.log('AddCardKey', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.ADD_CARD_KEY,
             session_id: data.session_id,
@@ -545,7 +545,7 @@ export default class ParseCrud {
 
     public static editKey (data: any): void {
         // console.log('EditKey', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.EDIT_KEY,
             session_id: data.session_id,
@@ -559,7 +559,7 @@ export default class ParseCrud {
 
     public static dellKeys (data: any): void {
         // console.log('DellKeys', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.DELL_KEYS,
             session_id: data.session_id,
@@ -573,7 +573,7 @@ export default class ParseCrud {
 
     public static dellAllKeys (data: any): void {
         // console.log('DellAllKeys', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.DELL_ALL_KEYS,
             session_id: data.session_id,
@@ -587,7 +587,7 @@ export default class ParseCrud {
 
     public static setSdlDaily (data: any): void {
         // console.log('SetSdlDaily', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_SDL_DAILY,
             session_id: data.session_id,
@@ -601,7 +601,7 @@ export default class ParseCrud {
 
     public static setSdlWeekly (data: any): void {
         // console.log('SetSdlWeekly', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_SDL_WEEKLY,
             session_id: data.session_id,
@@ -615,7 +615,7 @@ export default class ParseCrud {
 
     public static setSdlFlexiTime (data: any): void {
         // console.log('SetSdlFlexiTime', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_SDL_FLEXI_TIME,
             session_id: data.session_id,
@@ -629,7 +629,7 @@ export default class ParseCrud {
 
     public static addDayFlexiTime (data: any): void {
         // console.log('AddDayFlexiTime', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.ADD_DAY_FLEXI_TIME,
             session_id: data.session_id,
@@ -643,7 +643,7 @@ export default class ParseCrud {
 
     public static endSdlFlexiTime (data: any): void {
         // console.log('EndSdlFlexiTime', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.END_SDL_FLEXI_TIME,
             session_id: data.session_id,
@@ -657,7 +657,7 @@ export default class ParseCrud {
 
     public static delDayFlexiTime (data: any): void {
         // console.log('DelDayFlexiTime', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.DEL_DAY_FLEXI_TIME,
             session_id: data.session_id,
@@ -671,7 +671,7 @@ export default class ParseCrud {
 
     public static setSdlSpecified (data: any): void {
         // console.log('SetSdlSpecified', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_SDL_SPECIFIED,
             session_id: data.session_id,
@@ -685,7 +685,7 @@ export default class ParseCrud {
 
     public static addDaySpecified (data: any): void {
         // console.log('AddDaySpecified', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.ADD_DAY_SPECIFIED,
             session_id: data.session_id,
@@ -699,7 +699,7 @@ export default class ParseCrud {
 
     public static endSdlSpecified (data: any): void {
         // console.log('EndSdlSpecified', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.END_SDL_SPECIFIED,
             session_id: data.session_id,
@@ -713,7 +713,7 @@ export default class ParseCrud {
 
     public static dellDaySpecified (data: any): void {
         // console.log('EndSdlSpecified', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.DELL_DAY_SPECIFIED,
             session_id: data.session_id,
@@ -727,7 +727,7 @@ export default class ParseCrud {
 
     public static dellShedule (data: any): void {
         // console.log('DellShedule', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.DELL_SHEDULE,
             session_id: data.session_id,
@@ -741,7 +741,7 @@ export default class ParseCrud {
 
     public static devTest (data: any): void {
         // console.log('DellShedule', data)
-        const topic = `${data.location}/Registration/${data.device_id}/Operate`
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.DEV_TEST,
             session_id: data.session_id,
@@ -762,7 +762,7 @@ function handleCallback (send_topic: any, send_data: any): any {
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
-            if (topicAck === `${send_topic}/Ack` && send_data.message_id === messageAck.message_id) {
+            if (topicAck === `${send_topic}/Ack/` && send_data.message_id === messageAck.message_id) {
                 MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
