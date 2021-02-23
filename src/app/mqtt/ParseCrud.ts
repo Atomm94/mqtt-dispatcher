@@ -1,5 +1,6 @@
 import MQTTBroker from './mqtt'
 import { OperatorType } from './Operators'
+import { SendTopics } from './Topics'
 
 export default class ParseCrud {
     public static crudData (topic: string, data: any): void {
@@ -140,12 +141,14 @@ export default class ParseCrud {
         const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.ACCEPT,
-            session_id: '0',
-            message_id: '0',
-            info: 'none'
+            session_id: data.session_id,
+            message_id: data.message_id,
+            info: data.info
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static login (data: any): void {
@@ -154,13 +157,9 @@ export default class ParseCrud {
         const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.LOGIN,
-            session_id: '0',
-            message_id: '1111111111',
-            info:
-            {
-                username: data.username,
-                password: data.password
-            }
+            session_id: data.session_id,
+            message_id: data.message_id,
+            info: data.info
         }
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
@@ -173,8 +172,8 @@ export default class ParseCrud {
         const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.LOGOUT,
-            session_Id: 2222222222,
-            message_Id: 1111111111,
+            session_id: data.session_id,
+            message_id: data.message_id,
             info: data.info
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
@@ -186,7 +185,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_PASS,
             session_id: data.session_id,
-            message_id: 1111111111,
+            message_id: data.message_id,
             info: data.info
         }
         console.log('setpasss send data', send_data)
@@ -198,8 +197,8 @@ export default class ParseCrud {
         const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
-            sessionId: data.session_id,
-            messageId: data.message_id,
+            session_id: data.session_id,
+            message_id: data.message_id,
             info: data.info
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
@@ -217,8 +216,8 @@ export default class ParseCrud {
         const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
-            sessionId: data.session_id,
-            messageId: data.message_id,
+            session_id: data.session_id,
+            message_id: data.message_id,
             info: data.info
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
@@ -237,8 +236,8 @@ export default class ParseCrud {
         const topic = `${data.location}/registration/${data.device_id}/Operate/`
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
-            sessionId: data.session_id,
-            messageId: data.message_id,
+            session_id: data.session_id,
+            message_id: data.message_id,
             info: data.info
             // info:
             // {
@@ -255,7 +254,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_MQTT_SETTINGS,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
 
@@ -270,7 +269,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.GET_MQTT_SETTINGS,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
 
@@ -285,7 +284,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.GET_STATUS_ACU,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
 
@@ -300,7 +299,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_EXT_BRD,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
 
@@ -315,10 +314,8 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.GET_EXT_BRD,
             session_id: data.session_id,
-            message_id: '222222222222',
-            info: {
-                Brd_idx: 1
-            }
+            message_id: data.message_id,
+            info: data.info
         }
 
         console.log('deviceGetExtBrd send data', send_data)
@@ -437,7 +434,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_EVENTS_MOD,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('SetEventsMod send data', send_data)
@@ -451,7 +448,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.GET_EVENTS_MOD,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('GetEventsMod send data', send_data)
@@ -465,7 +462,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.GET_EVENTS,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('GetEvents send data', send_data)
@@ -479,7 +476,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_ACCESS_MODE,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('SetAccessMode send data', send_data)
@@ -493,7 +490,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.GET_ACCESS_MODE,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('GetAccessMode send data', send_data)
@@ -507,7 +504,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SINGLE_PASS,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('Single_pass send data', send_data)
@@ -521,7 +518,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_CARD_KEYS,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('SetCardKeys send data', send_data)
@@ -535,7 +532,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.ADD_CARD_KEY,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('AddCardKey send data', send_data)
@@ -549,7 +546,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.EDIT_KEY,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('EditKey send data', send_data)
@@ -563,7 +560,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.DELL_KEYS,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('DellKeys send data', send_data)
@@ -577,7 +574,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.DELL_ALL_KEYS,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('DellAllKeys send data', send_data)
@@ -591,7 +588,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_SDL_DAILY,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('SetSdlDaily send data', send_data)
@@ -605,7 +602,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_SDL_WEEKLY,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('SetSdlWeekly send data', send_data)
@@ -619,7 +616,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_SDL_FLEXI_TIME,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('SetSdlFlexiTime send data', send_data)
@@ -633,7 +630,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.ADD_DAY_FLEXI_TIME,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('AddDayFlexiTime send data', send_data)
@@ -647,7 +644,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.END_SDL_FLEXI_TIME,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('EndSdlFlexiTime send data', send_data)
@@ -661,7 +658,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.DEL_DAY_FLEXI_TIME,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('DelDayFlexiTime send data', send_data)
@@ -675,7 +672,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.SET_SDL_SPECIFIED,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('SetSdlSpecified send data', send_data)
@@ -689,7 +686,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.ADD_DAY_SPECIFIED,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('AddDaySpecified send data', send_data)
@@ -703,7 +700,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.END_SDL_SPECIFIED,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('EndSdlSpecified send data', send_data)
@@ -717,7 +714,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.DELL_DAY_SPECIFIED,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('EndSdlSpecified send data', send_data)
@@ -731,7 +728,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.DELL_SHEDULE,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('DellShedule send data', send_data)
@@ -745,7 +742,7 @@ export default class ParseCrud {
         const send_data = {
             operator: OperatorType.DEV_TEST,
             session_id: data.session_id,
-            message_id: '222222222222',
+            message_id: data.message_id,
             info: data.info
         }
         console.log('DellShedule send data', send_data)
@@ -755,15 +752,28 @@ export default class ParseCrud {
 }
 
 function handleCallback (send_topic: any, send_data: any): any {
+    console.log(88888888888888888)
+
     send_data = JSON.parse(send_data)
-    setTimeout(() => {
-        MQTTBroker.client.removeListener('message', cb)
-    }, 20000)
+    // setTimeout(() => {
+        // MQTTBroker.client.removeListener('message', cb)
+    // }, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
-            if (topicAck === `${send_topic}/Ack/` && send_data.message_id === messageAck.message_id) {
+            console.log(1111111111111, `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`)
+            console.log(1111111111111, topicAck)
+            console.log(send_data.message_id === messageAck.message_id)
+            console.log(send_data.operator === `${messageAck.operator}-Ack`)
+
+            if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
+                // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
+console.log(2222222222222222)
+
                 MQTTBroker.client.removeListener('message', cb)
+                messageAck.send_data = send_data
+                messageAck.topic = topicAck
+                MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
             }
         } catch (e) {
 
