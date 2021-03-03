@@ -62,6 +62,9 @@ export default class ParseCrud {
             case OperatorType.SET_CTP_DOOR:
                 this.setCtpDoor(data)
                 break
+            case OperatorType.DEL_CTP_DOOR:
+                this.delCtpDoor(data)
+                break
             case OperatorType.SET_EVENTS_MOD:
                 this.setEventsMod(data)
                 break
@@ -428,6 +431,21 @@ export default class ParseCrud {
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
     }
 
+    public static delCtpDoor (data: any): void {
+        // console.log('deviceSetMqttSettings', data)
+        const topic = `${data.location}/registration/${data.device_id}/Operate/`
+        const send_data = {
+            operator: OperatorType.DEL_CTP_DOOR,
+            session_id: data.session_id,
+            message_id: data.message_id,
+            info: data.info
+        }
+
+        console.log('deviceSetCtpDoor send data', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+    }
+
     public static setEventsMod (data: any): void {
         // console.log('SetEventsMod', data)
         const topic = `${data.location}/registration/${data.device_id}/Operate/`
@@ -756,7 +774,7 @@ function handleCallback (send_topic: any, send_data: any): any {
 
     send_data = JSON.parse(send_data)
     // setTimeout(() => {
-        // MQTTBroker.client.removeListener('message', cb)
+    // MQTTBroker.client.removeListener('message', cb)
     // }, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
@@ -768,7 +786,7 @@ function handleCallback (send_topic: any, send_data: any): any {
 
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
-console.log(2222222222222222)
+                console.log(2222222222222222)
 
                 MQTTBroker.client.removeListener('message', cb)
                 messageAck.send_data = send_data

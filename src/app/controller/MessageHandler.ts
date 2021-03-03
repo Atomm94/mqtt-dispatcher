@@ -3,7 +3,7 @@ import ParseCrud from '../mqtt/ParseCrud'
 import ParseDevice from '../mqtt/ParseDevice'
 import { ReceiveTopics, SendTopics } from '../mqtt/Topics'
 // import { OperatorType } from '../mqtt/Operators'
-import UserLog from './UserLogMessages'
+// import UserLog from './UserLogMessages'
 
 export default class MessageHandler {
     constructor () {
@@ -21,7 +21,7 @@ export default class MessageHandler {
                 case SendTopics.MQTT_CRUD:
                     break
                 case ReceiveTopics.USER_LOG:
-                    UserLog.saveLog(message)
+                    // UserLog.saveLog(message)
                     break
                 default:
                     data = JSON.parse(message)
