@@ -1,12 +1,14 @@
 import MQTTBroker from './mqtt'
 import { SendTopics } from './Topics'
 import { OperatorType } from './Operators'
+import { IDeviceMqttMessaging, IMqttCrudMessaging } from '../interfaces/messaging.interface'
 
 export default class ParseDevice {
-    public static deviceData (topic: string, data: any): void {
+    public static deviceData (topic: string, data: IDeviceMqttMessaging): void {
+        const send_crud: IMqttCrudMessaging = { ...data, device_topic: topic }
         switch (data.operator) {
             case OperatorType.REGISTRATION:
-                this.deviceRegistration(topic, data)
+                this.deviceRegistration(send_crud)
                 break
             // case OperatorType.ACCEPT_ACK:
             //     this.deviceAcceptAck(topic, data)
@@ -18,7 +20,7 @@ export default class ParseDevice {
             //     this.deviceLogOutAck(topic, data)
             //     break
             case OperatorType.LOGOUT_EVENT:
-                this.deviceLogOutEvent(topic, data)
+                this.deviceLogOutEvent(send_crud)
                 break
             // case OperatorType.SET_PASS_ACK:
             //     this.deviceSetPassAck(topic, data)
@@ -66,7 +68,7 @@ export default class ParseDevice {
             //     this.deviceSetCtpDoorAck(topic, data)
             //     break
             case OperatorType.EVENT:
-                this.deviceEvent(topic, data)
+                this.deviceEvent(send_crud)
                 break
 
             // case OperatorType.SET_EVENTS_MOD_ACK:
@@ -144,8 +146,7 @@ export default class ParseDevice {
         }
     }
 
-    public static deviceRegistration (topic: string, data: any): void {
-        data.topic = topic
+    public static deviceRegistration (data: IMqttCrudMessaging): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
@@ -168,10 +169,7 @@ export default class ParseDevice {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
-    public static deviceLogOutEvent (topic: string, data: any): void {
-        data.topic = topic
-        console.log('deviceLogOutEvent', data)
-
+    public static deviceLogOutEvent (data: IMqttCrudMessaging): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
@@ -252,8 +250,7 @@ export default class ParseDevice {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
-    public static deviceEvent (topic: string, data: any): void {
-        data.topic = topic
+    public static deviceEvent (data: IMqttCrudMessaging): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
