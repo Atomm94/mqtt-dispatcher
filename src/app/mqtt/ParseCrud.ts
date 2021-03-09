@@ -182,16 +182,18 @@ export default class ParseCrud {
         })
     }
 
-    public static logOut (message: any): void {
+    public static logOut (message: ICrudMqttMessaging): void {
         // console.log('logOut', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.LOGOUT,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static setPass (message: ICrudMqttMessaging): void {
@@ -205,7 +207,9 @@ export default class ParseCrud {
         }
         console.log('setpasss send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static setNetSettings (message: ICrudMqttMessaging): void {
@@ -232,10 +236,12 @@ export default class ParseCrud {
                 // MAC_Eth: 'none'
             }
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getNetSettings (message: any): void {
+    public static getNetSettings (message: ICrudMqttMessaging): void {
         // send message to device
         // {
         //     "operator": "GetNetSettings",
@@ -244,14 +250,16 @@ export default class ParseCrud {
         //     "info":"none"
         // }
 
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_DATE_TIME,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static setDateTime (message: ICrudMqttMessaging): void {
@@ -280,40 +288,46 @@ export default class ParseCrud {
                 DST_Shift: 3600
             }
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static setMqttSettings (message: any): void {
+    public static setMqttSettings (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_MQTT_SETTINGS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceSetMqttSettings send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getMqttSettings (message: any): void {
+    public static getMqttSettings (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_MQTT_SETTINGS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceGetMqttSettings send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getStatusAcu (message: any): void {
+    public static getStatusAcu (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
         const send_data = {
@@ -323,37 +337,55 @@ export default class ParseCrud {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static setExtBrd (message: any): void {
+    public static setExtBrd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_EXT_BRD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: {
+                // Brd_inteface_type: 0,
+                Brd_idx: message.data.id,
+                Brd_inputs: message.data.resources.input,
+                Brd_outputs: message.data.resources.output,
+                RS485_Idx: message.data.port,
+                Brd_RS45_adr: message.data.address ? message.data.address : 'none',
+                RS485_Uart_Mode: message.data.uart_mode,
+                RS485_Baud_Rate: message.data.baud_rate,
+                Brd_prot: message.data.protocol
+                // Brd_Eth_adr: message.data.address ? message.data.address : 'none'
+                // Brd_Eth_port: message.data.port
+            }
         }
 
         console.log('deviceSetExtBrd send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getExtBrd (message: any): void {
+    public static getExtBrd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_EXT_BRD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceGetExtBrd send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static setRd (message: ICrudMqttMessaging): void {
@@ -363,144 +395,194 @@ export default class ParseCrud {
             operator: OperatorType.SET_RD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: {
+                Rd_idx: message.data.id,
+                Rd_opt: (message.data.interface_type === 'Wiegand') ? 1 : 2,
+                Rd_type: 0,
+                Rd_Wg_idx: message.data.port,
+                Rd_Wg_type: message.data.interface_type,
+                Rd_Key_endian: message.data.reverse,
+                // Rd_WG_RG: -1,
+                // Rd_WG_Red: -1,
+                // Rd_WG_Green: -1,
+                Rd_RS485_idx: message.data.port,
+                Rd_OSDP_adr: message.data.osdp_address,
+                Rd_OSDP_bd: message.data.baud_rate,
+                Rd_OSDP_WgPuls: message.data.card_data_format_flags,
+                Rd_OSDP_KeyPad: message.data.keypad_mode,
+                Rd_OSDP_singl: message.data.configuration,
+                Rd_OSDP_tracing: message.data.tracing,
+                // Rd_MQTT: 'none',
+                // Rd_ind_var: 0,
+                Rd_beep: message.data.beep,
+                // Rd_bt_prox: 10,
+                // Rd_sens_act: 50,
+                Rd_mode: message.data.mode
+                // Rd_Eth: 'none',
+                // Rd_Eth_port: 0
+            }
         }
 
         console.log('deviceSetRd send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleRdUpdateCallback(topic, message) as Function)
+        })
     }
 
-    public static getRd (message: any): void {
+    public static getRd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_RD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceGetRd send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static setOutput (message: any): void {
+    public static setOutput (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_OUTPUT,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceSetOutput send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getOutput (message: any): void {
+    public static getOutput (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_OUTPUT,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceSetOutput send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getInput (message: any): void {
+    public static getInput (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_INPUT,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceSetOutput send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static cardProtection (message: any): void {
+    public static cardProtection (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.CARD_PROTECTION,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
 
         console.log('deviceCardProtection send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static setCtpDoor (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
+
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.resources) {
+            const resources = message.data.resources
+            for (const resource in resources) {
+                const element = resources[resource]
+                switch (element.name) {
+                    case 'Door_sensor':
+                        info.Door_sens_opt = element.component_source
+                        info.Door_sens_idx = element.input
+                        info.Door_sens_Condition = element.condition
+                        break
+                    case 'Exit_button':
+                        info.Button_rex_opt = element.component_source
+                        info.Button_rex_idx = element.input
+                        info.Button_rex_Condition = element.condition
+                        break
+                    case 'Fire_Alarm_in':
+                        info.Alarm_In_opt = element.component_source
+                        info.Alarm_In_idx = element.input
+                        info.Allarm_Input_Condition = element.condition
+                        break
+                    case 'Lock':
+                        info.Lock_Relay_opt = element.component_source
+                        info.Lock_Relay_idx = element.output
+                        info.Door_Lock_mode = element.relay_mode
+                        info.Door_Lock_type = element.type
+                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Delay = element.entry_exit_open_durations
+                        info.Door_Sens_Autolock = element.door_sensor_autolock
+
+                        break
+                    case 'Alarm_out':
+                        info.Alarm_out_opt = element.component_source
+                        info.Alarm_out_idx = element.output
+                        info.Alarm_out_tm = element.impulse_time
+                        info.Button_Input_Condition = element.condition
+                        info.Alarm_out_mod = element.relay_mode
+                        // type ?
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+        if (message.data.reader) {
+            const reader = message.data.reader
+            info[`Rd${reader.port - 1}_idx`] = reader.port
+            info[`Rd${reader.port - 1}_dir`] = reader.direction
+        }
+
         const topic = message.topic
-        const send_data = {
+        const send_data: any = {
             operator: OperatorType.SET_CTP_DOOR,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: {
-                Control_point_idx: message.data.id
-                // Control_point_gId: '12548789522',
-                // Leaving_Zone: 'Hall',
-                // Came_To_Zone: 'Meeting room',
-                // Ctp_Apb_Group: 'Meeting room/ABP',
-                // Control_type: 1,
-                // APB_Wrk_type: 0,
-                // APB_Mode: -1,
-                // APB_Time: 0,
-                // Work_Mode: 0,
-                // Door_Allarm: 1,
-                // Door_Allarm_Tm: 1500,
-                // Door_Delay: 6,
-                // Door_Lock_mode: 0,
-                // Door_Lock_type: 1,
-                // Door_Lock_pulse: 500,
-                // Lock_Relay_opt: 0,
-                // Lock_Relay_idx: 0,
-                // Alarm_out_opt: 0,
-                // Alarm_out_idx: 2,
-                // Button_rex_opt: 0,
-                // Button_rex_idx: 0,
-                // Button_rex_sens: 20,
-                // Door_sens_opt: 0,
-                // Door_sens_idx: 1,
-                // Rex_release_tm: 255,
-                // Alarm_In_opt: 0,
-                // Alarm_In_idx: 1,
-                // Acc_mod: 0,
-                // Ctp_auto_mod: -1,
-                // Shedul_auto_mod: 'none',
-                // Owner_mod: -1,
-                // Owner_keys: 'none',
-                // Rd0_idx: 0,
-                // Rd0_dir: 1,
-                // Rd1_idx: 1,
-                // Rd1_dir: 0,
-                // Rd2_idx: -1,
-                // Rd2_dir: -1,
-                // Rd3_idx: -1,
-                // Rd3_dir: -1
-            }
+            info: info
         }
 
         console.log('deviceSetCtpDoor send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static delCtpDoor (message: ICrudMqttMessaging): void {
@@ -517,161 +599,185 @@ export default class ParseCrud {
 
         console.log('deviceSetCtpDoor send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static setEventsMod (message: any): void {
+    public static setEventsMod (message: ICrudMqttMessaging): void {
         // console.log('SetEventsMod', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_EVENTS_MOD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('SetEventsMod send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getEventsMod (message: any): void {
+    public static getEventsMod (message: ICrudMqttMessaging): void {
         // console.log('GetEventsMod', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_EVENTS_MOD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('GetEventsMod send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getEvents (message: any): void {
+    public static getEvents (message: ICrudMqttMessaging): void {
         // console.log('GetEvents', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_EVENTS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('GetEvents send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static setAccessMode (message: any): void {
+    public static setAccessMode (message: ICrudMqttMessaging): void {
         // console.log('SetAccessMode', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_ACCESS_MODE,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('SetAccessMode send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static getAccessMode (message: any): void {
+    public static getAccessMode (message: ICrudMqttMessaging): void {
         // console.log('GetAccessMode', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.GET_ACCESS_MODE,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('GetAccessMode send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static single_pass (message: any): void {
+    public static single_pass (message: ICrudMqttMessaging): void {
         // console.log('Single_pass', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SINGLE_PASS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('Single_pass send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static setCardKeys (message: any): void {
+    public static setCardKeys (message: ICrudMqttMessaging): void {
         // console.log('SetCardKeys', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_CARD_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('SetCardKeys send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static addCardKey (message: any): void {
+    public static addCardKey (message: ICrudMqttMessaging): void {
         // console.log('AddCardKey', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.ADD_CARD_KEY,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('AddCardKey send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static editKey (message: any): void {
+    public static editKey (message: ICrudMqttMessaging): void {
         // console.log('EditKey', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.EDIT_KEY,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('EditKey send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static dellKeys (message: any): void {
+    public static dellKeys (message: ICrudMqttMessaging): void {
         // console.log('DellKeys', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.DELL_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('DellKeys send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static dellAllKeys (message: any): void {
+    public static dellAllKeys (message: ICrudMqttMessaging): void {
         // console.log('DellAllKeys', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.DELL_ALL_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('DellAllKeys send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static setSdlDaily (message: ICrudMqttMessaging): void {
@@ -697,8 +803,6 @@ export default class ParseCrud {
             }
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            console.log(456456456456456)
-
             MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
         })
     }
@@ -727,8 +831,6 @@ export default class ParseCrud {
         const topic = message.topic
 
         const week_tms: any = {
-            Tm0_Start: 'none',
-            Tm0_End: 'none',
             Tm1_Start: 'none',
             Tm1_End: 'none',
             Tm2_Start: 'none',
@@ -740,17 +842,15 @@ export default class ParseCrud {
             Tm5_Start: 'none',
             Tm5_End: 'none',
             Tm6_Start: 'none',
-            Tm6_End: 'none'
+            Tm6_End: 'none',
+            Tm7_Start: 'none',
+            Tm7_End: 'none'
         }
 
         message.data.timeframes.forEach((time: any) => {
-            console.log(time)
+            // console.log(time)
             const start_time = dateTimeToSeconds(time.start)
             const end_time = dateTimeToSeconds(time.end)
-            if (Number(time.name) === 0) {
-                week_tms.Tm0_Start = (week_tms.Tm0_Start === 'none') ? start_time.toString() : `${week_tms.Tm0_Start};${start_time}`
-                week_tms.Tm0_End = (week_tms.Tm0_End === 'none') ? end_time.toString() : `${week_tms.Tm0_End};${end_time}`
-            }
             if (Number(time.name) === 1) {
                 week_tms.Tm1_Start = (week_tms.Tm1_Start === 'none') ? start_time.toString() : `${week_tms.Tm1_Start};${start_time}`
                 week_tms.Tm1_End = (week_tms.Tm1_End === 'none') ? end_time.toString() : `${week_tms.Tm1_End};${end_time}`
@@ -775,6 +875,10 @@ export default class ParseCrud {
                 week_tms.Tm6_Start = (week_tms.Tm6_Start === 'none') ? start_time.toString() : `${week_tms.Tm6_Start};${start_time}`
                 week_tms.Tm6_End = (week_tms.Tm6_End === 'none') ? end_time.toString() : `${week_tms.Tm6_End};${end_time}`
             }
+            if (Number(time.name) === 7) {
+                week_tms.Tm7_Start = (week_tms.Tm7_Start === 'none') ? start_time.toString() : `${week_tms.Tm7_Start};${start_time}`
+                week_tms.Tm7_End = (week_tms.Tm7_End === 'none') ? end_time.toString() : `${week_tms.Tm7_End};${end_time}`
+            }
         })
         const send_data: any = {
             operator: OperatorType.SET_SDL_WEEKLY,
@@ -786,7 +890,7 @@ export default class ParseCrud {
                 ...week_tms
             }
         }
-        console.log('SetSdlWeekly send message', send_data)
+        // console.log('SetSdlWeekly send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
@@ -839,14 +943,14 @@ export default class ParseCrud {
         })
     }
 
-    public static addDayFlexiTime (message: any): void {
+    public static addDayFlexiTime (message: ICrudMqttMessaging): void {
         // console.log('AddDayFlexiTime', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.ADD_DAY_FLEXI_TIME,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('AddDayFlexiTime send message', send_data)
 
@@ -855,18 +959,20 @@ export default class ParseCrud {
         })
     }
 
-    public static endSdlFlexiTime (message: any): void {
+    public static endSdlFlexiTime (message: ICrudMqttMessaging): void {
         // console.log('EndSdlFlexiTime', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.END_SDL_FLEXI_TIME,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('EndSdlFlexiTime send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static delSdlFlexiTime (message: ICrudMqttMessaging): void {
@@ -888,18 +994,20 @@ export default class ParseCrud {
         })
     }
 
-    public static delDayFlexiTime (message: any): void {
+    public static delDayFlexiTime (message: ICrudMqttMessaging): void {
         // console.log('DelDayFlexiTime', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.DEL_DAY_FLEXI_TIME,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('DelDayFlexiTime send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static setSdlSpecified (message: ICrudMqttMessaging): void {
@@ -928,32 +1036,36 @@ export default class ParseCrud {
         })
     }
 
-    public static addDaySpecified (message: any): void {
+    public static addDaySpecified (message: ICrudMqttMessaging): void {
         // console.log('AddDaySpecified', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.ADD_DAY_SPECIFIED,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('AddDaySpecified send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
-    public static endSdlSpecified (message: any): void {
+    public static endSdlSpecified (message: ICrudMqttMessaging): void {
         // console.log('EndSdlSpecified', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.END_SDL_SPECIFIED,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('EndSdlSpecified send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static delSdlSpecified (message: ICrudMqttMessaging): void {
@@ -975,18 +1087,20 @@ export default class ParseCrud {
         })
     }
 
-    public static dellDaySpecified (message: any): void {
+    public static dellDaySpecified (message: ICrudMqttMessaging): void {
         // console.log('EndSdlSpecified', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.DELL_DAY_SPECIFIED,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('EndSdlSpecified send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static dellShedule (message: ICrudMqttMessaging): void {
@@ -1008,24 +1122,24 @@ export default class ParseCrud {
         })
     }
 
-    public static devTest (message: any): void {
+    public static devTest (message: ICrudMqttMessaging): void {
         // console.log('DellShedule', message)
-        const topic = `${message.location}/registration/${message.device_id}/Operate/`
+        const topic = message.topic
         const send_data = {
             operator: OperatorType.DEV_TEST,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.info
+            info: message.data
         }
         console.log('DellShedule send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data))
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 }
 
 function handleCallback (send_topic: any, send_data: any, crud_message?: ICrudMqttMessaging): any {
-    console.log(88888888888888888)
-
     send_data = JSON.parse(send_data)
     // setTimeout(() => {
     // MQTTBroker.client.removeListener('message', cb)
@@ -1065,14 +1179,14 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
     // setTimeout(() => {
     // MQTTBroker.client.removeListener('message', cb)
     // }, 20000)
-    console.log(12312123)
+    // console.log(12312123)
 
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
-            console.log(topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`, crud_message.message_id === messageAck.message_id, messageAck.operator === `${crud_message.operator}-Ack`)
-            console.log(messageAck.operator)
-            console.log(`${crud_message.operator}-Ack`)
+            // console.log(topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`, crud_message.message_id === messageAck.message_id, messageAck.operator === `${crud_message.operator}-Ack`)
+            // console.log(messageAck.operator)
+            // console.log(`${crud_message.operator}-Ack`)
 
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 console.log(11111, crud_message)
@@ -1084,7 +1198,7 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
 
                 switch (crud_message.data.schedule_type) {
                     case 'daily':
-                        console.log(11111, 'daily')
+                        console.log(22222, 'daily')
                         crud_message.operator = OperatorType.SET_SDL_DAILY
                         delete crud_message.data.schedule_type
                         ParseCrud.setSdlDaily(crud_message)
@@ -1103,6 +1217,54 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
                         crud_message.operator = OperatorType.SET_SDL_FLEXI_TIME
                         delete crud_message.data.schedule_type
                         ParseCrud.setSdlFlexiTime(crud_message)
+                        break
+                    default:
+                        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+                        break
+                }
+                MQTTBroker.client.removeListener('message', cb)
+            }
+        } catch (e) {
+
+        }
+    }
+    return cb
+}
+
+function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
+    // setTimeout(() => {
+    // MQTTBroker.client.removeListener('message', cb)
+    // }, 20000)
+    // console.log(12312123)
+
+    function cb (topicAck: any, messageAck: any) {
+        try {
+            messageAck = JSON.parse(messageAck.toString())
+            // console.log(topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`, crud_message.message_id === messageAck.message_id, messageAck.operator === `${crud_message.operator}-Ack`)
+            // console.log(messageAck.operator)
+            // console.log(`${crud_message.operator}-Ack`)
+
+            if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
+                console.log(11111, crud_message)
+
+                messageAck.send_data = crud_message
+                // messageAck.crud_message = crud_message
+                messageAck.device_topic = topicAck
+                console.log('crud_message.data.schedule_type', crud_message.data.schedule_type)
+                const message = {
+                    id: crud_message.data.id,
+                    reader: {
+                        port: crud_message.data.port,
+                        direction: crud_message.data.direction
+                    }
+                }
+                switch (crud_message.data.access_point_type) {
+                    case 'door':
+                        crud_message.operator = OperatorType.SET_CTP_DOOR
+                        delete crud_message.data.access_point_type
+                        crud_message.data = message
+
+                        ParseCrud.setCtpDoor(crud_message)
                         break
                     default:
                         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
