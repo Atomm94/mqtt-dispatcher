@@ -43,11 +43,18 @@ export default class ParseCrud {
             case OperatorType.GET_EXT_BRD:
                 this.getExtBrd(message)
                 break
+            case OperatorType.DEL_EXT_BRD:
+                this.delExtBrd(message)
+                break
+
             case OperatorType.SET_RD:
                 this.setRd(message)
                 break
             case OperatorType.GET_RD:
                 this.getRd(message)
+                break
+            case OperatorType.DEL_RD:
+                this.delRd(message)
                 break
             case OperatorType.SET_OUTPUT:
                 this.setOutput(message)
@@ -388,6 +395,23 @@ export default class ParseCrud {
         })
     }
 
+    public static delExtBrd (message: ICrudMqttMessaging): void {
+        // console.log('devicedelExtBrd', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_EXT_BRD,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+
+        console.log('devicedelExtBrd send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setRd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
@@ -441,6 +465,23 @@ export default class ParseCrud {
         }
 
         console.log('deviceGetRd send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static delRd (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_RD,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+
+        console.log('devicedelRd send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -564,8 +605,8 @@ export default class ParseCrud {
                 }
             }
         }
-        if (message.data.reader) {
-            const reader = message.data.reader
+        if (message.data.readers) {
+            const reader = message.data.readers
             info[`Rd${reader.port - 1}_idx`] = reader.port
             info[`Rd${reader.port - 1}_dir`] = reader.direction
         }
