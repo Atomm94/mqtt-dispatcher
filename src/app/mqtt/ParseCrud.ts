@@ -107,7 +107,7 @@ export default class ParseCrud {
                 this.getEventsMod(message)
                 break
             case OperatorType.GET_EVENTS:
-                this.getEvents(message)
+                // this.getEvents(message)
                 break
             case OperatorType.SET_ACCESS_MODE:
                 this.setAccessMode(message)

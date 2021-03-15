@@ -23,6 +23,9 @@ export default class MessageHandler {
                 case ReceiveTopics.USER_LOG:
                     // UserLog.saveLog(message)
                     break
+                    case ReceiveTopics.MQTT_LOG:
+                        // UserLog.saveLog(message)
+                        break
                 default:
                     data = JSON.parse(message)
                     ParseDevice.deviceData(topic, data)

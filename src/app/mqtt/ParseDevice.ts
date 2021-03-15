@@ -10,6 +10,12 @@ export default class ParseDevice {
             case OperatorType.REGISTRATION:
                 this.deviceRegistration(send_crud)
                 break
+            case OperatorType.LOGOUT_EVENT:
+                this.deviceLogOutEvent(send_crud)
+                break
+            case OperatorType.EVENT:
+                this.deviceEvent(send_crud)
+                break
             // case OperatorType.ACCEPT_ACK:
             //     this.deviceAcceptAck(topic, data)
             //     break
@@ -19,9 +25,7 @@ export default class ParseDevice {
             // case OperatorType.LOGOUT_ACK:
             //     this.deviceLogOutAck(topic, data)
             //     break
-            case OperatorType.LOGOUT_EVENT:
-                this.deviceLogOutEvent(send_crud)
-                break
+
             // case OperatorType.SET_PASS_ACK:
             //     this.deviceSetPassAck(topic, data)
             //     break
@@ -67,10 +71,6 @@ export default class ParseDevice {
             // case OperatorType.SET_CTP_DOOR_ACK:
             //     this.deviceSetCtpDoorAck(topic, data)
             //     break
-            case OperatorType.EVENT:
-                this.deviceEvent(send_crud)
-                break
-
             // case OperatorType.SET_EVENTS_MOD_ACK:
             //     this.deviceSetEventsModAck(topic, data)
             //     break
