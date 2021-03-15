@@ -1,9 +1,10 @@
+/* eslint-disable no-new */
 import MQTTBroker from '../mqtt/mqtt'
 import ParseCrud from '../mqtt/ParseCrud'
 import ParseDevice from '../mqtt/ParseDevice'
 import { ReceiveTopics, SendTopics } from '../mqtt/Topics'
+import LogMessageHandler from './LogMessagesHandler'
 // import { OperatorType } from '../mqtt/Operators'
-// import UserLog from './UserLogMessages'
 
 export default class MessageHandler {
     constructor () {
@@ -20,12 +21,14 @@ export default class MessageHandler {
                     break
                 case SendTopics.MQTT_CRUD:
                     break
-                case ReceiveTopics.USER_LOG:
-                    // UserLog.saveLog(message)
+                case ReceiveTopics.LOG:
+                    data = JSON.parse(message)
+                    LogMessageHandler.parseLog(data)
                     break
-                    case ReceiveTopics.MQTT_LOG:
-                        // UserLog.saveLog(message)
-                        break
+                case ReceiveTopics.MQTT_LOG:
+                    break
+                case ReceiveTopics.MQTT_SOCKET:
+                    break
                 default:
                     data = JSON.parse(message)
                     ParseDevice.deviceData(topic, data)

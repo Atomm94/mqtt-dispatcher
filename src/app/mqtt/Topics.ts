@@ -1,9 +1,9 @@
 export enum ReceiveTopics {
     PING='PING',
     CRUD_MQTT = 'crud_mqtt',
-    USER_LOG = 'userlog',
-    MQTT_LOG = 'mqtt_log'
-
+    LOG = 'log',
+    MQTT_LOG = 'mqtt_log',
+    MQTT_SOCKET = 'mqtt_socket'
 }
 
 export enum SendTopics {

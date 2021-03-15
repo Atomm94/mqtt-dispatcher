@@ -54,11 +54,15 @@ export enum OperatorType {
 
     GET_EVENTS_MOD = 'GetEventsMod',
     GET_EVENTS_MOD_ACK = 'GetEventsMod-Ack',
+
     EVENT = 'Event',
     GET_EVENTS = 'GetEvents',
     GET_EVENTS_ACK = 'GetEvents-Ack',
     SET_ACCESS_MODE = 'SetAccessMode',
     SET_ACCESS_MODE_ACK = 'SetAccessMode-Ack',
+
+    EVENT_LOG = 'EventLog',
+    USER_LOG = 'UserLog',
 
     GET_ACCESS_MODE = 'GetAccessMode',
     GET_ACCESS_MODE_ACK = 'GetAccessMode-Ack',
@@ -121,5 +125,6 @@ export enum OperatorType {
     DELL_SHEDULE_ACK = 'DellShedule-Ack',
 
     DEV_TEST = 'DevTest',
-    DEV_TEST_ACK = 'DevTest-Ack'
+    DEV_TEST_ACK = 'DevTest-Ack',
+    NOTIFICATION='Notification'
 }
