@@ -1113,14 +1113,35 @@ export default class ParseCrud {
 
     public static setCardKeys (message: ICrudMqttMessaging): void {
         // console.log('SetCardKeys', message)
+        const info: any = {}
+        info.KeysDataLength = '66'
+        info.KeysCount = message.data.length
+        let keys = '/'
+        // if (info.KeysCount > 1) {
+            message.data.forEach((credential: any) => {
+                keys += `${credential.id};`
+                keys += `${credential.len};`
+                keys += `${credential.code};`
+                keys += `${credential.status};`
+                keys += `${credential.schedule_id};`
+                keys += `${credential.Kind_key};`
+                keys += `${credential.Key_type};`
+                keys += `${credential.Passes};`
+                keys += `${credential.ABP};`
+                keys += `${credential.Start_date};`
+                keys += `${credential.Expiration_date};`
+            })
+            info.Keys = keys
+        // }
         const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_CARD_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
-        // console.log('SetCardKeys send message', send_data)
+
+        console.log('SetCardKeys send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -1129,12 +1150,32 @@ export default class ParseCrud {
 
     public static addCardKey (message: ICrudMqttMessaging): void {
         // console.log('AddCardKey', message)
+        const info: any = {}
+        info.KeysDataLength = '66'
+        info.KeysCount = message.data.length
+        let keys = '/'
+        // if (info.KeysCount > 1) {
+            message.data.forEach((credential: any) => {
+                keys += `${credential.id};`
+                keys += `${credential.len};`
+                keys += `${credential.code};`
+                keys += `${credential.status};`
+                keys += `${credential.schedule_id};`
+                keys += `${credential.Kind_key};`
+                keys += `${credential.Key_type};`
+                keys += `${credential.Passes};`
+                keys += `${credential.ABP};`
+                keys += `${credential.Start_date};`
+                keys += `${credential.Expiration_date};`
+            })
+            info.Keys = keys
+        // }
         const topic = message.topic
         const send_data = {
-            operator: OperatorType.ADD_CARD_KEY,
+            operator: OperatorType.SET_CARD_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
         // console.log('AddCardKey send message', send_data)
 
