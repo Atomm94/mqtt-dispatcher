@@ -89,21 +89,21 @@ export default class ParseDevice {
             // case OperatorType.SINGLE_PASS_ACK:
             //     this.deviceSinglePassAck(topic, data)
             //     break
-            // case OperatorType.SET_CARD_KEYS_ACK:
-            //     this.setCardKeysAck(topic, data)
-            //     break
-            // case OperatorType.ADD_CARD_KEY_ACK:
-            //     this.addCardKeyAck(topic, data)
-            //     break
-            // case OperatorType.EDIT_KEY_ACK:
-            //     this.editKeyAck(topic, data)
-            //     break
-            // case OperatorType.DELL_KEYS_ACK:
-            //     this.dellKeysAck(topic, data)
-            //     break
-            // case OperatorType.DELL_ALL_KEYS_ACK:
-            //     this.dellAllKeysAck(topic, data)
-            //     break
+            case OperatorType.SET_CARD_KEYS_ACK:
+                this.setCardKeysAck(send_crud)
+                break
+            case OperatorType.ADD_CARD_KEY_ACK:
+                this.addCardKeyAck(send_crud)
+                break
+            case OperatorType.EDIT_KEY_ACK:
+                this.editKeyAck(send_crud)
+                break
+            case OperatorType.DELL_KEYS_ACK:
+                this.dellKeysAck(send_crud)
+                break
+            case OperatorType.DELL_ALL_KEYS_ACK:
+                this.dellAllKeysAck(send_crud)
+                break
             // case OperatorType.SET_SDL_DAILY_ACK:
             //     this.setSdlDailyAck(topic, data)
             //     break
@@ -284,28 +284,23 @@ export default class ParseDevice {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
-    public static setCardKeysAck (topic: string, data: any): void {
-        data.topic = topic
+    public static setCardKeysAck (data: any): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
-    public static addCardKeyAck (topic: string, data: any): void {
-        data.topic = topic
+    public static addCardKeyAck (data: any): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
-    public static editKeyAck (topic: string, data: any): void {
-        data.topic = topic
+    public static editKeyAck (data: any): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
-    public static dellKeysAck (topic: string, data: any): void {
-        data.topic = topic
+    public static dellKeysAck (data: any): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
-    public static dellAllKeysAck (topic: string, data: any): void {
-        data.topic = topic
+    public static dellAllKeysAck (data: any): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
