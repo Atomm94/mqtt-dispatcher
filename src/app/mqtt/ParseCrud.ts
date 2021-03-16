@@ -43,11 +43,18 @@ export default class ParseCrud {
             case OperatorType.GET_EXT_BRD:
                 this.getExtBrd(message)
                 break
+            case OperatorType.DEL_EXT_BRD:
+                this.delExtBrd(message)
+                break
+
             case OperatorType.SET_RD:
                 this.setRd(message)
                 break
             case OperatorType.GET_RD:
                 this.getRd(message)
+                break
+            case OperatorType.DEL_RD:
+                this.delRd(message)
                 break
             case OperatorType.SET_OUTPUT:
                 this.setOutput(message)
@@ -67,6 +74,32 @@ export default class ParseCrud {
             case OperatorType.DEL_CTP_DOOR:
                 this.delCtpDoor(message)
                 break
+
+            case OperatorType.SET_CTP_TURNSTILE:
+                this.setCtpTurnstile(message)
+                break
+            case OperatorType.DEL_CTP_TURNSTILE:
+                this.delCtpTurnstile(message)
+                break
+            case OperatorType.SET_CTP_GATE:
+                this.setCtpGate(message)
+                break
+            case OperatorType.DEL_CTP_GATE:
+                this.delCtpGate(message)
+                break
+            case OperatorType.SET_CTP_GATEWAY:
+                this.setCtpGateway(message)
+                break
+            case OperatorType.DEL_CTP_GATEWAY:
+                this.delCtpGateway(message)
+                break
+            case OperatorType.SET_CTP_FLOOR:
+                this.setCtpFloor(message)
+                break
+            case OperatorType.DEL_CTP_FLOOR:
+                this.delCtpFloor(message)
+                break
+
             case OperatorType.SET_EVENTS_MOD:
                 this.setEventsMod(message)
                 break
@@ -378,6 +411,23 @@ export default class ParseCrud {
         })
     }
 
+    public static delExtBrd (message: ICrudMqttMessaging): void {
+        // console.log('devicedelExtBrd', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_EXT_BRD,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+
+        console.log('devicedelExtBrd send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setRd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
@@ -427,6 +477,23 @@ export default class ParseCrud {
             message_id: message.message_id,
             info: message.data
         }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static delRd (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_RD,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+
+        console.log('devicedelRd send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -584,6 +651,370 @@ export default class ParseCrud {
         })
     }
 
+    public static setCtpTurnstile (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.resources) {
+            const resources = message.data.resources
+            for (const resource in resources) {
+                const element = resources[resource]
+                switch (element.name) {
+                    case 'Door_sensor':
+                        info.Door_sens_opt = element.component_source
+                        info.Door_sens_idx = element.input
+                        info.Door_sens_Condition = element.condition
+                        break
+                    case 'Exit_button':
+                        info.Button_rex_opt = element.component_source
+                        info.Button_rex_idx = element.input
+                        info.Button_rex_Condition = element.condition
+                        break
+                    case 'Fire_Alarm_in':
+                        info.Alarm_In_opt = element.component_source
+                        info.Alarm_In_idx = element.input
+                        info.Allarm_Input_Condition = element.condition
+                        break
+                    case 'Lock':
+                        info.Lock_Relay_opt = element.component_source
+                        info.Lock_Relay_idx = element.output
+                        info.Door_Lock_mode = element.relay_mode
+                        info.Door_Lock_type = element.type
+                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Delay = element.entry_exit_open_durations
+                        info.Door_Sens_Autolock = element.door_sensor_autolock
+
+                        break
+                    case 'Alarm_out':
+                        info.Alarm_out_opt = element.component_source
+                        info.Alarm_out_idx = element.output
+                        info.Alarm_out_tm = element.impulse_time
+                        info.Button_Input_Condition = element.condition
+                        info.Alarm_out_mod = element.relay_mode
+                        // type ?
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+
+        if (message.data.readers) {
+            const readers = message.data.readers
+            for (const reader of readers) {
+                info[`Rd${+reader.port - 1}_idx`] = reader.port
+                info[`Rd${+reader.port - 1}_dir`] = reader.direction
+            }
+        }
+        const topic = message.topic
+        const send_data: any = {
+            operator: OperatorType.SET_CTP_TURNSTILE,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static delCtpTurnstile (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEL_CTP_TURNSTILE,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static setCtpGate (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.resources) {
+            const resources = message.data.resources
+            for (const resource in resources) {
+                const element = resources[resource]
+                switch (element.name) {
+                    case 'Door_sensor':
+                        info.Door_sens_opt = element.component_source
+                        info.Door_sens_idx = element.input
+                        info.Door_sens_Condition = element.condition
+                        break
+                    case 'Exit_button':
+                        info.Button_rex_opt = element.component_source
+                        info.Button_rex_idx = element.input
+                        info.Button_rex_Condition = element.condition
+                        break
+                    case 'Fire_Alarm_in':
+                        info.Alarm_In_opt = element.component_source
+                        info.Alarm_In_idx = element.input
+                        info.Allarm_Input_Condition = element.condition
+                        break
+                    case 'Lock':
+                        info.Lock_Relay_opt = element.component_source
+                        info.Lock_Relay_idx = element.output
+                        info.Door_Lock_mode = element.relay_mode
+                        info.Door_Lock_type = element.type
+                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Delay = element.entry_exit_open_durations
+                        info.Door_Sens_Autolock = element.door_sensor_autolock
+
+                        break
+                    case 'Alarm_out':
+                        info.Alarm_out_opt = element.component_source
+                        info.Alarm_out_idx = element.output
+                        info.Alarm_out_tm = element.impulse_time
+                        info.Button_Input_Condition = element.condition
+                        info.Alarm_out_mod = element.relay_mode
+                        // type ?
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+
+        if (message.data.readers) {
+            const readers = message.data.readers
+            for (const reader of readers) {
+                info[`Rd${+reader.port - 1}_idx`] = reader.port
+                info[`Rd${+reader.port - 1}_dir`] = reader.direction
+            }
+        }
+        const topic = message.topic
+        const send_data: any = {
+            operator: OperatorType.SET_CTP_GATE,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static delCtpGate (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEL_CTP_GATE,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static setCtpGateway (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.resources) {
+            const resources = message.data.resources
+            for (const resource in resources) {
+                const element = resources[resource]
+                switch (element.name) {
+                    case 'Door_sensor':
+                        info.Door_sens_opt = element.component_source
+                        info.Door_sens_idx = element.input
+                        info.Door_sens_Condition = element.condition
+                        break
+                    case 'Exit_button':
+                        info.Button_rex_opt = element.component_source
+                        info.Button_rex_idx = element.input
+                        info.Button_rex_Condition = element.condition
+                        break
+                    case 'Fire_Alarm_in':
+                        info.Alarm_In_opt = element.component_source
+                        info.Alarm_In_idx = element.input
+                        info.Allarm_Input_Condition = element.condition
+                        break
+                    case 'Lock':
+                        info.Lock_Relay_opt = element.component_source
+                        info.Lock_Relay_idx = element.output
+                        info.Door_Lock_mode = element.relay_mode
+                        info.Door_Lock_type = element.type
+                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Delay = element.entry_exit_open_durations
+                        info.Door_Sens_Autolock = element.door_sensor_autolock
+
+                        break
+                    case 'Alarm_out':
+                        info.Alarm_out_opt = element.component_source
+                        info.Alarm_out_idx = element.output
+                        info.Alarm_out_tm = element.impulse_time
+                        info.Button_Input_Condition = element.condition
+                        info.Alarm_out_mod = element.relay_mode
+                        // type ?
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+
+        if (message.data.readers) {
+            const readers = message.data.readers
+            for (const reader of readers) {
+                info[`Rd${+reader.port - 1}_idx`] = reader.port
+                info[`Rd${+reader.port - 1}_dir`] = reader.direction
+            }
+        }
+        const topic = message.topic
+        const send_data: any = {
+            operator: OperatorType.SET_CTP_GATEWAY,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static delCtpGateway (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEL_CTP_GATEWAY,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static setCtpFloor (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.resources) {
+            const resources = message.data.resources
+            for (const resource in resources) {
+                const element = resources[resource]
+                switch (element.name) {
+                    case 'Door_sensor':
+                        info.Door_sens_opt = element.component_source
+                        info.Door_sens_idx = element.input
+                        info.Door_sens_Condition = element.condition
+                        break
+                    case 'Exit_button':
+                        info.Button_rex_opt = element.component_source
+                        info.Button_rex_idx = element.input
+                        info.Button_rex_Condition = element.condition
+                        break
+                    case 'Fire_Alarm_in':
+                        info.Alarm_In_opt = element.component_source
+                        info.Alarm_In_idx = element.input
+                        info.Allarm_Input_Condition = element.condition
+                        break
+                    case 'Lock':
+                        info.Lock_Relay_opt = element.component_source
+                        info.Lock_Relay_idx = element.output
+                        info.Door_Lock_mode = element.relay_mode
+                        info.Door_Lock_type = element.type
+                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Delay = element.entry_exit_open_durations
+                        info.Door_Sens_Autolock = element.door_sensor_autolock
+
+                        break
+                    case 'Alarm_out':
+                        info.Alarm_out_opt = element.component_source
+                        info.Alarm_out_idx = element.output
+                        info.Alarm_out_tm = element.impulse_time
+                        info.Button_Input_Condition = element.condition
+                        info.Alarm_out_mod = element.relay_mode
+                        // type ?
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+
+        if (message.data.readers) {
+            const readers = message.data.readers
+            for (const reader of readers) {
+                info[`Rd${+reader.port - 1}_idx`] = reader.port
+                info[`Rd${+reader.port - 1}_dir`] = reader.direction
+            }
+        }
+        const topic = message.topic
+        const send_data: any = {
+            operator: OperatorType.SET_CTP_FLOOR,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static delCtpFloor (message: ICrudMqttMessaging): void {
+        // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEL_CTP_FLOOR,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setEventsMod (message: ICrudMqttMessaging): void {
         // console.log('SetEventsMod', message)
         const topic = message.topic
@@ -682,14 +1113,35 @@ export default class ParseCrud {
 
     public static setCardKeys (message: ICrudMqttMessaging): void {
         // console.log('SetCardKeys', message)
+        const info: any = {}
+        info.KeysDataLength = '66'
+        info.KeysCount = message.data.length
+        let keys = '/'
+        // if (info.KeysCount > 1) {
+            message.data.forEach((credential: any) => {
+                keys += `${credential.id};`
+                keys += `${credential.len};`
+                keys += `${credential.code};`
+                keys += `${credential.status};`
+                keys += `${credential.schedule_id};`
+                keys += `${credential.Kind_key};`
+                keys += `${credential.Key_type};`
+                keys += `${credential.Passes};`
+                keys += `${credential.ABP};`
+                keys += `${credential.Start_date};`
+                keys += `${credential.Expiration_date};`
+            })
+            info.Keys = keys
+        // }
         const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_CARD_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
-        // console.log('SetCardKeys send message', send_data)
+
+        console.log('SetCardKeys send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -698,12 +1150,32 @@ export default class ParseCrud {
 
     public static addCardKey (message: ICrudMqttMessaging): void {
         // console.log('AddCardKey', message)
+        const info: any = {}
+        info.KeysDataLength = '66'
+        info.KeysCount = message.data.length
+        let keys = '/'
+        // if (info.KeysCount > 1) {
+            message.data.forEach((credential: any) => {
+                keys += `${credential.id};`
+                keys += `${credential.len};`
+                keys += `${credential.code};`
+                keys += `${credential.status};`
+                keys += `${credential.schedule_id};`
+                keys += `${credential.Kind_key};`
+                keys += `${credential.Key_type};`
+                keys += `${credential.Passes};`
+                keys += `${credential.ABP};`
+                keys += `${credential.Start_date};`
+                keys += `${credential.Expiration_date};`
+            })
+            info.Keys = keys
+        // }
         const topic = message.topic
         const send_data = {
-            operator: OperatorType.ADD_CARD_KEY,
+            operator: OperatorType.SET_CARD_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
         // console.log('AddCardKey send message', send_data)
 
