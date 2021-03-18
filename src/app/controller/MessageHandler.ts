@@ -1,4 +1,5 @@
 /* eslint-disable no-new */
+import sendSocket from '../functions/sendSocket'
 import MQTTBroker from '../mqtt/mqtt'
 import ParseCrud from '../mqtt/ParseCrud'
 import ParseDevice from '../mqtt/ParseDevice'
@@ -17,17 +18,19 @@ export default class MessageHandler {
                     break
                 case ReceiveTopics.CRUD_MQTT:
                     data = JSON.parse(message)
-                    ParseCrud.crudData(topic, data)
-                    break
-                case SendTopics.MQTT_CRUD:
+                    if (data.topic === SendTopics.MQTT_SOCKET) {
+                        sendSocket(data)
+                    } else {
+                        ParseCrud.crudData(topic, data)
+                    }
                     break
                 case ReceiveTopics.LOG:
                     data = JSON.parse(message)
                     LogMessageHandler.parseLog(data)
                     break
-                case ReceiveTopics.MQTT_LOG:
-                    break
-                case ReceiveTopics.MQTT_SOCKET:
+                case SendTopics.MQTT_CRUD:
+                case SendTopics.MQTT_LOG:
+                case SendTopics.MQTT_SOCKET:
                     break
                 default:
                     data = JSON.parse(message)
