@@ -4,8 +4,6 @@ import { SendTopics } from '../mqtt/Topics'
 
 export default class LogMessageHandler {
     public static async parseLog (message: any) {
-        console.log(message)
-
         switch (message.operator) {
             case OperatorType.EVENT_LOG:
                 this.saveEventLog(message)

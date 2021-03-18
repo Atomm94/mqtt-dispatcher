@@ -163,5 +163,4 @@ export enum OperatorType {
 
     DEV_TEST = 'DevTest',
     DEV_TEST_ACK = 'DevTest-Ack',
-    NOTIFICATION='Notification'
 }

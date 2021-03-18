@@ -1,6 +1,6 @@
 import MQTTBroker from '../mqtt/mqtt'
-import { OperatorType } from '../mqtt/Operators'
+import { SendTopics } from '../mqtt/Topics'
 
 export default async function sendSocket (data: any) {
-    MQTTBroker.publishMessage(OperatorType.NOTIFICATION, JSON.stringify(data))
+    MQTTBroker.publishMessage(SendTopics.MQTT_SOCKET, JSON.stringify(data))
 }
