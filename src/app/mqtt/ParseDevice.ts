@@ -222,10 +222,6 @@ export default class ParseDevice {
 
     public static deviceSetRdAck (topic: string, data: any): void {
         data.topic = topic
-        console.log('--------------')
-        console.log('deviceSetRdAck', JSON.stringify(data))
-        console.log('______________')
-
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 

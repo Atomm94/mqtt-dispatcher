@@ -1687,13 +1687,15 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
             console.log('---------------------------')
 
             console.log('rd1', topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`, crud_message.message_id === messageAck.message_id, messageAck.operator === `${crud_message.operator}-Ack`)
-            console.log('rd2', messageAck.operator)
-            console.log('rd3', `${crud_message.operator}-Ack`)
+            console.log('send_topic', send_topic)
+            console.log('topicAck', topicAck)
             console.log('crud_message', JSON.stringify(crud_message))
             console.log('messageAck', JSON.stringify(messageAck))
 
             console.log('______________________________________')
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
+                console.log('handleRdUpdateCallback', true)
+
                 messageAck.send_data = crud_message
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
@@ -1706,6 +1708,8 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                 }
                 switch (crud_message.data.access_point_type) {
                     case 'door':
+                        console.log('crud_message.data', crud_message.data)
+
                         crud_message.operator = OperatorType.SET_CTP_DOOR
                         delete crud_message.data.access_point_type
                         crud_message.data = message
@@ -1713,6 +1717,7 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                         ParseCrud.setCtpDoor(crud_message)
                         break
                     default:
+                        console.log('crud_message.data 2', crud_message.data)
                         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                         break
                 }
