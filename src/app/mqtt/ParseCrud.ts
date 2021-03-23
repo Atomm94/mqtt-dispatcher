@@ -561,7 +561,7 @@ export default class ParseCrud {
     }
 
     public static setCtpDoor (message: ICrudMqttMessaging): void {
-        console.log('deviceSetMqttSettings', message)
+        // console.log('deviceSetMqttSettings', message)
 
         const info: any = {
             Control_point_idx: message.data.id
@@ -624,8 +624,6 @@ export default class ParseCrud {
             message_id: message.message_id,
             info: info
         }
-
-        console.log('deviceSetCtpDoor send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
