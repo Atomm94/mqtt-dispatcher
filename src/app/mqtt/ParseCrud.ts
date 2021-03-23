@@ -1118,20 +1118,20 @@ export default class ParseCrud {
         info.KeysCount = message.data.length
         let keys = '/'
         // if (info.KeysCount > 1) {
-            message.data.forEach((credential: any) => {
-                keys += `${credential.id};`
-                keys += `${credential.len};`
-                keys += `${credential.code};`
-                keys += `${credential.status};`
-                keys += `${credential.schedule_id};`
-                keys += `${credential.Kind_key};`
-                keys += `${credential.Key_type};`
-                keys += `${credential.Passes};`
-                keys += `${credential.ABP};`
-                keys += `${credential.Start_date};`
-                keys += `${credential.Expiration_date};`
-            })
-            info.Keys = keys
+        message.data.forEach((credential: any) => {
+            keys += `${credential.id};`
+            keys += `${credential.len};`
+            keys += `${credential.code};`
+            keys += `${credential.status};`
+            keys += `${credential.schedule_id};`
+            keys += `${credential.Kind_key};`
+            keys += `${credential.Key_type};`
+            keys += `${credential.Passes};`
+            keys += `${credential.ABP};`
+            keys += `${credential.Start_date};`
+            keys += `${credential.Expiration_date};`
+        })
+        info.Keys = keys
         // }
         const topic = message.topic
         const send_data = {
@@ -1155,20 +1155,20 @@ export default class ParseCrud {
         info.KeysCount = message.data.length
         let keys = '/'
         // if (info.KeysCount > 1) {
-            message.data.forEach((credential: any) => {
-                keys += `${credential.id};`
-                keys += `${credential.len};`
-                keys += `${credential.code};`
-                keys += `${credential.status};`
-                keys += `${credential.schedule_id};`
-                keys += `${credential.Kind_key};`
-                keys += `${credential.Key_type};`
-                keys += `${credential.Passes};`
-                keys += `${credential.ABP};`
-                keys += `${credential.Start_date};`
-                keys += `${credential.Expiration_date};`
-            })
-            info.Keys = keys
+        message.data.forEach((credential: any) => {
+            keys += `${credential.id};`
+            keys += `${credential.len};`
+            keys += `${credential.code};`
+            keys += `${credential.status};`
+            keys += `${credential.schedule_id};`
+            keys += `${credential.Kind_key};`
+            keys += `${credential.Key_type};`
+            keys += `${credential.Passes};`
+            keys += `${credential.ABP};`
+            keys += `${credential.Start_date};`
+            keys += `${credential.Expiration_date};`
+        })
+        info.Keys = keys
         // }
         const topic = message.topic
         const send_data = {
@@ -1684,10 +1684,15 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
-            // console.log(topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`, crud_message.message_id === messageAck.message_id, messageAck.operator === `${crud_message.operator}-Ack`)
-            // console.log(messageAck.operator)
-            // console.log(`${crud_message.operator}-Ack`)
+            console.log('---------------------------')
 
+            console.log('rd1', topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`, crud_message.message_id === messageAck.message_id, messageAck.operator === `${crud_message.operator}-Ack`)
+            console.log('rd2', messageAck.operator)
+            console.log('rd3', `${crud_message.operator}-Ack`)
+            console.log('crud_message', JSON.stringify(crud_message))
+            console.log('messageAck', JSON.stringify(messageAck))
+
+            console.log('______________________________________')
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 messageAck.send_data = crud_message
                 // messageAck.crud_message = crud_message
