@@ -561,7 +561,7 @@ export default class ParseCrud {
     }
 
     public static setCtpDoor (message: ICrudMqttMessaging): void {
-        // console.log('deviceSetMqttSettings', message)
+        console.log('deviceSetMqttSettings', message)
 
         const info: any = {
             Control_point_idx: message.data.id
@@ -625,7 +625,7 @@ export default class ParseCrud {
             info: info
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        console.log('deviceSetCtpDoor send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -1637,31 +1637,50 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
                 if (messageAck.result.errorNo === 0) {
-                    switch (crud_message.data.schedule_type) {
-                        case 'daily':
-                            crud_message.operator = OperatorType.SET_SDL_DAILY
-                            delete crud_message.data.schedule_type
-                            ParseCrud.setSdlDaily(crud_message)
-                            break
-                        case 'weekly':
-                            crud_message.operator = OperatorType.SET_SDL_WEEKLY
-                            delete crud_message.data.schedule_type
-                            ParseCrud.setSdlWeekly(crud_message)
-                            break
-                        case 'specific':
-                            crud_message.operator = OperatorType.SET_SDL_SPECIFIED
-                            delete crud_message.data.schedule_type
-                            ParseCrud.setSdlSpecified(crud_message)
-                            break
-                        case 'flexitime':
-                            crud_message.operator = OperatorType.SET_SDL_FLEXI_TIME
-                            delete crud_message.data.schedule_type
-                            ParseCrud.setSdlFlexiTime(crud_message)
-                            break
-                        default:
-                            MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
-                            break
+                    if (crud_message.data.schedule_type === 'daily') {
+                        crud_message.operator = OperatorType.SET_SDL_DAILY
+                        delete crud_message.data.schedule_type
+                        ParseCrud.setSdlDaily(crud_message)
+                    } else if (crud_message.data.schedule_type === 'weekly') {
+                        crud_message.operator = OperatorType.SET_SDL_WEEKLY
+                        delete crud_message.data.schedule_type
+                        ParseCrud.setSdlWeekly(crud_message)
+                    } else if (crud_message.data.schedule_type === 'specific') {
+                        crud_message.operator = OperatorType.SET_SDL_SPECIFIED
+                        delete crud_message.data.schedule_type
+                        ParseCrud.setSdlSpecified(crud_message)
+                    } else if (crud_message.data.schedule_type === 'flexitime') {
+                        crud_message.operator = OperatorType.SET_SDL_FLEXI_TIME
+                        delete crud_message.data.schedule_type
+                        ParseCrud.setSdlFlexiTime(crud_message)
+                    } else {
+                        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                     }
+                    // switch (crud_message.data.schedule_type) {
+                    //     case 'daily':
+                    //         crud_message.operator = OperatorType.SET_SDL_DAILY
+                    //         delete crud_message.data.schedule_type
+                    //         ParseCrud.setSdlDaily(crud_message)
+                    //         break
+                    //     case 'weekly':
+                    //         crud_message.operator = OperatorType.SET_SDL_WEEKLY
+                    //         delete crud_message.data.schedule_type
+                    //         ParseCrud.setSdlWeekly(crud_message)
+                    //         break
+                    //     case 'specific':
+                    //         crud_message.operator = OperatorType.SET_SDL_SPECIFIED
+                    //         delete crud_message.data.schedule_type
+                    //         ParseCrud.setSdlSpecified(crud_message)
+                    //         break
+                    //     case 'flexitime':
+                    //         crud_message.operator = OperatorType.SET_SDL_FLEXI_TIME
+                    //         delete crud_message.data.schedule_type
+                    //         ParseCrud.setSdlFlexiTime(crud_message)
+                    //         break
+                    //     default:
+                    //         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+                    //         break
+                    // }
                 } else {
                     MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                 }
@@ -1684,15 +1703,6 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
-            console.log('---------------------------')
-
-            console.log('rd1', topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`, crud_message.message_id === messageAck.message_id, messageAck.operator === `${crud_message.operator}-Ack`)
-            console.log('send_topic', send_topic)
-            console.log('topicAck', topicAck)
-            console.log('crud_message', JSON.stringify(crud_message))
-            console.log('messageAck', JSON.stringify(messageAck))
-
-            console.log('______________________________________')
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 console.log('handleRdUpdateCallback', true)
 
@@ -1706,21 +1716,37 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                         direction: crud_message.data.direction
                     }
                 }
-                switch (crud_message.data.access_point_type) {
-                    case 'door':
-                        console.log('crud_message.data', crud_message.data)
 
-                        crud_message.operator = OperatorType.SET_CTP_DOOR
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
+                if (crud_message.data.access_point_type === 'door') {
+                    console.log('crud_message.data', crud_message.data)
 
-                        ParseCrud.setCtpDoor(crud_message)
-                        break
-                    default:
-                        console.log('crud_message.data 2', crud_message.data)
-                        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
-                        break
+                    crud_message.operator = OperatorType.SET_CTP_DOOR
+                    delete crud_message.data.access_point_type
+                    crud_message.data = message
+
+                    ParseCrud.setCtpDoor(crud_message)
+                } else {
+                    console.log('crud_message.data 2', crud_message.data)
+                    MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                 }
+                // switch (crud_message.data.access_point_type) {
+                //     case 'door':
+                //         console.log('crud_message.data', crud_message.data)
+
+                //         crud_message.operator = OperatorType.SET_CTP_DOOR
+                //         delete crud_message.data.access_point_type
+                //         crud_message.data = message
+
+                //         ParseCrud.setCtpDoor(crud_message)
+                //         MQTTBroker.client.removeListener('message', cb)
+
+                //         break
+                //     default:
+                //         console.log('crud_message.data 2', crud_message.data)
+                //         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+
+                //         break
+                //     }
                 MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
