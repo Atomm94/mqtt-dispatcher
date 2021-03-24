@@ -3,6 +3,8 @@ import { OperatorType } from './Operators'
 import { SendTopics } from './Topics'
 import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 import { acuConnectionType } from '../enums/acuConnectionType.enum'
+import { accessPointType } from '../enums/accessPointType.enum'
+import { scheduleType } from '../enums/scheduleType.enum'
 
 export default class ParseCrud {
     public static crudData (topic: string, message: ICrudMqttMessaging): void {
@@ -74,6 +76,9 @@ export default class ParseCrud {
             case OperatorType.DEL_CTP_DOOR:
                 this.delCtpDoor(message)
                 break
+            case OperatorType.GET_CTP_DOOR:
+                this.getCtpDoor(message)
+                break
 
             case OperatorType.SET_CTP_TURNSTILE:
                 this.setCtpTurnstile(message)
@@ -81,11 +86,17 @@ export default class ParseCrud {
             case OperatorType.DEL_CTP_TURNSTILE:
                 this.delCtpTurnstile(message)
                 break
+            case OperatorType.GET_CTP_TURNSTILE:
+                this.getCtpTurnstile(message)
+                break
             case OperatorType.SET_CTP_GATE:
                 this.setCtpGate(message)
                 break
             case OperatorType.DEL_CTP_GATE:
                 this.delCtpGate(message)
+                break
+            case OperatorType.GET_CTP_GATE:
+                this.getCtpGate(message)
                 break
             case OperatorType.SET_CTP_GATEWAY:
                 this.setCtpGateway(message)
@@ -93,11 +104,17 @@ export default class ParseCrud {
             case OperatorType.DEL_CTP_GATEWAY:
                 this.delCtpGateway(message)
                 break
+            case OperatorType.GET_CTP_GATEWAY:
+                this.getCtpGateway(message)
+                break
             case OperatorType.SET_CTP_FLOOR:
                 this.setCtpFloor(message)
                 break
             case OperatorType.DEL_CTP_FLOOR:
                 this.delCtpFloor(message)
+                break
+            case OperatorType.GET_CTP_FLOOR:
+                this.getCtpFloor(message)
                 break
 
             case OperatorType.SET_EVENTS_MOD:
@@ -651,6 +668,25 @@ export default class ParseCrud {
         })
     }
 
+    public static getCtpDoor (message: ICrudMqttMessaging): void {
+        // console.log('getCtpDoor', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_CTP_DOOR,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('getCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setCtpTurnstile (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
 
@@ -736,6 +772,25 @@ export default class ParseCrud {
         }
 
         // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static getCtpTurnstile (message: ICrudMqttMessaging): void {
+        // console.log('getCtpTurnstile', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_CTP_TURNSTILE,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('getCtpTurnstile send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -833,6 +888,25 @@ export default class ParseCrud {
         })
     }
 
+    public static getCtpGate (message: ICrudMqttMessaging): void {
+        // console.log('getCtpGate', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_CTP_GATE,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('getCtpGate send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setCtpGateway (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
 
@@ -924,6 +998,25 @@ export default class ParseCrud {
         })
     }
 
+    public static getCtpGateway (message: ICrudMqttMessaging): void {
+        // console.log('getCtpGateway', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_CTP_GATEWAY,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('getCtpGateway send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setCtpFloor (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
 
@@ -1009,6 +1102,25 @@ export default class ParseCrud {
         }
 
         // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static getCtpFloor (message: ICrudMqttMessaging): void {
+        // console.log('getCtpFloor', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.GET_CTP_FLOOR,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.id
+            }
+        }
+
+        // console.log('getCtpFloor send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -1637,19 +1749,19 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
                 if (messageAck.result.errorNo === 0) {
-                    if (crud_message.data.schedule_type === 'daily') {
+                    if (crud_message.data.schedule_type === scheduleType.DAILY) {
                         crud_message.operator = OperatorType.SET_SDL_DAILY
                         delete crud_message.data.schedule_type
                         ParseCrud.setSdlDaily(crud_message)
-                    } else if (crud_message.data.schedule_type === 'weekly') {
+                    } else if (crud_message.data.schedule_type === scheduleType.WEEKLY) {
                         crud_message.operator = OperatorType.SET_SDL_WEEKLY
                         delete crud_message.data.schedule_type
                         ParseCrud.setSdlWeekly(crud_message)
-                    } else if (crud_message.data.schedule_type === 'specific') {
+                    } else if (crud_message.data.schedule_type === scheduleType.SPECIFIC) {
                         crud_message.operator = OperatorType.SET_SDL_SPECIFIED
                         delete crud_message.data.schedule_type
                         ParseCrud.setSdlSpecified(crud_message)
-                    } else if (crud_message.data.schedule_type === 'flexitime') {
+                    } else if (crud_message.data.schedule_type === scheduleType.FLEXITIME) {
                         crud_message.operator = OperatorType.SET_SDL_FLEXI_TIME
                         delete crud_message.data.schedule_type
                         ParseCrud.setSdlFlexiTime(crud_message)
@@ -1717,9 +1829,8 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     }
                 }
 
-                if (crud_message.data.access_point_type === 'door') {
+                if (crud_message.data.access_point_type === accessPointType.DOOR) {
                     console.log('crud_message.data', crud_message.data)
-
                     crud_message.operator = OperatorType.SET_CTP_DOOR
                     delete crud_message.data.access_point_type
                     crud_message.data = message
