@@ -839,36 +839,39 @@ export default class ParseCrud {
             for (const resource in resources) {
                 const element = resources[resource]
                 switch (element.name) {
-                    case 'Door_sensor':
+                    case 'Gate_ready':
                         info.Door_sens_opt = element.component_source
                         info.Door_sens_idx = element.input
                         info.Door_sens_Condition = element.condition
                         break
-                    case 'Exit_button':
-                        info.Button_rex_opt = element.component_source
-                        info.Button_rex_idx = element.input
-                        info.Button_rex_Condition = element.condition
+                    case 'Loop_sensor':
+                        info.Loop_Ready_opt = element.component_source
+                        info.Loop_Ready_idx = element.input
+                        info.Loop_Ready_Condition = element.condition
+                        break
+                    case 'Open_button':
+                        info.Open_Btn_opt = element.component_source
+                        info.Open_Btn_idx = element.input
+                        info.Open_Btn_Condition = element.condition
                         break
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
                         info.Alarm_In_idx = element.input
-                        info.Allarm_Input_Condition = element.condition
+                        info.Alarm_In_Condition = element.condition
                         break
-                    case 'Lock':
+                    case 'Open_relay':
                         info.Lock_Relay_opt = element.component_source
                         info.Lock_Relay_idx = element.output
                         info.Door_Lock_mode = element.relay_mode
                         info.Door_Lock_type = element.type
-                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Lock_pulse = element.impulse_time
                         info.Door_Delay = element.entry_exit_open_durations
                         info.Door_Sens_Autolock = element.door_sensor_autolock
-
                         break
                     case 'Alarm_out':
                         info.Alarm_out_opt = element.component_source
                         info.Alarm_out_idx = element.output
                         info.Alarm_out_tm = element.impulse_time
-                        info.Button_Input_Condition = element.condition
                         info.Alarm_out_mod = element.relay_mode
                         // type ?
                         break
@@ -1835,6 +1838,12 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     delete crud_message.data.access_point_type
                     crud_message.data = message
                     ParseCrud.setCtpTurnstile(crud_message)
+                } else if (crud_message.data.access_point_type === accessPointType.GATE) {
+                    console.log('crud_message.data', crud_message.data)
+                    crud_message.operator = OperatorType.SET_CTP_GATE
+                    delete crud_message.data.access_point_type
+                    crud_message.data = message
+                    ParseCrud.setCtpGate(crud_message)
                 } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
                     console.log('crud_message.data GATEWAY', crud_message.data)
                     crud_message.operator = OperatorType.SET_CTP_GATEWAY
