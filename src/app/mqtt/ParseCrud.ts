@@ -612,15 +612,13 @@ export default class ParseCrud {
                             info.Door_Lock_puls = element.impulse_time
                             info.Door_Delay = element.entry_exit_open_durations
                             info.Door_Sens_Autolock = element.door_sensor_autolock
-
                             break
                         case 'Alarm_out':
                             info.Alarm_out_opt = element.component_source
                             info.Alarm_out_idx = element.output
                             info.Alarm_out_tm = element.impulse_time
-                            info.Button_Input_Condition = element.condition
-                            info.Alarm_out_mod = element.relay_mode
-                            // type ?
+                            info.Alarm_mod = element.relay_mode
+                            info.Alarm_out_mod = element.type
                             break
                         default:
                             break
@@ -738,15 +736,14 @@ export default class ParseCrud {
                         info.Exit_Rl_mode = element.relay_mode
                         info.Exit_Rl_type = element.type
                         info.Exit_Rl_pulse = element.impulse_time
-                        info.EntryExit_Delay = element.impulse_time
-                        info.EntryExit_Delay = element.entry_exit_open_durations
+                        info.Entry_Delay = element.entry_exit_open_durations
                         break
                     case 'Alarm_out':
                         info.Alarm_out_opt = element.component_source
                         info.Alarm_out_idx = element.output
                         info.Alarm_out_tm = element.impulse_time
-                        info.Alarm_out_mod = element.relay_mode
-                        // type ?
+                        info.Alarm_mod = element.relay_mode
+                        info.Alarm_out_mod = element.type
                         break
                     case 'Block_Turnstile':
                         info.BlockEnt_Rl_opt = element.component_source
@@ -771,8 +768,8 @@ export default class ParseCrud {
 
         if (message.data.readers) {
             const readers = message.data.readers
-                info[`Rd${+readers.port - 1}_idx`] = readers.port
-                info[`Rd${+readers.port - 1}_dir`] = readers.direction
+            info[`Rd${+readers.port - 1}_idx`] = readers.port
+            info[`Rd${+readers.port - 1}_dir`] = readers.direction
         }
         const topic = message.topic
         const send_data: any = {
@@ -838,15 +835,20 @@ export default class ParseCrud {
             for (const resource in resources) {
                 const element = resources[resource]
                 switch (element.name) {
-                    case 'Door_sensor':
-                        info.Door_sens_opt = element.component_source
-                        info.Door_sens_idx = element.input
-                        info.Door_sens_Condition = element.condition
+                    // case 'Gate_ready':
+                    //     info.Door_sens_opt = element.component_source
+                    //     info.Door_sens_idx = element.input
+                    //     info.Door_sens_Condition = element.condition
+                    //     break
+                    case 'Loop_sensor':
+                        info.Loop_Ready_opt = element.component_source
+                        info.Loop_Ready_idx = element.input
+                        info.Loop_Ready_Condition = element.condition
                         break
-                    case 'Exit_button':
-                        info.Button_rex_opt = element.component_source
-                        info.Button_rex_idx = element.input
-                        info.Button_rex_Condition = element.condition
+                    case 'Open_button':
+                        info.Open_Btn_opt = element.component_source
+                        info.Open_Btn_idx = element.input
+                        info.Open_Btn_Condition = element.condition
                         break
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
@@ -862,14 +864,6 @@ export default class ParseCrud {
                         info.Door_Delay = element.entry_exit_open_durations
                         info.Door_Sens_Autolock = element.door_sensor_autolock
 
-                        break
-                    case 'Alarm_out':
-                        info.Alarm_out_opt = element.component_source
-                        info.Alarm_out_idx = element.output
-                        info.Alarm_out_tm = element.impulse_time
-                        info.Button_Input_Condition = element.condition
-                        info.Alarm_out_mod = element.relay_mode
-                        // type ?
                         break
                     default:
                         break
@@ -977,9 +971,8 @@ export default class ParseCrud {
                         info.Alarm_out_opt = element.component_source
                         info.Alarm_out_idx = element.output
                         info.Alarm_out_tm = element.impulse_time
-                        info.Button_Input_Condition = element.condition
-                        info.Alarm_out_mod = element.relay_mode
-                        // type ?
+                        info.Alarm_mod = element.relay_mode
+                        info.Alarm_out_mod = element.type
                         break
                     default:
                         break
@@ -1080,7 +1073,6 @@ export default class ParseCrud {
                         info.Door_Lock_type = element.type
                         info.Door_Lock_puls = element.impulse_time
                         info.Door_Delay = element.entry_exit_open_durations
-                        info.Door_Sens_Autolock = element.door_sensor_autolock
 
                         break
                     case 'Alarm_out':
@@ -1834,19 +1826,37 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     }
                 }
                 if (crud_message.data.access_point_type === accessPointType.DOOR) {
-                    console.log('crud_message.data', crud_message.data)
+                    console.log('crud_message.data DOOR', crud_message.data)
                     crud_message.operator = OperatorType.SET_CTP_DOOR
                     delete crud_message.data.access_point_type
                     crud_message.data = message
 
                     ParseCrud.setCtpDoor(crud_message)
                 } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
-                    console.log('crud_message.data', crud_message.data)
+                    console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
                     crud_message.operator = OperatorType.SET_CTP_TURNSTILE
                     crud_message.data.type = crud_message.data.access_point_type
                     delete crud_message.data.access_point_type
                     crud_message.data = message
                     ParseCrud.setCtpTurnstile(crud_message)
+                } else if (crud_message.data.access_point_type === accessPointType.GATE) {
+                    console.log('crud_message.data GATE', crud_message.data)
+                    crud_message.operator = OperatorType.SET_CTP_GATE
+                    delete crud_message.data.access_point_type
+                    crud_message.data = message
+                    ParseCrud.setCtpGate(crud_message)
+                } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
+                    console.log('crud_message.data GATEWAY', crud_message.data)
+                    crud_message.operator = OperatorType.SET_CTP_GATEWAY
+                    // delete crud_message.data.access_point_type
+                    crud_message.data = message
+                    ParseCrud.setCtpGateway(crud_message)
+                } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
+                    console.log('crud_message.data FLOOR', crud_message.data)
+                    crud_message.operator = OperatorType.SET_CTP_FLOOR
+                    delete crud_message.data.access_point_type
+                    crud_message.data = message
+                    ParseCrud.setCtpFloor(crud_message)
                 } else {
                     console.log('crud_message.data 2', crud_message.data)
                     MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
@@ -1854,7 +1864,7 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                 MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
-console.log(e)
+            console.log(e)
         }
     }
     return cb
