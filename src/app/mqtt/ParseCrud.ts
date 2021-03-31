@@ -690,6 +690,7 @@ export default class ParseCrud {
 
         const info: any = {
             Control_point_idx: message.data.id,
+            // Control_point_idx: message.data.info.Control_point_idx, //////for testing
             Control_type: (message.data.type === accessPointType.TURNSTILE_ONE_SIDE) ? 0 : 1
         }
         if (message.data.resources) {
@@ -728,7 +729,7 @@ export default class ParseCrud {
                         info.Entry_Rl_mode = element.relay_mode
                         info.Entry_Rl_type = element.type
                         info.Entry_Rl_pulse = element.impulse_time
-                        info.EntryExit_Delay = element.entry_exit_open_durations
+                        info.Entry_Delay = element.entry_exit_open_durations
                         break
                     case 'Exit_relay':
                         info.Exit_Rl_opt = element.component_source
@@ -835,11 +836,6 @@ export default class ParseCrud {
             for (const resource in resources) {
                 const element = resources[resource]
                 switch (element.name) {
-                    // case 'Gate_ready':
-                    //     info.Door_sens_opt = element.component_source
-                    //     info.Door_sens_idx = element.input
-                    //     info.Door_sens_Condition = element.condition
-                    //     break
                     case 'Loop_sensor':
                         info.Loop_Ready_opt = element.component_source
                         info.Loop_Ready_idx = element.input
@@ -873,10 +869,8 @@ export default class ParseCrud {
 
         if (message.data.readers) {
             const readers = message.data.readers
-            for (const reader of readers) {
-                info[`Rd${+reader.port - 1}_idx`] = reader.port
-                info[`Rd${+reader.port - 1}_dir`] = reader.direction
-            }
+            info[`Rd${+readers.port - 1}_idx`] = readers.port
+            info[`Rd${+readers.port - 1}_dir`] = readers.direction
         }
         const topic = message.topic
         const send_data: any = {
@@ -947,10 +941,10 @@ export default class ParseCrud {
                         info.Door_sens_idx = element.input
                         info.Door_sens_Condition = element.condition
                         break
-                    case 'Exit_button':
-                        info.Button_rex_opt = element.component_source
-                        info.Button_rex_idx = element.input
-                        info.Button_rex_Condition = element.condition
+                    case 'Open_button':
+                        info.Open_Btn_opt = element.component_source
+                        info.Open_Btn_idx = element.input
+                        info.Open_Btn_Condition = element.condition
                         break
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
@@ -962,7 +956,7 @@ export default class ParseCrud {
                         info.Lock_Relay_idx = element.output
                         info.Door_Lock_mode = element.relay_mode
                         info.Door_Lock_type = element.type
-                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Lock_pulse = element.impulse_time
                         info.Door_Delay = element.entry_exit_open_durations
                         info.Door_Sens_Autolock = element.door_sensor_autolock
 
@@ -982,10 +976,8 @@ export default class ParseCrud {
 
         if (message.data.readers) {
             const readers = message.data.readers
-            for (const reader of readers) {
-                info[`Rd${+reader.port - 1}_idx`] = reader.port
-                info[`Rd${+reader.port - 1}_dir`] = reader.direction
-            }
+            info[`Rd${+readers.port - 1}_idx`] = readers.port
+            info[`Rd${+readers.port - 1}_dir`] = readers.direction
         }
         const topic = message.topic
         const send_data: any = {
@@ -1041,74 +1033,58 @@ export default class ParseCrud {
     }
 
     public static setCtpFloor (message: ICrudMqttMessaging): void {
-        // console.log('deviceSetMqttSettings', message)
+        try {
+            // console.log('deviceSetMqttSettings', message)
 
-        const info: any = {
-            Control_point_idx: message.data.id
-        }
-        if (message.data.resources) {
-            const resources = message.data.resources
-            for (const resource in resources) {
-                const element = resources[resource]
-                switch (element.name) {
-                    case 'Door_sensor':
-                        info.Door_sens_opt = element.component_source
-                        info.Door_sens_idx = element.input
-                        info.Door_sens_Condition = element.condition
-                        break
-                    case 'Exit_button':
-                        info.Button_rex_opt = element.component_source
-                        info.Button_rex_idx = element.input
-                        info.Button_rex_Condition = element.condition
-                        break
-                    case 'Fire_Alarm_in':
-                        info.Alarm_In_opt = element.component_source
-                        info.Alarm_In_idx = element.input
-                        info.Allarm_Input_Condition = element.condition
-                        break
-                    case 'Lock':
-                        info.Lock_Relay_opt = element.component_source
-                        info.Lock_Relay_idx = element.output
-                        info.Door_Lock_mode = element.relay_mode
-                        info.Door_Lock_type = element.type
-                        info.Door_Lock_puls = element.impulse_time
-                        info.Door_Delay = element.entry_exit_open_durations
-
-                        break
-                    case 'Alarm_out':
-                        info.Alarm_out_opt = element.component_source
-                        info.Alarm_out_idx = element.output
-                        info.Alarm_out_tm = element.impulse_time
-                        info.Button_Input_Condition = element.condition
-                        info.Alarm_out_mod = element.relay_mode
-                        // type ?
-                        break
-                    default:
-                        break
+            const info: any = {
+                Control_point_idx: message.data.id
+            }
+            if (message.data.resources) {
+                const resources = message.data.resources
+                for (const resource in resources) {
+                    const element = resources[resource]
+                    switch (element.name) {
+                        case 'Fire_Alarm_in':
+                            info.Alarm_In_opt = element.component_source
+                            info.Alarm_In_idx = element.input
+                            info.Allarm_Input_Condition = element.condition
+                            break
+                        case 'Lock':
+                            info.Lock_Relay_opt = element.component_source
+                            info.Lock_Relay_idx = element.output
+                            info.Door_Lock_mode = element.relay_mode
+                            info.Door_Lock_type = element.type
+                            info.Door_Lock_pulse = element.impulse_time
+                            info.Door_Delay = element.entry_exit_open_durations
+                            break
+                        default:
+                            break
+                    }
                 }
             }
-        }
 
-        if (message.data.readers) {
-            const readers = message.data.readers
-            for (const reader of readers) {
-                info[`Rd${+reader.port - 1}_idx`] = reader.port
-                info[`Rd${+reader.port - 1}_dir`] = reader.direction
+            if (message.data.readers) {
+                const readers = message.data.readers
+                info[`Rd${+readers.port - 1}_idx`] = readers.port
+                info[`Rd${+readers.port - 1}_dir`] = readers.direction
             }
-        }
-        const topic = message.topic
-        const send_data: any = {
-            operator: OperatorType.SET_CTP_FLOOR,
-            session_id: message.session_id,
-            message_id: message.message_id,
-            info: info
-        }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+            const topic = message.topic
+            const send_data: any = {
+                operator: OperatorType.SET_CTP_FLOOR,
+                session_id: message.session_id,
+                message_id: message.message_id,
+                info: info
+            }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
-        })
+            // console.log('deviceSetCtpDoor send message', send_data)
+
+            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     public static delCtpFloor (message: ICrudMqttMessaging): void {
@@ -1248,25 +1224,44 @@ export default class ParseCrud {
     public static setCardKeys (message: ICrudMqttMessaging): void {
         // console.log('SetCardKeys', message)
         const info: any = {}
+        console.log(1111111111111, message.data)
+
         info.KeysDataLength = '66'
         info.KeysCount = message.data.length
+        message.data.key_len = 4
+        message.data.status = 1
+        message.data.schedule_id = 111
+        message.data.Kind_key = 0
+        message.data.Key_type = 0
+        message.data.First_Use_Counter = 0
+        message.data.Last_Use_Counter = 0
+        message.data.Passes = -1
+        message.data.ABP = 0
+        message.data.ABP_Time = 0
+        message.data.Start_date = 0
+        message.data.Expiration_date = 0
+
         let keys = '/'
-        // if (info.KeysCount > 1) {
-        message.data.forEach((credential: any) => {
-            keys += `${credential.id};`
-            keys += `${credential.len};`
+        message.data.forEach((credential:any) => {
+            keys += `${credential.cardholder};`
+            keys += `${credential.access_point};`
+            keys += `${credential.key_len};`
             keys += `${credential.code};`
             keys += `${credential.status};`
             keys += `${credential.schedule_id};`
             keys += `${credential.Kind_key};`
             keys += `${credential.Key_type};`
             keys += `${credential.Passes};`
+            keys += `${credential.First_Use_Counter};`
+            keys += `${credential.Last_Use_Counter};`
+            keys += `${credential.Passes};`
             keys += `${credential.ABP};`
+            keys += `${credential.ABP_Time};`
             keys += `${credential.Start_date};`
             keys += `${credential.Expiration_date};`
+            keys += '/'
         })
         info.Keys = keys
-        // }
         const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_CARD_KEYS,
@@ -1288,25 +1283,43 @@ export default class ParseCrud {
         info.KeysDataLength = '66'
         info.KeysCount = message.data.length
         let keys = '/'
-        // if (info.KeysCount > 1) {
-        message.data.forEach((credential: any) => {
-            keys += `${credential.id};`
-            keys += `${credential.len};`
-            keys += `${credential.code};`
-            keys += `${credential.status};`
-            keys += `${credential.schedule_id};`
-            keys += `${credential.Kind_key};`
-            keys += `${credential.Key_type};`
-            keys += `${credential.Passes};`
-            keys += `${credential.ABP};`
-            keys += `${credential.Start_date};`
-            keys += `${credential.Expiration_date};`
-        })
+        message.data.key_len = 4
+        message.data.status = 1
+        message.data.schedule_id = 111
+        message.data.Kind_key = 0
+        message.data.Key_type = 0
+        message.data.First_Use_Counter = 0
+        message.data.Last_Use_Counter = 0
+        message.data.Passes = -1
+        message.data.ABP = 0
+        message.data.ABP_Time = 0
+        message.data.Start_date = 0
+        message.data.Expiration_date = 0
+        // message.data.forEach((credential: any) => {
+
+            keys += `${message.data.cardholder};`
+            keys += `${message.data.access_point};`
+            keys += `${message.data.key_len};`
+            keys += `${message.data.code};`
+            keys += `${message.data.status};`
+            keys += `${message.data.schedule_id};`
+            keys += `${message.data.Kind_key};`
+            keys += `${message.data.Key_type};`
+            keys += `${message.data.Passes};`
+            keys += `${message.data.First_Use_Counter};`
+            keys += `${message.data.Last_Use_Counter};`
+            keys += `${message.data.Passes};`
+            keys += `${message.data.ABP};`
+            keys += `${message.data.ABP_Time};`
+            keys += `${message.data.Start_date};`
+            keys += `${message.data.Expiration_date};`
+            keys += '/'
+
+        // })
         info.Keys = keys
-        // }
         const topic = message.topic
         const send_data = {
-            operator: OperatorType.SET_CARD_KEYS,
+            operator: OperatorType.ADD_CARD_KEY,
             session_id: message.session_id,
             message_id: message.message_id,
             info: info
@@ -1325,7 +1338,12 @@ export default class ParseCrud {
             operator: OperatorType.EDIT_KEY,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: {
+                Ctp_idx: message.data.access_point,
+                Key: message.data.code,
+                Key_status: message.data.status,
+                Key_len: 4 // hardcode !!
+            }
         }
         // console.log('EditKey send message', send_data)
 
@@ -1337,11 +1355,16 @@ export default class ParseCrud {
     public static dellKeys (message: ICrudMqttMessaging): void {
         // console.log('DellKeys', message)
         const topic = message.topic
+        const keys = `/${message.data.id}/`
         const send_data = {
             operator: OperatorType.DELL_KEYS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: {
+                KeysDataLength: keys.length,
+                Keys_count: 1,
+                Keys_id: keys
+            }
         }
         // console.log('DellKeys send message', send_data)
 
