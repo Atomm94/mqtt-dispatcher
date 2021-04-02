@@ -5,8 +5,11 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 import { acuConnectionType } from '../enums/acuConnectionType.enum'
 import { accessPointType } from '../enums/accessPointType.enum'
 import { scheduleType } from '../enums/scheduleType.enum'
+import { credentialStatus } from '../enums/credentialStatus.enum'
 
 export default class ParseCrud {
+    public static limit_for_keys_count = 25
+
     public static crudData (topic: string, message: ICrudMqttMessaging): void {
         switch (message.operator) {
             case OperatorType.ACCEPT:
@@ -849,17 +852,16 @@ export default class ParseCrud {
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
                         info.Alarm_In_idx = element.input
-                        info.Allarm_Input_Condition = element.condition
+                        info.Alarm_In_Condition = element.condition
                         break
-                    case 'Lock':
+                    case 'Open_relay':
                         info.Lock_Relay_opt = element.component_source
                         info.Lock_Relay_idx = element.output
                         info.Door_Lock_mode = element.relay_mode
                         info.Door_Lock_type = element.type
-                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Lock_pulse = element.impulse_time
                         info.Door_Delay = element.entry_exit_open_durations
                         info.Door_Sens_Autolock = element.door_sensor_autolock
-
                         break
                     default:
                         break
@@ -1222,46 +1224,47 @@ export default class ParseCrud {
     }
 
     public static setCardKeys (message: ICrudMqttMessaging): void {
-        // console.log('SetCardKeys', message)
-        const info: any = {}
-        console.log(1111111111111, message.data)
+        // console.log('setCardKeys', message)
+        const access_points = message.data.access_points
+        const cardholders = message.data.cardholders
+        const access_point_id = access_points[0].id
+        const keys: any = []
+        for (const cardholder of cardholders) {
+            let access_rule_id = 0
+            for (const access_rule of cardholder.access_rights.access_rules) {
+                if (access_rule.access_point === access_point_id) {
+                    access_rule_id = access_rule.id
+                }
+            }
+            for (const credential of cardholder.credentials) {
+                let key_string = '/'
+                key_string += `${credential.cardholder};`
+                key_string += `${credential.access_point};`
+                key_string += `${credential.key_len};`
+                key_string += `${credential.code};`
+                key_string += `${credential.status};`
+                key_string += `${access_rule_id};`
+                key_string += '0;' // Kind_key
+                key_string += '0;' // Key_type
+                key_string += '0;' // First_Use_Counter
+                key_string += '0;' // Last_Use_Counter
+                key_string += '-1;' // Passes
+                key_string += '0;' // ABP
+                key_string += '0;' // ABP_Time
+                key_string += '0;' // Start_date
+                key_string += '0;' // Expiration_date
+                keys.push(key_string)
+            }
+        }
+        if (!message.data.access_point_sended) message.data.access_point_sended = 0
+        if (!message.data.all_keys_count) message.data.all_keys_count = keys.length * access_points.length
 
-        info.KeysDataLength = '66'
+        const info: any = {
+            Ctp_idx: access_point_id
+        }
         info.KeysCount = message.data.length
-        message.data.key_len = 4
-        message.data.status = 1
-        message.data.schedule_id = 111
-        message.data.Kind_key = 0
-        message.data.Key_type = 0
-        message.data.First_Use_Counter = 0
-        message.data.Last_Use_Counter = 0
-        message.data.Passes = -1
-        message.data.ABP = 0
-        message.data.ABP_Time = 0
-        message.data.Start_date = 0
-        message.data.Expiration_date = 0
-
-        let keys = '/'
-        message.data.forEach((credential:any) => {
-            keys += `${credential.cardholder};`
-            keys += `${credential.access_point};`
-            keys += `${credential.key_len};`
-            keys += `${credential.code};`
-            keys += `${credential.status};`
-            keys += `${credential.schedule_id};`
-            keys += `${credential.Kind_key};`
-            keys += `${credential.Key_type};`
-            keys += `${credential.Passes};`
-            keys += `${credential.First_Use_Counter};`
-            keys += `${credential.Last_Use_Counter};`
-            keys += `${credential.Passes};`
-            keys += `${credential.ABP};`
-            keys += `${credential.ABP_Time};`
-            keys += `${credential.Start_date};`
-            keys += `${credential.Expiration_date};`
-            keys += '/'
-        })
-        info.Keys = keys
+        info.Keys = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count).join('') + '/'
+        info.KeysDataLength = info.Keys.length
         const topic = message.topic
         const send_data = {
             operator: OperatorType.SET_CARD_KEYS,
@@ -1269,54 +1272,55 @@ export default class ParseCrud {
             message_id: message.message_id,
             info: info
         }
+        // console.log('setCardKeys send message', send_data)
 
-        console.log('SetCardKeys send message', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
         })
     }
 
     public static addCardKey (message: ICrudMqttMessaging): void {
         // console.log('AddCardKey', message)
-        const info: any = {}
-        info.KeysDataLength = '66'
+        const access_points = message.data.access_points
+        const cardholders = message.data.cardholders
+        const access_point_id = access_points[0].id
+        const keys: any = []
+        for (const cardholder of cardholders) {
+            let access_rule_id = 0
+            for (const access_rule of cardholder.access_rights.access_rules) {
+                if (access_rule.access_point === access_point_id) {
+                    access_rule_id = access_rule.id
+                }
+            }
+            for (const credential of cardholder.credentials) {
+                let key_string = '/'
+                key_string += `${credential.cardholder};`
+                key_string += `${credential.access_point};`
+                key_string += `${credential.key_len};`
+                key_string += `${credential.code};`
+                key_string += `${credential.status};`
+                key_string += `${access_rule_id};`
+                key_string += '0;' // Kind_key
+                key_string += '0;' // Key_type
+                key_string += '0;' // First_Use_Counter
+                key_string += '0;' // Last_Use_Counter
+                key_string += '-1;' // Passes
+                key_string += '0;' // ABP
+                key_string += '0;' // ABP_Time
+                key_string += '0;' // Start_date
+                key_string += '0;' // Expiration_date
+                keys.push(key_string)
+            }
+        }
+        if (!message.data.access_point_sended) message.data.access_point_sended = 0
+        if (!message.data.all_keys_count) message.data.all_keys_count = keys.length * access_points.length
+
+        const info: any = {
+            Ctp_idx: access_point_id
+        }
         info.KeysCount = message.data.length
-        let keys = '/'
-        message.data.key_len = 4
-        message.data.status = 1
-        message.data.schedule_id = 111
-        message.data.Kind_key = 0
-        message.data.Key_type = 0
-        message.data.First_Use_Counter = 0
-        message.data.Last_Use_Counter = 0
-        message.data.Passes = -1
-        message.data.ABP = 0
-        message.data.ABP_Time = 0
-        message.data.Start_date = 0
-        message.data.Expiration_date = 0
-        // message.data.forEach((credential: any) => {
-
-            keys += `${message.data.cardholder};`
-            keys += `${message.data.access_point};`
-            keys += `${message.data.key_len};`
-            keys += `${message.data.code};`
-            keys += `${message.data.status};`
-            keys += `${message.data.schedule_id};`
-            keys += `${message.data.Kind_key};`
-            keys += `${message.data.Key_type};`
-            keys += `${message.data.Passes};`
-            keys += `${message.data.First_Use_Counter};`
-            keys += `${message.data.Last_Use_Counter};`
-            keys += `${message.data.Passes};`
-            keys += `${message.data.ABP};`
-            keys += `${message.data.ABP_Time};`
-            keys += `${message.data.Start_date};`
-            keys += `${message.data.Expiration_date};`
-            keys += '/'
-
-        // })
-        info.Keys = keys
+        info.Keys = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count).join('') + '/'
+        info.KeysDataLength = info.Keys.length
         const topic = message.topic
         const send_data = {
             operator: OperatorType.ADD_CARD_KEY,
@@ -1326,6 +1330,24 @@ export default class ParseCrud {
         }
         // console.log('AddCardKey send message', send_data)
 
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+        })
+    }
+
+    public static endCardKey (message: ICrudMqttMessaging): void {
+        // console.log('endCardKey', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.END_CARD_KEY,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                KeysCount: message.data.all_keys_count
+            }
+        }
+        // console.log('endCardKey send message', send_data)
+
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
@@ -1334,22 +1356,51 @@ export default class ParseCrud {
     public static editKey (message: ICrudMqttMessaging): void {
         // console.log('EditKey', message)
         const topic = message.topic
-        const send_data = {
-            operator: OperatorType.EDIT_KEY,
-            session_id: message.session_id,
-            message_id: message.message_id,
-            info: {
-                Ctp_idx: message.data.access_point,
-                Key: message.data.code,
-                Key_status: message.data.status,
-                Key_len: 4 // hardcode !!
+        // console.log('EditKey send message', send_data)
+        const access_points = message.data.access_points
+        const cardholders = message.data.cardholders
+        for (const cardholder of cardholders) {
+            for (const credential of cardholder.credentials) {
+                const code = credential.code
+                const key_len = 4
+                if (message.data.access_rule) {
+                    const send_data = {
+                        operator: OperatorType.EDIT_KEY,
+                        session_id: message.session_id,
+                        message_id: message.message_id,
+                        info: {
+                            Ctp_idx: message.data.access_rule.access_point,
+                            Key: code,
+                            Key_Schedule_id: message.data.access_rule.id,
+                            Key_len: key_len
+                        }
+                    }
+                    MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+                        MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                    })
+                } else {
+                    for (const access_point of access_points) {
+                        const info: any = {
+                            Ctp_idx: access_point.id,
+                            Key: code
+                        }
+
+                        if ('vip' in cardholder) info.Key_type = cardholder.vip ? 2 : 0
+                        if ('status' in credential) info.Key_status = credential.status === credentialStatus.ACTIVE ? 1 : 0
+                        info.Key_len = key_len
+                        const send_data = {
+                            operator: OperatorType.EDIT_KEY,
+                            session_id: message.session_id,
+                            message_id: message.message_id,
+                            info: info
+                        }
+                        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+                            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                        })
+                    }
+                }
             }
         }
-        // console.log('EditKey send message', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
-        })
     }
 
     public static dellKeys (message: ICrudMqttMessaging): void {
@@ -1767,13 +1818,11 @@ function handleCallback (send_topic: any, crud_message: any): any {
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
 
-                    messageAck.send_data = crud_message
-                    messageAck.device_topic = topicAck
+                messageAck.send_data = crud_message
+                messageAck.device_topic = topicAck
 
-                    MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
-                    console.log(3333333333333333)
-
-                    MQTTBroker.client.removeListener('message', cb)
+                MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+                MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
 console.log(e, 7777777777777)
@@ -1896,6 +1945,44 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     console.log('crud_message.data 2', crud_message.data)
                     MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                 }
+                MQTTBroker.client.removeListener('message', cb)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    return cb
+}
+
+function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
+    // setTimeout(() => {
+    // MQTTBroker.client.removeListener('message', cb)
+    // }, 20000)
+    // console.log(12312123)
+
+    function cb (topicAck: any, messageAck: any) {
+        try {
+            messageAck = JSON.parse(messageAck.toString())
+            if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
+                console.log('handleCardKeyCallback', true)
+
+                messageAck.send_data = crud_message
+                // messageAck.crud_message = crud_message
+                messageAck.device_topic = topicAck
+                crud_message.data.access_point_sended += ParseCrud.limit_for_keys_count
+                if (crud_message.data.access_point_sended >= crud_message.data.credentials.length) {
+                    crud_message.data.access_points.shift()
+                    if (crud_message.data.access_points.length) {
+                        if (crud_message.operator === OperatorType.ADD_CARD_KEY) {
+                            ParseCrud.addCardKey(crud_message)
+                        } else {
+                            ParseCrud.setCardKeys(crud_message)
+                        }
+                    } else {
+                        ParseCrud.endCardKey(crud_message)
+                    }
+                }
+
                 MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
