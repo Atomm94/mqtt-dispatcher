@@ -852,17 +852,16 @@ export default class ParseCrud {
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
                         info.Alarm_In_idx = element.input
-                        info.Allarm_Input_Condition = element.condition
+                        info.Alarm_In_Condition = element.condition
                         break
-                    case 'Lock':
+                    case 'Open_relay':
                         info.Lock_Relay_opt = element.component_source
                         info.Lock_Relay_idx = element.output
                         info.Door_Lock_mode = element.relay_mode
                         info.Door_Lock_type = element.type
-                        info.Door_Lock_puls = element.impulse_time
+                        info.Door_Lock_pulse = element.impulse_time
                         info.Door_Delay = element.entry_exit_open_durations
                         info.Door_Sens_Autolock = element.door_sensor_autolock
-
                         break
                     default:
                         break
