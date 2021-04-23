@@ -1,0 +1,10 @@
+{
+  "name": "ext device1",
+  "acu": 12,
+  "ext_board": "LR-RB16",
+  "baud_rate": 0,
+  "uart_mode": 0,
+  "address": "string",
+  "port": 1,
+  "protocol": 0
+}
