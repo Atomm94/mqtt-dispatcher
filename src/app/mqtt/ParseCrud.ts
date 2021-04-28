@@ -689,11 +689,11 @@ export default class ParseCrud {
     }
 
     public static setCtpTurnstile (message: ICrudMqttMessaging): void {
-        // console.log('deviceSetMqttSettings', message)
+        // console.log('setCtpTurnstile', message)
 
         const info: any = {
-            Control_point_idx: message.data.id,
-            // Control_point_idx: message.data.info.Control_point_idx, //////for testing
+            // Control_point_idx: message.data.id,
+            Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
             Control_type: (message.data.type === accessPointType.TURNSTILE_ONE_SIDE) ? 0 : 1
         }
         if (message.data.resources) {
@@ -783,7 +783,7 @@ export default class ParseCrud {
             info: info
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        // console.log('setCtpTurnstile send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -802,7 +802,7 @@ export default class ParseCrud {
             }
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        // console.log('delCtpTurnstile send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -829,7 +829,7 @@ export default class ParseCrud {
     }
 
     public static setCtpGate (message: ICrudMqttMessaging): void {
-        // console.log('deviceSetMqttSettings', message)
+        // console.log('setCtpGate', message)
 
         const info: any = {
             Control_point_idx: message.data.id
@@ -882,7 +882,7 @@ export default class ParseCrud {
             info: info
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        // console.log('setCtpGate send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -901,7 +901,7 @@ export default class ParseCrud {
             }
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        // console.log('delCtpGate send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -1008,7 +1008,7 @@ export default class ParseCrud {
             }
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        // console.log('delCtpGateway send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -1101,7 +1101,7 @@ export default class ParseCrud {
             }
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        // console.log('delCtpFloor send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -1805,6 +1805,7 @@ function handleCallback (send_topic: any, crud_message: any): any {
     // }, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
+            messageAck = JSON.parse(messageAck)
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
 
@@ -1815,7 +1816,6 @@ function handleCallback (send_topic: any, crud_message: any): any {
                 MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
-
         }
     }
     return cb
