@@ -146,13 +146,23 @@ export default class ParseSchedule {
         })
     }
 
-    public static setSdlFlexiTime (message: ICrudMqttMessaging): void {
+    public static setSdlFlexiTime (message: any): void {
         // console.log('SetSdlFlexiTime', message)
         const topic = message.topic
 
         const days: any = {}
         message.data.timeframes.forEach((time: any) => {
-            days[time.name] = true
+            const start_time = dateTimeToSeconds(time.start)
+            const end_time = dateTimeToSeconds(time.end)
+            if (!days[time.name]) {
+                days[time.name] = {
+                    TmStart: `${start_time}`,
+                    TmEnd: `${start_time}`
+                }
+            } else {
+                days[time.name].TmStart += `;${start_time}`
+                days[time.name].TmEnd += `;${end_time}`
+            }
         })
         const send_data: any = {
             operator: OperatorType.SET_SDL_FLEXI_TIME,
@@ -165,7 +175,8 @@ export default class ParseSchedule {
                 DaysCount: Object.keys(days).length
             }
         }
-        send_data.days = days
+        message.days = days
+        message.days_count = Object.keys(days).length
         // console.log('SetSdlFlexiTime send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
@@ -176,15 +187,27 @@ export default class ParseSchedule {
     public static addDayFlexiTime (message: ICrudMqttMessaging): void {
         // console.log('AddDayFlexiTime', message)
         const topic = message.topic
+
+        const days = message.data.days
+        const first_key = Object.keys(days)[0]
+        const tms: any = days[first_key]
+        delete days[first_key]
+        message.data.days = days
+
         const send_data = {
             operator: OperatorType.ADD_DAY_FLEXI_TIME,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: {
+                Shedule_id: message.data.data.id,
+                Ctp_idx: message.data.data.access_point,
+                Day_idx: first_key,
+                ...tms
+            }
         }
         // console.log('AddDayFlexiTime send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -196,11 +219,15 @@ export default class ParseSchedule {
             operator: OperatorType.END_SDL_FLEXI_TIME,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: {
+                Shedule_id: message.data.data.id,
+                Ctp_idx: message.data.data.access_point,
+                DaysCount: message.data.days_count
+            }
         }
         // console.log('EndSdlFlexiTime send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -235,19 +262,31 @@ export default class ParseSchedule {
         }
         // console.log('DelDayFlexiTime send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
 
-    public static setSdlSpecified (message: ICrudMqttMessaging): void {
+    public static setSdlSpecified (message: any): void {
         // console.log('SetSdlSpecified', message)
         const topic = message.topic
 
         const days: any = {}
         message.data.timeframes.forEach((time: any) => {
-            days[time.name] = true
+            const start_time = dateTimeToSeconds(time.start)
+            const end_time = dateTimeToSeconds(time.end)
+            if (!days[time.name]) {
+                days[time.name] = {
+                    TmStart: `${start_time}`,
+                    TmEnd: `${start_time}`
+                }
+            } else {
+                days[time.name].TmStart += `;${start_time}`
+                days[time.name].TmEnd += `;${end_time}`
+            }
         })
+        message.days = days
+        message.days_count = Object.keys(days).length
 
         const send_data: any = {
             operator: OperatorType.SET_SDL_SPECIFIED,
@@ -269,15 +308,27 @@ export default class ParseSchedule {
     public static addDaySpecified (message: ICrudMqttMessaging): void {
         // console.log('AddDaySpecified', message)
         const topic = message.topic
+
+        const days = message.data.days
+        const first_key = Object.keys(days)[0]
+        const tms: any = days[first_key]
+        delete days[first_key]
+        message.data.days = days
+
         const send_data = {
             operator: OperatorType.ADD_DAY_SPECIFIED,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: {
+                Shedule_id: message.data.data.id,
+                Ctp_idx: message.data.data.access_point,
+                Day: Math.floor(new Date(first_key).getTime() / 1000),
+                ...tms
+            }
         }
         // console.log('AddDaySpecified send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -289,11 +340,15 @@ export default class ParseSchedule {
             operator: OperatorType.END_SDL_SPECIFIED,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: {
+                Shedule_id: message.data.data.id,
+                Ctp_idx: message.data.data.access_point,
+                DaysCount: message.data.days_count
+            }
         }
         // console.log('EndSdlSpecified send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -328,7 +383,7 @@ export default class ParseSchedule {
         }
         // console.log('EndSdlSpecified send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }

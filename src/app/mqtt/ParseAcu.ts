@@ -525,6 +525,14 @@ export function handleCallback (send_topic: any, crud_message: any): any {
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck)
+            // console.log('topicAck', topicAck)
+            // console.log('send_topic', send_topic)
+            // console.log('messageAck.operator', messageAck.operator)
+            // console.log('crud_message.operator', crud_message.operator)
+            // console.log(1, topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`)
+            // console.log(2, crud_message.message_id === messageAck.message_id)
+            // console.log(3, messageAck.operator === `${crud_message.operator}-Ack`)
+
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
 

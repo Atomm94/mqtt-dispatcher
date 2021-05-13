@@ -156,8 +156,8 @@ export default class ParseCardKeys {
                         message_id: message.message_id,
                         info: {
                             Ctp_idx: message.data.access_rule.access_point,
-                            Key: code,
-                            Key_Schedule_id: message.data.access_rule.id,
+                            Key_id: code,
+                            Schedule_id: message.data.access_rule.id,
                             Key_len: key_len
                         }
                     }
@@ -167,7 +167,7 @@ export default class ParseCardKeys {
                 } else {
                     for (const access_point of access_points) {
                         const info: any = {
-                            Ctp_idx: access_point.id,
+                            Ctp_id: access_point.id,
                             Key: code
                         }
 
