@@ -15,6 +15,7 @@ export default class ParseCardKeys {
         const cardholders = message.data.cardholders
         const access_point_id = access_points[0].id
         const keys: any = []
+        const key_len = 4
         for (const cardholder of cardholders) {
             let access_rule_id = 0
             for (const access_rule of cardholder.access_rights.access_rules) {
@@ -25,16 +26,15 @@ export default class ParseCardKeys {
             for (const credential of cardholder.credentials) {
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
-                key_string += `${credential.access_point};`
-                key_string += `${credential.key_len};`
+                key_string += `${key_len};`
                 key_string += `${credential.code};`
-                key_string += `${credential.status};`
                 key_string += `${access_rule_id};`
-                key_string += '0;' // Kind_key
+                key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
+                key_string += '1;' // Kind_key
                 key_string += '0;' // Key_type
+                key_string += '-1;' // Passes
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
-                key_string += '-1;' // Passes
                 key_string += '0;' // ABP
                 key_string += '0;' // ABP_Time
                 key_string += '0;' // Start_date
@@ -44,12 +44,14 @@ export default class ParseCardKeys {
         }
         if (!message.data.access_point_sended) message.data.access_point_sended = 0
         if (!message.data.all_keys_count) message.data.all_keys_count = keys.length * access_points.length
+        if (!message.data.keys_count) message.data.keys_count = keys.length
 
         const info: any = {
             Ctp_idx: access_point_id
         }
-        info.KeysCount = message.data.length
-        info.Keys = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count).join('') + '/'
+        const keys_slice = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count)
+        info.Keys = keys_slice.join('') + '/'
+        info.KeysCount = keys_slice.length
         info.KeysDataLength = info.Keys.length
         const topic = message.topic
         const send_data = {
@@ -60,7 +62,7 @@ export default class ParseCardKeys {
         }
         // console.log('setCardKeys send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
         })
     }
@@ -71,6 +73,7 @@ export default class ParseCardKeys {
         const cardholders = message.data.cardholders
         const access_point_id = access_points[0].id
         const keys: any = []
+        const key_len = 4
         for (const cardholder of cardholders) {
             let access_rule_id = 0
             for (const access_rule of cardholder.access_rights.access_rules) {
@@ -81,16 +84,15 @@ export default class ParseCardKeys {
             for (const credential of cardholder.credentials) {
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
-                key_string += `${credential.access_point};`
-                key_string += `${credential.key_len};`
+                key_string += `${key_len};`
                 key_string += `${credential.code};`
-                key_string += `${credential.status};`
                 key_string += `${access_rule_id};`
-                key_string += '0;' // Kind_key
+                key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
+                key_string += '1;' // Kind_key
                 key_string += '0;' // Key_type
+                key_string += '-1;' // Passes
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
-                key_string += '-1;' // Passes
                 key_string += '0;' // ABP
                 key_string += '0;' // ABP_Time
                 key_string += '0;' // Start_date
@@ -100,12 +102,14 @@ export default class ParseCardKeys {
         }
         if (!message.data.access_point_sended) message.data.access_point_sended = 0
         if (!message.data.all_keys_count) message.data.all_keys_count = keys.length * access_points.length
+        if (!message.data.keys_count) message.data.keys_count = keys.length
 
         const info: any = {
             Ctp_idx: access_point_id
         }
-        info.KeysCount = message.data.length
-        info.Keys = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count).join('') + '/'
+        const keys_slice = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count)
+        info.Keys = keys_slice.join('') + '/'
+        info.KeysCount = keys_slice.length
         info.KeysDataLength = info.Keys.length
         const topic = message.topic
         const send_data = {
@@ -116,7 +120,7 @@ export default class ParseCardKeys {
         }
         // console.log('AddCardKey send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
         })
     }
@@ -168,7 +172,7 @@ export default class ParseCardKeys {
                     for (const access_point of access_points) {
                         const info: any = {
                             Ctp_id: access_point.id,
-                            Key: code
+                            Key_id: code
                         }
 
                         if ('vip' in cardholder) info.Key_type = cardholder.vip ? 2 : 0
@@ -243,8 +247,11 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
                 crud_message.data.access_point_sended += ParseCardKeys.limit_for_keys_count
-                if (crud_message.data.access_point_sended >= crud_message.data.credentials.length) {
+                console.log('crud_message', crud_message)
+
+                if (crud_message.data.access_point_sended >= crud_message.data.keys_count) {
                     crud_message.data.access_points.shift()
+                    crud_message.data.access_point_sended = 0
                     if (crud_message.data.access_points.length) {
                         if (crud_message.operator === OperatorType.ADD_CARD_KEY) {
                             ParseCardKeys.addCardKey(crud_message)

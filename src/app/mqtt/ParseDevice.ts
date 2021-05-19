@@ -89,12 +89,12 @@ export default class ParseDevice {
             // case OperatorType.SINGLE_PASS_ACK:
             //     this.deviceSinglePassAck(topic, data)
             //     break
-            case OperatorType.SET_CARD_KEYS_ACK:
-                this.setCardKeysAck(send_crud)
-                break
-            case OperatorType.ADD_CARD_KEY_ACK:
-                this.addCardKeyAck(send_crud)
-                break
+            // case OperatorType.SET_CARD_KEYS_ACK:
+            //     this.setCardKeysAck(send_crud)
+            //     break
+            // case OperatorType.ADD_CARD_KEY_ACK:
+            //     this.addCardKeyAck(send_crud)
+            //     break
             case OperatorType.EDIT_KEY_ACK:
                 this.editKeyAck(send_crud)
                 break

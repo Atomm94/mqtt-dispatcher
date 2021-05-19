@@ -71,7 +71,7 @@ export default class ParseAcu {
     public static setNetSettings (message: ICrudMqttMessaging): void {
         const topic = message.topic
         const send_data = {
-            operator: OperatorType.SET_DATE_TIME,
+            operator: OperatorType.SET_NET_SETTINGS,
             session_id: message.session_id,
             message_id: message.message_id,
             info: {
@@ -135,7 +135,7 @@ export default class ParseAcu {
             message_id: message.message_id,
             info: {
                 DateTime: 1583636400,
-                GMT: message.data.time_zone,
+                GMT: message.data.time.time_zone,
                 NTP1: 'pool.ntp.org',
                 NTP2: 'pool2.ntp.org:123',
                 DST_GMT: false,
