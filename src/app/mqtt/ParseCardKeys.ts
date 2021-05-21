@@ -138,7 +138,7 @@ export default class ParseCardKeys {
         }
         // console.log('endCardKey send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -165,7 +165,7 @@ export default class ParseCardKeys {
                             Key_len: key_len
                         }
                     }
-                    MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+                    MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
                         MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
                     })
                 } else {
@@ -184,7 +184,7 @@ export default class ParseCardKeys {
                             message_id: message.message_id,
                             info: info
                         }
-                        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+                        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
                             MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
                         })
                     }
@@ -209,7 +209,7 @@ export default class ParseCardKeys {
         }
         // console.log('DellKeys send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -225,7 +225,7 @@ export default class ParseCardKeys {
         }
         // console.log('DellAllKeys send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }

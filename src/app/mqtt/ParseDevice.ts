@@ -95,15 +95,15 @@ export default class ParseDevice {
             // case OperatorType.ADD_CARD_KEY_ACK:
             //     this.addCardKeyAck(send_crud)
             //     break
-            case OperatorType.EDIT_KEY_ACK:
-                this.editKeyAck(send_crud)
-                break
-            case OperatorType.DELL_KEYS_ACK:
-                this.dellKeysAck(send_crud)
-                break
-            case OperatorType.DELL_ALL_KEYS_ACK:
-                this.dellAllKeysAck(send_crud)
-                break
+            // case OperatorType.EDIT_KEY_ACK:
+            //     this.editKeyAck(send_crud)
+            //     break
+            // case OperatorType.DELL_KEYS_ACK:
+            //     this.dellKeysAck(send_crud)
+            //     break
+            // case OperatorType.DELL_ALL_KEYS_ACK:
+            //     this.dellAllKeysAck(send_crud)
+            //     break
             // case OperatorType.SET_SDL_DAILY_ACK:
             //     this.setSdlDailyAck(topic, data)
             //     break
