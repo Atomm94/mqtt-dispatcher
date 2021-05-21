@@ -257,36 +257,41 @@ export default class ParseAcu {
     public static setRd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
+        const info: any = {
+            Rd_idx: message.data.id,
+            Rd_opt: (Number(message.data.wg_type) !== -1) ? 1 : 2,
+            Rd_type: 0,
+            Rd_Key_endian: message.data.reverse,
+            Rd_RS485_idx: message.data.port,
+            // Rd_MQTT: 'none',
+            // Rd_ind_var: 0,
+            Rd_beep: message.data.beep,
+            // Rd_bt_prox: 10,
+            // Rd_sens_act: 50,
+            Rd_mode: message.data.mode
+            // Rd_Eth: 'none',
+            // Rd_Eth_port: 0
+        }
+        if (Number(message.data.wg_type) === -1) {
+            info.Rd_OSDP_adr = message.data.osdp_address
+            info.Rd_OSDP_bd = message.data.baud_rate
+            info.Rd_OSDP_WgPuls = message.data.card_data_format_flags
+            info.Rd_OSDP_KeyPad = message.data.keypad_mode
+            info.Rd_OSDP_singl = message.data.configuration
+            info.Rd_OSDP_tracing = message.data.tracing
+        } else {
+            info.Rd_Wg_idx = message.data.port
+            info.Rd_Wg_type = message.data.wg_type
+            // Rd_WG_RG: -1,
+            // Rd_WG_Red: -1,
+            // Rd_WG_Green: -1,
+        }
+
         const send_data = {
             operator: OperatorType.SET_RD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: {
-                Rd_idx: message.data.id,
-                Rd_opt: (message.data.interface_type === 'Wiegand') ? 1 : 2,
-                Rd_type: 0,
-                Rd_Wg_idx: message.data.port,
-                Rd_Wg_type: message.data.interface_type,
-                Rd_Key_endian: message.data.reverse,
-                // Rd_WG_RG: -1,
-                // Rd_WG_Red: -1,
-                // Rd_WG_Green: -1,
-                Rd_RS485_idx: message.data.port,
-                Rd_OSDP_adr: message.data.osdp_address,
-                Rd_OSDP_bd: message.data.baud_rate,
-                Rd_OSDP_WgPuls: message.data.card_data_format_flags,
-                Rd_OSDP_KeyPad: message.data.keypad_mode,
-                Rd_OSDP_singl: message.data.configuration,
-                Rd_OSDP_tracing: message.data.tracing,
-                // Rd_MQTT: 'none',
-                // Rd_ind_var: 0,
-                Rd_beep: message.data.beep,
-                // Rd_bt_prox: 10,
-                // Rd_sens_act: 50,
-                Rd_mode: message.data.mode
-                // Rd_Eth: 'none',
-                // Rd_Eth_port: 0
-            }
+            info: info
         }
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
