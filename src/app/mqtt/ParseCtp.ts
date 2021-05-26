@@ -120,8 +120,8 @@ export default class ParseController {
             // console.log('setCtpTurnstile', message)
 
             const info: any = {
-                // Control_point_idx: message.data.id,
-                Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
+                Control_point_idx: message.data.id,
+                // Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
                 Control_type: (message.data.type === accessPointType.TURNSTILE_ONE_SIDE) ? 0 : 1
             }
             if (message.data.resources) {
