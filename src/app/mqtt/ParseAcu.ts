@@ -11,6 +11,8 @@ import { accessPointType } from '../enums/accessPointType.enum'
 
 import ParseCtp from './ParseCtp'
 import { SendTopics } from './Topics'
+import { extBrdProtocol } from '../enums/extBrdProtocol.enum'
+import { extBrdInterface } from '../enums/extBrdInterface.enum'
 
 export default class ParseAcu {
     public static accept (message: ICrudMqttMessaging): void {
@@ -198,18 +200,27 @@ export default class ParseAcu {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
         const info: any = {
-            Brd_idx: message.data.id
+            Brd_idx: message.data.id,
+            RS485_Uart_Mode: 'none'
         }
-
         if (message.data.resources && 'input' in message.data.resources) info.Brd_inputs = message.data.resources.input
         if (message.data.resources && 'output' in message.data.resources) info.Brd_outputs = message.data.resources.output
-        if ('port' in message.data) info.RS485_Idx = message.data.port
-        if ('address' in message.data) info.Brd_RS45_adr = (message.data.address) ? message.data.address : 'none'
-        if ('uart_mode' in message.data) info.RS485_Uart_Mode = message.data.uart_mode
-        if ('baud_rate' in message.data) info.RS485_Baud_Rate = message.data.baud_rate
-        if ('protocol' in message.data) info.Brd_prot = message.data.protocol
-        // Brd_Eth_adr: message.data.address ? message.data.address : 'none'
-        // Brd_Eth_port: message.data.port
+        if ('protocol' in message.data) {
+            if (message.data.protocol === extBrdProtocol.DEFAULT) {
+                info.Brd_prot = 0
+            } else {
+                info.Brd_prot = 1
+            }
+        }
+        if (message.data.interface === extBrdInterface.RS485) {
+            if ('port' in message.data) info.RS485_Idx = message.data.port
+            if ('address' in message.data) info.Brd_RS45_adr = (message.data.address) ? message.data.address : 'none'
+            if ('baud_rate' in message.data) info.RS485_Baud_Rate = message.data.baud_rate
+        } else {
+            if ('port' in message.data) info.Brd_Eth_adr = message.data.port
+            if ('address' in message.data) info.Brd_Eth_port = (message.data.address) ? message.data.address : 'none'
+        }
+
         const send_data = {
             operator: OperatorType.SET_EXT_BRD,
             session_id: message.session_id,
