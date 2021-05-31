@@ -24,7 +24,21 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static cancelRegistration (message: ICrudMqttMessaging): void {
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.CANCEL_REGISTRATION,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: { device_id: message.data.serial_number }
+        }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -37,7 +51,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(message.topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(message.topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -51,7 +65,7 @@ export default class ParseAcu {
             message_id: message.message_id,
             info: message.data
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -65,7 +79,7 @@ export default class ParseAcu {
             message_id: message.message_id,
             info: message.data
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -94,7 +108,7 @@ export default class ParseAcu {
                 // MAC_Eth: 'none'
             }
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -115,7 +129,7 @@ export default class ParseAcu {
             message_id: message.message_id,
             info: message.data
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -146,7 +160,7 @@ export default class ParseAcu {
                 DST_Shift: 3600
             }
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -161,7 +175,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -176,7 +190,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -191,7 +205,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -243,7 +257,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -260,7 +274,7 @@ export default class ParseAcu {
 
         console.log('devicedelExtBrd send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -321,7 +335,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -338,7 +352,7 @@ export default class ParseAcu {
 
         console.log('devicedelRd send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -354,7 +368,7 @@ export default class ParseAcu {
         }
         // console.log('Single_pass send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -369,7 +383,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -384,7 +398,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -399,7 +413,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -414,7 +428,7 @@ export default class ParseAcu {
             info: message.data
         }
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -430,7 +444,7 @@ export default class ParseAcu {
         }
         // console.log('SetAccessMode send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -446,7 +460,7 @@ export default class ParseAcu {
         }
         // console.log('GetAccessMode send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -462,7 +476,7 @@ export default class ParseAcu {
         }
         // console.log('DellShedule send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }

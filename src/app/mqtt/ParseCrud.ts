@@ -17,6 +17,9 @@ export default class ParseCrud {
             case OperatorType.LOGIN:
                 ParseAcu.login(message)
                 break
+            case OperatorType.CANCEL_REGISTRATION:
+                ParseAcu.cancelRegistration(message)
+                break
             case OperatorType.LOGOUT:
                 ParseAcu.logOut(message)
                 break
@@ -72,49 +75,49 @@ export default class ParseCrud {
                 ParseAcu.cardProtection(message)
                 break
             case OperatorType.SET_CTP_DOOR:
-            ParseCtp.setCtpDoor(message)
+                ParseCtp.setCtpDoor(message)
                 break
             case OperatorType.DEL_CTP_DOOR:
-            ParseCtp.delCtpDoor(message)
+                ParseCtp.delCtpDoor(message)
                 break
             case OperatorType.GET_CTP_DOOR:
-            ParseCtp.getCtpDoor(message)
+                ParseCtp.getCtpDoor(message)
                 break
             case OperatorType.SET_CTP_TURNSTILE:
-            ParseCtp.setCtpTurnstile(message)
+                ParseCtp.setCtpTurnstile(message)
                 break
             case OperatorType.DEL_CTP_TURNSTILE:
-            ParseCtp.delCtpTurnstile(message)
+                ParseCtp.delCtpTurnstile(message)
                 break
             case OperatorType.GET_CTP_TURNSTILE:
-            ParseCtp.getCtpTurnstile(message)
+                ParseCtp.getCtpTurnstile(message)
                 break
             case OperatorType.SET_CTP_GATE:
-            ParseCtp.setCtpGate(message)
+                ParseCtp.setCtpGate(message)
                 break
             case OperatorType.DEL_CTP_GATE:
-            ParseCtp.delCtpGate(message)
+                ParseCtp.delCtpGate(message)
                 break
             case OperatorType.GET_CTP_GATE:
-            ParseCtp.getCtpGate(message)
+                ParseCtp.getCtpGate(message)
                 break
             case OperatorType.SET_CTP_GATEWAY:
-            ParseCtp.setCtpGateway(message)
+                ParseCtp.setCtpGateway(message)
                 break
             case OperatorType.DEL_CTP_GATEWAY:
-            ParseCtp.delCtpGateway(message)
+                ParseCtp.delCtpGateway(message)
                 break
             case OperatorType.GET_CTP_GATEWAY:
-            ParseCtp.getCtpGateway(message)
+                ParseCtp.getCtpGateway(message)
                 break
             case OperatorType.SET_CTP_FLOOR:
-            ParseCtp.setCtpFloor(message)
+                ParseCtp.setCtpFloor(message)
                 break
             case OperatorType.DEL_CTP_FLOOR:
-            ParseCtp.delCtpFloor(message)
+                ParseCtp.delCtpFloor(message)
                 break
             case OperatorType.GET_CTP_FLOOR:
-            ParseCtp.getCtpFloor(message)
+                ParseCtp.getCtpFloor(message)
                 break
 
             case OperatorType.SET_EVENTS_MOD:
