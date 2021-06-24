@@ -124,11 +124,12 @@ export default class ParseAcu {
 
         const topic = message.topic
         const send_data = {
-            operator: OperatorType.SET_DATE_TIME,
+            operator: OperatorType.GET_NET_SETTINGS,
             session_id: message.session_id,
             message_id: message.message_id,
             info: message.data
         }
+
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
@@ -536,10 +537,11 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     delete crud_message.data.access_point_type
                     crud_message.data = message
                     ParseCtp.setCtpFloor(crud_message)
-                } else {
-                    console.log('crud_message.data 2', crud_message.data)
-                    MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                 }
+
+                console.log('crud_message.data 2', crud_message.data)
+                MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+
                 MQTTBroker.client.removeListener('message', cb)
             }
         } catch (e) {
@@ -563,10 +565,16 @@ export function handleCallback (send_topic: any, crud_message: any): any {
             // console.log(1, topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`)
             // console.log(2, crud_message.message_id === messageAck.message_id)
             // console.log(3, messageAck.operator === `${crud_message.operator}-Ack`)
+            if (messageAck.operator === 'GetNETSettings-Ack') {
+                console.log('send_topic', send_topic)
+                console.log('crud_message', crud_message)
+                console.log('send_topic.split(/.slice(0, -2).join( / )', send_topic.split('/').slice(0, -2).join('/'))
+            }
 
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
 
+                console.log(888888888888888888)
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 
