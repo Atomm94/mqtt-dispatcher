@@ -505,6 +505,9 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                         direction: crud_message.data.direction
                     }
                 }
+
+                MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+
                 if (crud_message.data.access_point_type === accessPointType.DOOR) {
                     console.log('crud_message.data DOOR', crud_message.data)
                     crud_message.operator = OperatorType.SET_CTP_DOOR
@@ -538,9 +541,6 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     crud_message.data = message
                     ParseCtp.setCtpFloor(crud_message)
                 }
-
-                console.log('crud_message.data 2', crud_message.data)
-                MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
 
                 MQTTBroker.client.removeListener('message', cb)
             }
