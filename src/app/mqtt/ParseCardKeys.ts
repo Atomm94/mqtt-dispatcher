@@ -76,6 +76,8 @@ export default class ParseCardKeys {
         const key_len = 4
         for (const cardholder of cardholders) {
             let access_rule_id = 0
+            console.log('cardholder', cardholder)
+
             for (const access_rule of cardholder.access_rights.access_rules) {
                 if (access_rule.access_point === access_point_id) {
                     access_rule_id = access_rule.id
