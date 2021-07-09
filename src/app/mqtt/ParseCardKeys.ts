@@ -6,7 +6,8 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 // import { accessPointType } from '../enums/accessPointType.enum'
 // import { scheduleType } from '../enums/scheduleType.enum'
 import { credentialStatus } from '../enums/credentialStatus.enum'
-import { handleCallback } from './ParseAcu'
+import { handleCallback, ackTimeout } from './ParseAcu'
+
 export default class ParseCardKeys {
     public static limit_for_keys_count = 25
     public static setCardKeys (message: ICrudMqttMessaging): void {
@@ -238,7 +239,7 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
     // MQTTBroker.client.removeListener('message', cb)
     // }, 20000)
     // console.log(12312123)
-
+    ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
