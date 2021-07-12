@@ -8,6 +8,7 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 // import { credentialStatus } from '../enums/credentialStatus.enum'
 import { acuConnectionType } from '../enums/acuConnectionType.enum'
 import { accessPointType } from '../enums/accessPointType.enum'
+import { accessPointDirection } from '../enums/accessPointDirection.enum'
 
 import ParseCtp from './ParseCtp'
 import { SendTopics } from './Topics'
@@ -375,17 +376,28 @@ export default class ParseAcu {
     public static single_pass (message: ICrudMqttMessaging): void {
         // console.log('Single_pass', message)
         const topic = message.topic
+        const info: any = {
+            Control_Point_GId: 'none',
+            Control_point_idx: message.data.id
+        }
+        if (message.data.direction === accessPointDirection.ENTRY) {
+            info.Direction = 0
+        } else if (message.data.direction === accessPointDirection.EXIT) {
+            info.Direction = 1
+        } else {
+            info.Direction = -1
+        }
+
         const send_data = {
             operator: OperatorType.SINGLE_PASS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
-        // console.log('Single_pass send message', send_data)
-
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
+        // console.log('Single_pass send message', send_data)
     }
 
     public static setOutput (message: ICrudMqttMessaging): void {
