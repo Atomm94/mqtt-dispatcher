@@ -377,7 +377,6 @@ export default class ParseAcu {
         // console.log('Single_pass', message)
         const topic = message.topic
         const info: any = {
-            Control_Point_GId: 'none',
             Control_point_idx: message.data.id
         }
         if (message.data.direction === accessPointDirection.ENTRY) {
@@ -463,11 +462,21 @@ export default class ParseAcu {
     public static setAccessMode (message: ICrudMqttMessaging): void {
         // console.log('SetAccessMode', message)
         const topic = message.topic
+
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.type === accessPointType.TURNSTILE_TWO_SIDE) {
+            if (message.data.mode) info.Work_Mode_Entry = message.data.mode
+            if (message.data.exit_mode) info.Work_Mode_Exit = message.data.exit_mode
+        } else {
+            info.Access_mode = message.data.mode
+        }
         const send_data = {
             operator: OperatorType.SET_ACCESS_MODE,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
         // console.log('SetAccessMode send message', send_data)
 
