@@ -11,6 +11,9 @@ export default class ParseCrud {
 
     public static crudData (topic: string, message: ICrudMqttMessaging): void {
         switch (message.operator) {
+            case OperatorType.PING:
+                ParseAcu.ping(message)
+                break
             case OperatorType.ACCEPT:
                 ParseAcu.accept(message)
                 break

@@ -8,6 +8,7 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 // import { credentialStatus } from '../enums/credentialStatus.enum'
 import { acuConnectionType } from '../enums/acuConnectionType.enum'
 import { accessPointType } from '../enums/accessPointType.enum'
+import { accessPointDirection } from '../enums/accessPointDirection.enum'
 
 import ParseCtp from './ParseCtp'
 import { SendTopics } from './Topics'
@@ -15,6 +16,20 @@ import { extBrdProtocol } from '../enums/extBrdProtocol.enum'
 import { extBrdInterface } from '../enums/extBrdInterface.enum'
 
 export default class ParseAcu {
+    public static ping (message: ICrudMqttMessaging): void {
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.PING,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handlePingCallback(topic, message) as Function)
+        })
+    }
+
     public static accept (message: ICrudMqttMessaging): void {
         const topic = message.topic
         const send_data = {
@@ -361,17 +376,27 @@ export default class ParseAcu {
     public static single_pass (message: ICrudMqttMessaging): void {
         // console.log('Single_pass', message)
         const topic = message.topic
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.direction === accessPointDirection.ENTRY) {
+            info.Direction = 0
+        } else if (message.data.direction === accessPointDirection.EXIT) {
+            info.Direction = 1
+        } else {
+            info.Direction = -1
+        }
+
         const send_data = {
             operator: OperatorType.SINGLE_PASS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
-        // console.log('Single_pass send message', send_data)
-
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
+        // console.log('Single_pass send message', send_data)
     }
 
     public static setOutput (message: ICrudMqttMessaging): void {
@@ -437,11 +462,21 @@ export default class ParseAcu {
     public static setAccessMode (message: ICrudMqttMessaging): void {
         // console.log('SetAccessMode', message)
         const topic = message.topic
+
+        const info: any = {
+            Control_point_idx: message.data.id
+        }
+        if (message.data.type === accessPointType.TURNSTILE_TWO_SIDE) {
+            if (message.data.mode) info.Work_Mode_Entry = message.data.mode
+            if (message.data.exit_mode) info.Work_Mode_Exit = message.data.exit_mode
+        } else {
+            info.Access_mode = message.data.mode
+        }
         const send_data = {
             operator: OperatorType.SET_ACCESS_MODE,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
         // console.log('SetAccessMode send message', send_data)
 
@@ -484,11 +519,7 @@ export default class ParseAcu {
 }
 
 function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
-    // setTimeout(() => {
-    // MQTTBroker.client.removeListener('message', cb)
-    // }, 20000)
-    // console.log(12312123)
-
+    ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
@@ -551,10 +582,29 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
     return cb
 }
 
+export function handlePingCallback (send_topic: any, crud_message: any): any {
+    ackTimeout(send_topic, crud_message, cb, 10000)
+    function cb (topicAck: any, messageAck: any) {
+        try {
+            messageAck = JSON.parse(messageAck)
+            if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
+                console.log('handlePingCallback', true)
+                messageAck.send_data = crud_message
+                messageAck.device_topic = topicAck
+                console.log('messageAck5555555555555', messageAck)
+
+                MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+                MQTTBroker.client.removeListener('message', cb)
+            }
+        } catch (e) {
+
+        }
+    }
+    return cb
+}
+
 export function handleCallback (send_topic: any, crud_message: any): any {
-    // setTimeout(() => {
-    // MQTTBroker.client.removeListener('message', cb)
-    // }, 20000)
+    ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck)
@@ -574,7 +624,6 @@ export function handleCallback (send_topic: any, crud_message: any): any {
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
 
-                console.log(888888888888888888)
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 
@@ -591,4 +640,19 @@ export function handleCallback (send_topic: any, crud_message: any): any {
     //     MQTTBroker.client.removeListener('message', handleCallback)
     // }
     // return callBack([...arguments])
+}
+
+export function ackTimeout (send_topic: any, crud_message: any, cb: any, timeout: number = 20000): any {
+    setTimeout(() => {
+        const messageAck = {
+            operator: `${crud_message.operator}-Ack`,
+            result: {
+                errorNo: 777
+            },
+            send_data: crud_message,
+            device_topic: `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`
+        }
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+        MQTTBroker.client.removeListener('message', cb)
+    }, timeout)
 }

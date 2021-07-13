@@ -6,7 +6,8 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 // import { accessPointType } from '../enums/accessPointType.enum'
 // import { scheduleType } from '../enums/scheduleType.enum'
 import { credentialStatus } from '../enums/credentialStatus.enum'
-import { handleCallback } from './ParseAcu'
+import { handleCallback, ackTimeout } from './ParseAcu'
+
 export default class ParseCardKeys {
     public static limit_for_keys_count = 25
     public static setCardKeys (message: ICrudMqttMessaging): void {
@@ -76,6 +77,8 @@ export default class ParseCardKeys {
         const key_len = 4
         for (const cardholder of cardholders) {
             let access_rule_id = 0
+            console.log('cardholder', cardholder)
+
             for (const access_rule of cardholder.access_rights.access_rules) {
                 if (access_rule.access_point === access_point_id) {
                     access_rule_id = access_rule.id
@@ -236,7 +239,7 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
     // MQTTBroker.client.removeListener('message', cb)
     // }, 20000)
     // console.log(12312123)
-
+    ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
