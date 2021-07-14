@@ -6,6 +6,8 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 // import { accessPointType } from '../enums/accessPointType.enum'
 // import { scheduleType } from '../enums/scheduleType.enum'
 import { credentialStatus } from '../enums/credentialStatus.enum'
+import { typeAntipassBack } from '../enums/typeAntipassBack.enum'
+
 import { handleCallback, ackTimeout } from './ParseAcu'
 
 export default class ParseCardKeys {
@@ -14,10 +16,24 @@ export default class ParseCardKeys {
         // console.log('setCardKeys', message)
         const access_points = message.data.access_points
         const cardholders = message.data.cardholders
+        console.log('data', message.data)
+
         const access_point_id = access_points[0].id
         const keys: any = []
         const key_len = 4
         for (const cardholder of cardholders) {
+            let anti_passback_type = -1
+            if (cardholder.antipass_backs) {
+                if (cardholder.antipass_backs.type === typeAntipassBack.SOFT) {
+                    anti_passback_type = 0
+                } else if (cardholder.antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
+                    anti_passback_type = 1
+                } else if (cardholder.antipass_backs.type === typeAntipassBack.HARD) {
+                    anti_passback_type = 2
+                } else if (cardholder.antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
+                    anti_passback_type = 3
+                }
+            }
             let access_rule_id = 0
             for (const access_rule of cardholder.access_rights.access_rules) {
                 if (access_rule.access_point === access_point_id) {
@@ -36,8 +52,8 @@ export default class ParseCardKeys {
                 key_string += '-1;' // Passes
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
-                key_string += '0;' // ABP
-                key_string += '0;' // ABP_Time
+                key_string += `${anti_passback_type};` // ABP
+                key_string += `${cardholder.antipass_backs.enable_timer};` // ABP_Time
                 key_string += '0;' // Start_date
                 key_string += '0;' // Expiration_date
                 keys.push(key_string)
@@ -77,8 +93,16 @@ export default class ParseCardKeys {
         const key_len = 4
         for (const cardholder of cardholders) {
             let access_rule_id = 0
-            console.log('cardholder', cardholder)
-
+            let anti_passback_type = -1
+            if (cardholder.antipass_backs.type === typeAntipassBack.SOFT) {
+                anti_passback_type = 0
+            } else if (cardholder.antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
+                anti_passback_type = 1
+            } else if (cardholder.antipass_backs.type === typeAntipassBack.HARD) {
+                anti_passback_type = 2
+            } else if (cardholder.antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
+                anti_passback_type = 3
+            }
             for (const access_rule of cardholder.access_rights.access_rules) {
                 if (access_rule.access_point === access_point_id) {
                     access_rule_id = access_rule.id
@@ -96,8 +120,8 @@ export default class ParseCardKeys {
                 key_string += '-1;' // Passes
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
-                key_string += '0;' // ABP
-                key_string += '0;' // ABP_Time
+                key_string += `${anti_passback_type};` // ABP
+                key_string += `${cardholder.antipass_backs.enable_timer};` // ABP_Time
                 key_string += '0;' // Start_date
                 key_string += '0;' // Expiration_date
                 keys.push(key_string)
@@ -244,8 +268,6 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
         try {
             messageAck = JSON.parse(messageAck.toString())
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
-                console.log('handleCardKeyCallback', true)
-
                 messageAck.send_data = crud_message
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck

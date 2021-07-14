@@ -538,40 +538,39 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                 }
 
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+                    if (crud_message.data.access_point_type === accessPointType.DOOR) {
+                        console.log('crud_message.data DOOR', crud_message.data)
+                        crud_message.operator = OperatorType.SET_CTP_DOOR
+                        delete crud_message.data.access_point_type
+                        crud_message.data = message
 
-                if (crud_message.data.access_point_type === accessPointType.DOOR) {
-                    console.log('crud_message.data DOOR', crud_message.data)
-                    crud_message.operator = OperatorType.SET_CTP_DOOR
-                    delete crud_message.data.access_point_type
-                    crud_message.data = message
-
-                    ParseCtp.setCtpDoor(crud_message)
-                } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
-                    console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
-                    crud_message.operator = OperatorType.SET_CTP_TURNSTILE
-                    crud_message.data.type = crud_message.data.access_point_type
-                    delete crud_message.data.access_point_type
-                    crud_message.data = message
-                    ParseCtp.setCtpTurnstile(crud_message)
-                } else if (crud_message.data.access_point_type === accessPointType.GATE) {
-                    console.log('crud_message.data GATE', crud_message.data)
-                    crud_message.operator = OperatorType.SET_CTP_GATE
-                    delete crud_message.data.access_point_type
-                    crud_message.data = message
-                    ParseCtp.setCtpGate(crud_message)
-                } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
-                    console.log('crud_message.data GATEWAY', crud_message.data)
-                    crud_message.operator = OperatorType.SET_CTP_GATEWAY
-                    // delete crud_message.data.access_point_type
-                    crud_message.data = message
-                    ParseCtp.setCtpGateway(crud_message)
-                } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
-                    console.log('crud_message.data FLOOR', crud_message.data)
-                    crud_message.operator = OperatorType.SET_CTP_FLOOR
-                    delete crud_message.data.access_point_type
-                    crud_message.data = message
-                    ParseCtp.setCtpFloor(crud_message)
-                }
+                        ParseCtp.setCtpDoor(crud_message)
+                    } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
+                        console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
+                        crud_message.operator = OperatorType.SET_CTP_TURNSTILE
+                        crud_message.data.type = crud_message.data.access_point_type
+                        delete crud_message.data.access_point_type
+                        crud_message.data = message
+                        ParseCtp.setCtpTurnstile(crud_message)
+                    } else if (crud_message.data.access_point_type === accessPointType.GATE) {
+                        console.log('crud_message.data GATE', crud_message.data)
+                        crud_message.operator = OperatorType.SET_CTP_GATE
+                        delete crud_message.data.access_point_type
+                        crud_message.data = message
+                        ParseCtp.setCtpGate(crud_message)
+                    } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
+                        console.log('crud_message.data GATEWAY', crud_message.data)
+                        crud_message.operator = OperatorType.SET_CTP_GATEWAY
+                        // delete crud_message.data.access_point_type
+                        crud_message.data = message
+                        ParseCtp.setCtpGateway(crud_message)
+                    } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
+                        console.log('crud_message.data FLOOR', crud_message.data)
+                        crud_message.operator = OperatorType.SET_CTP_FLOOR
+                        delete crud_message.data.access_point_type
+                        crud_message.data = message
+                        ParseCtp.setCtpFloor(crud_message)
+                    }
 
                 MQTTBroker.client.removeListener('message', cb)
             }

@@ -18,7 +18,9 @@ export default class ParseController {
                 Button_rex_idx: -1,
                 Alarm_In_idx: -1,
                 Lock_Relay_idx: -1,
-                Alarm_out_idx: -1
+                Alarm_out_idx: -1,
+                Leaving_Zone: message.data.leaving_zone,
+                Came_To_Zone: message.data.came_to_zone
             }
             if (message.data.resources) {
                 const resources = message.data.resources
@@ -97,7 +99,7 @@ export default class ParseController {
 
         // console.log('deviceSetCtpDoor send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -116,7 +118,7 @@ export default class ParseController {
 
         // console.log('getCtpDoor send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -137,7 +139,9 @@ export default class ParseController {
             Exit_Rl_idx: -1,
             Alarm_out_idx: -1,
             BlockEnt_Rl_idx: -1,
-            FreeEnt_Rl_idx: -1
+            FreeEnt_Rl_idx: -1,
+            Leaving_Zone: message.data.leaving_zone,
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -247,7 +251,7 @@ export default class ParseController {
 
         // console.log('delCtpTurnstile send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -266,7 +270,7 @@ export default class ParseController {
 
         // console.log('getCtpTurnstile send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -279,7 +283,9 @@ export default class ParseController {
             Loop_Ready_idx: -1,
             Open_Btn_idx: -1,
             Alarm_In_idx: -1,
-            Lock_Relay_idx: -1
+            Lock_Relay_idx: -1,
+            Leaving_Zone: message.data.leaving_zone,
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -350,7 +356,7 @@ export default class ParseController {
 
         // console.log('delCtpGate send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -369,7 +375,7 @@ export default class ParseController {
 
         // console.log('getCtpGate send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -383,7 +389,9 @@ export default class ParseController {
             Open_Btn_idx: -1,
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
-            Alarm_out_idx: -1
+            Alarm_out_idx: -1,
+            Leaving_Zone: message.data.leaving_zone,
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -462,7 +470,7 @@ export default class ParseController {
 
         // console.log('delCtpGateway send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -481,7 +489,7 @@ export default class ParseController {
 
         // console.log('getCtpGateway send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -493,7 +501,9 @@ export default class ParseController {
             const info: any = {
                 Control_point_idx: message.data.id,
                 Alarm_In_idx: -1,
-                Lock_Relay_idx: -1
+                Lock_Relay_idx: -1,
+                Leaving_Zone: message.data.leaving_zone,
+                Came_To_Zone: message.data.came_to_zone
             }
             if (message.data.resources) {
                 const resources = message.data.resources
@@ -557,7 +567,7 @@ export default class ParseController {
 
         // console.log('delCtpFloor send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
@@ -576,7 +586,7 @@ export default class ParseController {
 
         // console.log('getCtpFloor send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
