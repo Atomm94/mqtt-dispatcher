@@ -18,7 +18,9 @@ export default class ParseController {
                 Button_rex_idx: -1,
                 Alarm_In_idx: -1,
                 Lock_Relay_idx: -1,
-                Alarm_out_idx: -1
+                Alarm_out_idx: -1,
+                Leaving_Zone: message.data.leaving_zone,
+                Came_To_Zone: message.data.came_to_zone
             }
             if (message.data.resources) {
                 const resources = message.data.resources
@@ -137,7 +139,9 @@ export default class ParseController {
             Exit_Rl_idx: -1,
             Alarm_out_idx: -1,
             BlockEnt_Rl_idx: -1,
-            FreeEnt_Rl_idx: -1
+            FreeEnt_Rl_idx: -1,
+            Leaving_Zone: message.data.leaving_zone,
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -279,7 +283,9 @@ export default class ParseController {
             Loop_Ready_idx: -1,
             Open_Btn_idx: -1,
             Alarm_In_idx: -1,
-            Lock_Relay_idx: -1
+            Lock_Relay_idx: -1,
+            Leaving_Zone: message.data.leaving_zone,
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -383,7 +389,9 @@ export default class ParseController {
             Open_Btn_idx: -1,
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
-            Alarm_out_idx: -1
+            Alarm_out_idx: -1,
+            Leaving_Zone: message.data.leaving_zone,
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -493,7 +501,9 @@ export default class ParseController {
             const info: any = {
                 Control_point_idx: message.data.id,
                 Alarm_In_idx: -1,
-                Lock_Relay_idx: -1
+                Lock_Relay_idx: -1,
+                Leaving_Zone: message.data.leaving_zone,
+                Came_To_Zone: message.data.came_to_zone
             }
             if (message.data.resources) {
                 const resources = message.data.resources
