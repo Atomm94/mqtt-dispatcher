@@ -51,7 +51,7 @@ export default class ParseSchedule {
         }
         // console.log('delSdlDaily send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, sent_message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
         })
     }
@@ -141,7 +141,7 @@ export default class ParseSchedule {
         }
         // console.log('delSdlWeekly send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, sent_message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
         })
     }
@@ -246,7 +246,7 @@ export default class ParseSchedule {
         }
         // console.log('delSdlFlexiTime send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, sent_message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
         })
     }
@@ -367,7 +367,7 @@ export default class ParseSchedule {
         }
         // console.log('delSdlSpecified send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, sent_message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
         })
     }
@@ -402,7 +402,7 @@ export default class ParseSchedule {
         }
         // console.log('DellShedule send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, sent_message: any) => {
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
         })
     }
