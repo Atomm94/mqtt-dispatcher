@@ -19,8 +19,8 @@ export default class ParseController {
                 Alarm_In_idx: -1,
                 Lock_Relay_idx: -1,
                 Alarm_out_idx: -1,
-                Leaving_Zone: message.data.leaving_zone,
-                Came_To_Zone: message.data.came_to_zone
+                Leaving_Zone: -1,
+                Came_To_Zone: -1
             }
             if (message.data.resources) {
                 const resources = message.data.resources
@@ -78,6 +78,21 @@ export default class ParseController {
                     if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
                         info[`Rd${i}_idx`] = reader.id
                         info[`Rd${i}_dir`] = reader.direction
+                        if (reader.direction === 0) { // Entry
+                            if (reader.leaving_zone) {
+                                info.Leaving_Zone = reader.leaving_zone
+                            }
+                            if (reader.came_to_zone) {
+                                info.Came_To_Zone = reader.came_to_zone
+                            }
+                        } else if (reader.direction === 1) { // Exit (reverse)
+                            if (reader.leaving_zone) {
+                                info.Came_To_Zone = reader.leaving_zone
+                            }
+                            if (reader.came_to_zone) {
+                                info.Leaving_Zone = reader.came_to_zone
+                            }
+                        }
                     }
                 })
             }
@@ -152,8 +167,8 @@ export default class ParseController {
             Alarm_out_idx: -1,
             BlockEnt_Rl_idx: -1,
             FreeEnt_Rl_idx: -1,
-            Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -243,6 +258,21 @@ export default class ParseController {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
                     info[`Rd${i}_idx`] = reader.id
                     info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
                 }
             })
         }
@@ -308,8 +338,8 @@ export default class ParseController {
             Open_Btn_idx: -1,
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
-            Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -360,6 +390,21 @@ export default class ParseController {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
                     info[`Rd${i}_idx`] = reader.id
                     info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
                 }
             })
         }
@@ -426,8 +471,8 @@ export default class ParseController {
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
             Alarm_out_idx: -1,
-            Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -486,6 +531,21 @@ export default class ParseController {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
                     info[`Rd${i}_idx`] = reader.id
                     info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
                 }
             })
         }
@@ -549,8 +609,8 @@ export default class ParseController {
             Control_point_idx: message.data.id,
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
-            Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -590,6 +650,21 @@ export default class ParseController {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
                     info[`Rd${i}_idx`] = reader.id
                     info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
                 }
             })
         }
