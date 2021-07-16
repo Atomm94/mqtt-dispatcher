@@ -20,15 +20,7 @@ export default class ParseController {
                 Lock_Relay_idx: -1,
                 Alarm_out_idx: -1,
                 Leaving_Zone: message.data.leaving_zone,
-                Came_To_Zone: message.data.came_to_zone,
-                Rd0_idx: -1,
-                Rd0_dir: -1,
-                Rd1_idx: -1,
-                Rd1_dir: -1,
-                Rd2_idx: -1,
-                Rd2_dir: -1,
-                Rd3_idx: -1,
-                Rd3_dir: -1
+                Came_To_Zone: message.data.came_to_zone
             }
             if (message.data.resources) {
                 const resources = message.data.resources
@@ -73,6 +65,14 @@ export default class ParseController {
             }
 
             if (message.data.readers) {
+                info.Rd0_idx = -1
+                info.Rd0_dir = -1
+                info.Rd1_idx = -1
+                info.Rd1_dir = -1
+                info.Rd2_idx = -1
+                info.Rd2_dir = -1
+                info.Rd3_idx = -1
+                info.Rd3_dir = -1
                 const readers = message.data.readers
                 readers.forEach((reader: any, i: number) => {
                     if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
@@ -153,15 +153,7 @@ export default class ParseController {
             BlockEnt_Rl_idx: -1,
             FreeEnt_Rl_idx: -1,
             Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone,
-            Rd0_idx: -1,
-            Rd0_dir: -1,
-            Rd1_idx: -1,
-            Rd1_dir: -1,
-            Rd2_idx: -1,
-            Rd2_dir: -1,
-            Rd3_idx: -1,
-            Rd3_dir: -1
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -238,6 +230,14 @@ export default class ParseController {
         }
 
         if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
             const readers = message.data.readers
             readers.forEach((reader: any, i: number) => {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
@@ -309,15 +309,7 @@ export default class ParseController {
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
             Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone,
-            Rd0_idx: -1,
-            Rd0_dir: -1,
-            Rd1_idx: -1,
-            Rd1_dir: -1,
-            Rd2_idx: -1,
-            Rd2_dir: -1,
-            Rd3_idx: -1,
-            Rd3_dir: -1
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -355,6 +347,14 @@ export default class ParseController {
         }
 
         if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
             const readers = message.data.readers
             readers.forEach((reader: any, i: number) => {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
@@ -427,15 +427,7 @@ export default class ParseController {
             Lock_Relay_idx: -1,
             Alarm_out_idx: -1,
             Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone,
-            Rd0_idx: -1,
-            Rd0_dir: -1,
-            Rd1_idx: -1,
-            Rd1_dir: -1,
-            Rd2_idx: -1,
-            Rd2_dir: -1,
-            Rd3_idx: -1,
-            Rd3_dir: -1
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -481,6 +473,14 @@ export default class ParseController {
         }
 
         if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
             const readers = message.data.readers
             readers.forEach((reader: any, i: number) => {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
@@ -550,15 +550,7 @@ export default class ParseController {
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
             Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone,
-            Rd0_idx: -1,
-            Rd0_dir: -1,
-            Rd1_idx: -1,
-            Rd1_dir: -1,
-            Rd2_idx: -1,
-            Rd2_dir: -1,
-            Rd3_idx: -1,
-            Rd3_dir: -1
+            Came_To_Zone: message.data.came_to_zone
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -585,6 +577,14 @@ export default class ParseController {
         }
 
         if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
             const readers = message.data.readers
             readers.forEach((reader: any, i: number) => {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
