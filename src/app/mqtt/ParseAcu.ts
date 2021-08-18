@@ -14,6 +14,7 @@ import ParseCtp from './ParseCtp'
 import { SendTopics } from './Topics'
 import { extBrdProtocol } from '../enums/extBrdProtocol.enum'
 import { extBrdInterface } from '../enums/extBrdInterface.enum'
+import { cloneDeep } from 'lodash'
 
 export default class ParseAcu {
     public static ping (message: ICrudMqttMessaging): void {
@@ -298,32 +299,35 @@ export default class ParseAcu {
     public static setRd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
+
+        const ind = message.data.answer_qty ? message.data.answer_qty : 0
+        const reader_data = message.data.readers[ind]
         const info: any = {
-            Rd_idx: message.data.id,
-            Rd_opt: (Number(message.data.wg_type) !== -1) ? 1 : 2,
+            Rd_idx: reader_data.id,
+            Rd_opt: (Number(reader_data.wg_type) !== -1) ? 1 : 2,
             Rd_type: 0,
-            Rd_Key_endian: message.data.reverse_byte_order,
-            Rd_RS485_idx: message.data.port,
+            Rd_Key_endian: reader_data.reverse_byte_order,
+            Rd_RS485_idx: reader_data.port,
             // Rd_MQTT: 'none',
             // Rd_ind_var: 0,
-            Rd_beep: message.data.enable_buzzer,
-            Rd_Enable_crc: message.data.enable_crc,
+            Rd_beep: reader_data.enable_buzzer,
+            Rd_Enable_crc: reader_data.enable_crc,
             // Rd_bt_prox: 10,
             // Rd_sens_act: 50,
-            Rd_mode: message.data.mode
+            Rd_mode: reader_data.mode
             // Rd_Eth: 'none',
             // Rd_Eth_port: 0
         }
-        if (Number(message.data.wg_type) === -1) {
-            info.Rd_OSDP_adr = message.data.osdp_address
-            info.Rd_OSDP_bd = message.data.baud_rate
-            info.Rd_OSDP_WgPuls = message.data.card_data_format_flags
-            info.Rd_OSDP_KeyPad = message.data.keypad_mode
-            info.Rd_OSDP_singl = message.data.configuration
-            info.Rd_OSDP_tracing = message.data.tracing
+        if (Number(reader_data.wg_type) === -1) {
+            info.Rd_OSDP_adr = reader_data.osdp_address
+            info.Rd_OSDP_bd = reader_data.baud_rate
+            info.Rd_OSDP_WgPuls = reader_data.card_data_format_flags
+            info.Rd_OSDP_KeyPad = reader_data.keypad_mode
+            info.Rd_OSDP_singl = reader_data.configuration
+            info.Rd_OSDP_tracing = reader_data.tracing
         } else {
-            info.Rd_Wg_idx = message.data.port
-            info.Rd_Wg_type = message.data.wg_type
+            info.Rd_Wg_idx = reader_data.port
+            info.Rd_Wg_type = reader_data.wg_type
             // Rd_WG_RG: -1,
             // Rd_WG_Red: -1,
             // Rd_WG_Green: -1,
@@ -526,18 +530,27 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 console.log('handleRdUpdateCallback', true)
 
+                if (!crud_message.data.answer_qty) crud_message.data.answer_qty = 0
+
                 messageAck.send_data = crud_message
-                // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
-                const message = {
-                    id: crud_message.data.access_point,
-                    readers: {
-                        port: crud_message.data.port,
-                        direction: crud_message.data.direction
-                    }
-                }
 
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+
+                crud_message.data.readers[crud_message.data.answer_qty].messageAck = cloneDeep(messageAck)
+
+                crud_message.data.answer_qty++
+
+                if (crud_message.data.answer_qty < crud_message.data.readers.length) {
+                    ParseAcu.setRd(crud_message)
+                } else {
+                    const message = {
+                        id: crud_message.data.access_point,
+                        readers: crud_message.data.readers
+                    }
+
+                    console.log('crud_message', crud_message)
+
                     if (crud_message.data.access_point_type === accessPointType.DOOR) {
                         console.log('crud_message.data DOOR', crud_message.data)
                         crud_message.operator = OperatorType.SET_CTP_DOOR
@@ -571,6 +584,7 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                         crud_message.data = message
                         ParseCtp.setCtpFloor(crud_message)
                     }
+                }
 
                 MQTTBroker.client.removeListener('message', cb)
             }
@@ -590,7 +604,6 @@ export function handlePingCallback (send_topic: any, crud_message: any): any {
                 console.log('handlePingCallback', true)
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
-                console.log('messageAck5555555555555', messageAck)
 
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                 MQTTBroker.client.removeListener('message', cb)
@@ -607,19 +620,6 @@ export function handleCallback (send_topic: any, crud_message: any): any {
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck)
-            // console.log('topicAck', topicAck)
-            // console.log('send_topic', send_topic)
-            // console.log('messageAck.operator', messageAck.operator)
-            // console.log('crud_message.operator', crud_message.operator)
-            // console.log(1, topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`)
-            // console.log(2, crud_message.message_id === messageAck.message_id)
-            // console.log(3, messageAck.operator === `${crud_message.operator}-Ack`)
-            if (messageAck.operator === 'GetNETSettings-Ack') {
-                console.log('send_topic', send_topic)
-                console.log('crud_message', crud_message)
-                console.log('send_topic.split(/.slice(0, -2).join( / )', send_topic.split('/').slice(0, -2).join('/'))
-            }
-
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
 
@@ -643,15 +643,18 @@ export function handleCallback (send_topic: any, crud_message: any): any {
 
 export function ackTimeout (send_topic: any, crud_message: any, cb: any, timeout: number = 20000): any {
     setTimeout(() => {
+        const topic = `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`
         const messageAck = {
             operator: `${crud_message.operator}-Ack`,
+            message_id: crud_message.message_id,
             result: {
                 errorNo: 777
             },
             send_data: crud_message,
-            device_topic: `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`
+            device_topic: topic
         }
-        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
-        MQTTBroker.client.removeListener('message', cb)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(messageAck))
+        // MQTTBroker.client.removeListener('message', cb)
     }, timeout)
 }

@@ -19,8 +19,8 @@ export default class ParseController {
                 Alarm_In_idx: -1,
                 Lock_Relay_idx: -1,
                 Alarm_out_idx: -1,
-                Leaving_Zone: message.data.leaving_zone,
-                Came_To_Zone: message.data.came_to_zone
+                Leaving_Zone: -1,
+                Came_To_Zone: -1
             }
             if (message.data.resources) {
                 const resources = message.data.resources
@@ -65,9 +65,36 @@ export default class ParseController {
             }
 
             if (message.data.readers) {
-                const reader = message.data.readers
-                info[`Rd${+reader.port - 1}_idx`] = reader.port
-                info[`Rd${+reader.port - 1}_dir`] = reader.direction
+                info.Rd0_idx = -1
+                info.Rd0_dir = -1
+                info.Rd1_idx = -1
+                info.Rd1_dir = -1
+                info.Rd2_idx = -1
+                info.Rd2_dir = -1
+                info.Rd3_idx = -1
+                info.Rd3_dir = -1
+                const readers = message.data.readers
+                readers.forEach((reader: any, i: number) => {
+                    if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
+                        info[`Rd${i}_idx`] = reader.id
+                        info[`Rd${i}_dir`] = reader.direction
+                        if (reader.direction === 0) { // Entry
+                            if (reader.leaving_zone) {
+                                info.Leaving_Zone = reader.leaving_zone
+                            }
+                            if (reader.came_to_zone) {
+                                info.Came_To_Zone = reader.came_to_zone
+                            }
+                        } else if (reader.direction === 1) { // Exit (reverse)
+                            if (reader.leaving_zone) {
+                                info.Came_To_Zone = reader.leaving_zone
+                            }
+                            if (reader.came_to_zone) {
+                                info.Leaving_Zone = reader.came_to_zone
+                            }
+                        }
+                    }
+                })
             }
             const topic = message.topic
             const send_data: any = {
@@ -140,8 +167,8 @@ export default class ParseController {
             Alarm_out_idx: -1,
             BlockEnt_Rl_idx: -1,
             FreeEnt_Rl_idx: -1,
-            Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -218,9 +245,36 @@ export default class ParseController {
         }
 
         if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
             const readers = message.data.readers
-            info[`Rd${+readers.port - 1}_idx`] = readers.port
-            info[`Rd${+readers.port - 1}_dir`] = readers.direction
+            readers.forEach((reader: any, i: number) => {
+                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
+                    info[`Rd${i}_idx`] = reader.id
+                    info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
+                }
+            })
         }
         const topic = message.topic
         const send_data: any = {
@@ -284,8 +338,8 @@ export default class ParseController {
             Open_Btn_idx: -1,
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
-            Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -323,9 +377,36 @@ export default class ParseController {
         }
 
         if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
             const readers = message.data.readers
-            info[`Rd${+readers.port - 1}_idx`] = readers.port
-            info[`Rd${+readers.port - 1}_dir`] = readers.direction
+            readers.forEach((reader: any, i: number) => {
+                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
+                    info[`Rd${i}_idx`] = reader.id
+                    info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
+                }
+            })
         }
         const topic = message.topic
         const send_data: any = {
@@ -390,8 +471,8 @@ export default class ParseController {
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1,
             Alarm_out_idx: -1,
-            Leaving_Zone: message.data.leaving_zone,
-            Came_To_Zone: message.data.came_to_zone
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
         }
         if (message.data.resources) {
             const resources = message.data.resources
@@ -437,9 +518,36 @@ export default class ParseController {
         }
 
         if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
             const readers = message.data.readers
-            info[`Rd${+readers.port - 1}_idx`] = readers.port
-            info[`Rd${+readers.port - 1}_dir`] = readers.direction
+            readers.forEach((reader: any, i: number) => {
+                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
+                    info[`Rd${i}_idx`] = reader.id
+                    info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
+                }
+            })
         }
         const topic = message.topic
         const send_data: any = {
@@ -495,62 +603,85 @@ export default class ParseController {
     }
 
     public static setCtpFloor (message: ICrudMqttMessaging): void {
-        try {
-            // console.log('deviceSetMqttSettings', message)
+        // console.log('deviceSetMqttSettings', message)
 
-            const info: any = {
-                Control_point_idx: message.data.id,
-                Alarm_In_idx: -1,
-                Lock_Relay_idx: -1,
-                Leaving_Zone: message.data.leaving_zone,
-                Came_To_Zone: message.data.came_to_zone
-            }
-            if (message.data.resources) {
-                const resources = message.data.resources
-                for (const resource in resources) {
-                    const element = resources[resource]
-                    switch (element.name) {
-                        case 'Fire_Alarm_in':
-                            info.Alarm_In_opt = element.component_source
-                            info.Alarm_In_idx = element.input
-                            info.Allarm_Input_Condition = element.condition
-                            break
-                        case 'Lock':
-                            info.Lock_Relay_opt = element.component_source
-                            info.Lock_Relay_idx = element.output
-                            info.Door_Lock_mode = element.relay_mode
-                            info.Door_Lock_type = element.type
-                            info.Door_Lock_pulse = element.impulse_time
-                            info.Door_Delay = element.entry_exit_open_durations
-                            break
-                        default:
-                            break
-                    }
+        const info: any = {
+            Control_point_idx: message.data.id,
+            Alarm_In_idx: -1,
+            Lock_Relay_idx: -1,
+            Leaving_Zone: -1,
+            Came_To_Zone: -1
+        }
+        if (message.data.resources) {
+            const resources = message.data.resources
+            for (const resource in resources) {
+                const element = resources[resource]
+                switch (element.name) {
+                    case 'Fire_Alarm_in':
+                        info.Alarm_In_opt = element.component_source
+                        info.Alarm_In_idx = element.input
+                        info.Allarm_Input_Condition = element.condition
+                        break
+                    case 'Lock':
+                        info.Lock_Relay_opt = element.component_source
+                        info.Lock_Relay_idx = element.output
+                        info.Door_Lock_mode = element.relay_mode
+                        info.Door_Lock_type = element.type
+                        info.Door_Lock_pulse = element.impulse_time
+                        info.Door_Delay = element.entry_exit_open_durations
+                        break
+                    default:
+                        break
                 }
             }
-
-            if (message.data.readers) {
-                const readers = message.data.readers
-                info[`Rd${+readers.port - 1}_idx`] = readers.port
-                info[`Rd${+readers.port - 1}_dir`] = readers.direction
-            }
-
-            const topic = message.topic
-            const send_data: any = {
-                operator: OperatorType.SET_CTP_FLOOR,
-                session_id: message.session_id,
-                message_id: message.message_id,
-                info: info
-            }
-
-            // console.log('deviceSetCtpDoor send message', send_data)
-
-            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
-            })
-        } catch (error) {
-            console.log(error)
         }
+
+        if (message.data.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
+            const readers = message.data.readers
+            readers.forEach((reader: any, i: number) => {
+                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
+                    info[`Rd${i}_idx`] = reader.id
+                    info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
+                }
+            })
+        }
+
+        const topic = message.topic
+        const send_data: any = {
+            operator: OperatorType.SET_CTP_FLOOR,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
+
+        // console.log('deviceSetCtpDoor send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
     }
 
     public static delCtpFloor (message: ICrudMqttMessaging): void {
