@@ -363,11 +363,15 @@ export default class ParseAcu {
     public static delRd (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
+        const info: any = {
+            Rd_idx: message.data.id
+        }
+
         const send_data = {
             operator: OperatorType.DEL_RD,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
 
         console.log('devicedelRd send message', send_data)
