@@ -364,7 +364,7 @@ export default class ParseAcu {
         // console.log('deviceSetMqttSettings', message)
         const topic = message.topic
         const send_data = {
-            operator: OperatorType.GET_RD,
+            operator: OperatorType.DEL_RD,
             session_id: message.session_id,
             message_id: message.message_id,
             info: message.data
