@@ -578,7 +578,7 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
                         console.log('crud_message.data GATEWAY', crud_message.data)
                         crud_message.operator = OperatorType.SET_CTP_GATEWAY
-                        // delete crud_message.data.access_point_type
+                        delete crud_message.data.access_point_type
                         crud_message.data = message
                         ParseCtp.setCtpGateway(crud_message)
                     } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
