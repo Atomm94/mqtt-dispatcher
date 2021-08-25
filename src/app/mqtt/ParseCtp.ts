@@ -30,22 +30,22 @@ export default class ParseController {
                     switch (element.name) {
                         case 'Door_sensor':
                             info.Door_sens_opt = element.component_source
-                            info.Door_sens_idx = element.input
+                            info.Door_sens_idx = element.input - 1
                             info.Door_sens_Condition = element.condition
                             break
                         case 'Exit_button':
                             info.Button_rex_opt = element.component_source
-                            info.Button_rex_idx = element.input
+                            info.Button_rex_idx = element.input - 1 - 1
                             info.Button_rex_Condition = element.condition
                             break
                         case 'Fire_Alarm_in':
                             info.Alarm_In_opt = element.component_source
-                            info.Alarm_In_idx = element.input
+                            info.Alarm_In_idx = element.input - 1
                             info.Allarm_Input_Condition = element.condition
                             break
                         case 'Lock':
                             info.Lock_Relay_opt = element.component_source
-                            info.Lock_Relay_idx = element.output
+                            info.Lock_Relay_idx = element.output - 1
                             info.Door_Lock_mode = element.relay_mode
                             info.Door_Lock_type = element.type
                             info.Door_Lock_puls = element.impulse_time
@@ -54,7 +54,7 @@ export default class ParseController {
                             break
                         case 'Alarm_out':
                             info.Alarm_out_opt = element.component_source
-                            info.Alarm_out_idx = element.output
+                            info.Alarm_out_idx = element.output - 1
                             info.Alarm_out_tm = element.impulse_time
                             info.Alarm_mod = element.relay_mode
                             info.Alarm_out_mod = element.type
@@ -179,32 +179,32 @@ export default class ParseController {
                 switch (element.name) {
                     case 'Turnstile_ready':
                         info.Sensor_Ready_opt = element.component_source
-                        info.Sensor_Ready_idx = element.input
+                        info.Sensor_Ready_idx = element.input - 1
                         info.Sensor_Ready_Condition = element.condition
                         break
                     case 'Pass_control':
                         info.Sansor_Pass_opt = element.component_source
-                        info.Sansor_Pass_idx = element.input
+                        info.Sansor_Pass_idx = element.input - 1
                         info.Sensor_Pass_Condition = element.condition
                         break
                     case 'Entry_button':
                         info.Entry_Btn_opt = element.component_source
-                        info.Entry_Btn_idx = element.input
+                        info.Entry_Btn_idx = element.input - 1
                         info.Entry_Btn_Condition = element.condition
                         break
                     case 'Exit_button':
                         info.Exit_Btn_opt = element.component_source
-                        info.Exit_Btn_idx = element.input
+                        info.Exit_Btn_idx = element.input - 1
                         info.Exit_Btn_Condition = element.condition
                         break
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
-                        info.Alarm_In_idx = element.input
+                        info.Alarm_In_idx = element.input - 1
                         info.Allarm_Input_Condition = element.condition
                         break
                     case 'Entry_relay':
                         info.Entry_Rl_opt = element.component_source
-                        info.Entry_Rl_idx = element.input
+                        info.Entry_Rl_idx = element.input - 1
                         info.Entry_Rl_mode = element.relay_mode
                         info.Entry_Rl_type = element.type
                         info.Entry_Rl_pulse = element.impulse_time
@@ -212,7 +212,7 @@ export default class ParseController {
                         break
                     case 'Exit_relay':
                         info.Exit_Rl_opt = element.component_source
-                        info.Exit_Rl_idx = element.input
+                        info.Exit_Rl_idx = element.input - 1
                         info.Exit_Rl_mode = element.relay_mode
                         info.Exit_Rl_type = element.type
                         info.Exit_Rl_pulse = element.impulse_time
@@ -220,21 +220,21 @@ export default class ParseController {
                         break
                     case 'Alarm_out':
                         info.Alarm_out_opt = element.component_source
-                        info.Alarm_out_idx = element.output
+                        info.Alarm_out_idx = element.output - 1
                         info.Alarm_out_tm = element.impulse_time
                         info.Alarm_mod = element.relay_mode
                         info.Alarm_out_mod = element.type
                         break
                     case 'Block_Turnstile':
                         info.BlockEnt_Rl_opt = element.component_source
-                        info.BlockEnt_Rl_idx = element.output
+                        info.BlockEnt_Rl_idx = element.output - 1
                         info.BlockEnt_Rl_pulse = element.impulse_time
                         info.BlockEnt_Rl_mode = element.relay_mode
                         info.BlockEnt_Rl_type = element.type
                         break
                     case 'Emergency_open':
                         info.FreeEnt_Rl_opt = element.component_source
-                        info.FreeEnt_Rl_idx = element.output
+                        info.FreeEnt_Rl_idx = element.output - 1
                         info.FreeEnt_Rl_pulse = element.impulse_time
                         info.FreeEnt_Rl_mode = element.relay_mode
                         info.FreeEnt_Rl_type = element.type
@@ -357,22 +357,22 @@ export default class ParseController {
                 switch (element.name) {
                     case 'Loop_sensor':
                         info.Loop_Ready_opt = element.component_source
-                        info.Loop_Ready_idx = element.input
+                        info.Loop_Ready_idx = element.input - 1
                         info.Loop_Ready_Condition = element.condition
                         break
                     case 'Open_button':
                         info.Open_Btn_opt = element.component_source
-                        info.Open_Btn_idx = element.input
+                        info.Open_Btn_idx = element.input - 1
                         info.Open_Btn_Condition = element.condition
                         break
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
-                        info.Alarm_In_idx = element.input
+                        info.Alarm_In_idx = element.input - 1
                         info.Alarm_In_Condition = element.condition
                         break
                     case 'Open_relay':
                         info.Lock_Relay_opt = element.component_source
-                        info.Lock_Relay_idx = element.output
+                        info.Lock_Relay_idx = element.output - 1
                         info.Door_Lock_mode = element.relay_mode
                         info.Door_Lock_type = element.type
                         info.Door_Lock_pulse = element.impulse_time
@@ -491,22 +491,22 @@ export default class ParseController {
                 switch (element.name) {
                     case 'Door_sensor':
                         info.Door_sens_opt = element.component_source
-                        info.Door_sens_idx = element.input
+                        info.Door_sens_idx = element.input - 1 - 1
                         info.Door_sens_Condition = element.condition
                         break
                     case 'Open_button':
                         info.Open_Btn_opt = element.component_source
-                        info.Open_Btn_idx = element.input
+                        info.Open_Btn_idx = element.input - 1
                         info.Open_Btn_Condition = element.condition
                         break
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
-                        info.Alarm_In_idx = element.input
+                        info.Alarm_In_idx = element.input - 1
                         info.Allarm_Input_Condition = element.condition
                         break
                     case 'Lock':
                         info.Lock_Relay_opt = element.component_source
-                        info.Lock_Relay_idx = element.output
+                        info.Lock_Relay_idx = element.output - 1
                         info.Door_Lock_mode = element.relay_mode
                         info.Door_Lock_type = element.type
                         info.Door_Lock_pulse = element.impulse_time
@@ -516,7 +516,7 @@ export default class ParseController {
                         break
                     case 'Alarm_out':
                         info.Alarm_out_opt = element.component_source
-                        info.Alarm_out_idx = element.output
+                        info.Alarm_out_idx = element.output - 1
                         info.Alarm_out_tm = element.impulse_time
                         info.Alarm_mod = element.relay_mode
                         info.Alarm_out_mod = element.type
@@ -634,12 +634,12 @@ export default class ParseController {
                 switch (element.name) {
                     case 'Fire_Alarm_in':
                         info.Alarm_In_opt = element.component_source
-                        info.Alarm_In_idx = element.input
+                        info.Alarm_In_idx = element.input - 1
                         info.Allarm_Input_Condition = element.condition
                         break
                     case 'Lock':
                         info.Lock_Relay_opt = element.component_source
-                        info.Lock_Relay_idx = element.output
+                        info.Lock_Relay_idx = element.output - 1
                         info.Door_Lock_mode = element.relay_mode
                         info.Door_Lock_type = element.type
                         info.Door_Lock_pulse = element.impulse_time
