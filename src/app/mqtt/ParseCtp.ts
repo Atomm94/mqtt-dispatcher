@@ -13,16 +13,17 @@ export default class ParseController {
 
         try {
             const info: any = {
-                Control_point_idx: message.data.id,
-                Door_sens_idx: -1,
-                Button_rex_idx: -1,
-                Alarm_In_idx: -1,
-                Lock_Relay_idx: -1,
-                Alarm_out_idx: -1,
-                Leaving_Zone: -1,
-                Came_To_Zone: -1
+                Control_point_idx: message.data.id
             }
             if (message.data.resources) {
+                info.Door_sens_idx = -1
+                info.Button_rex_idx = -1
+                info.Alarm_In_idx = -1
+                info.Lock_Relay_idx = -1
+                info.Alarm_out_idx = -1
+                info.Leaving_Zone = -1
+                info.Came_To_Zone = -1
+
                 const resources = message.data.resources
                 for (const resource in resources) {
                     const element = resources[resource]
@@ -154,23 +155,24 @@ export default class ParseController {
         // console.log('setCtpTurnstile', message)
 
         const info: any = {
-            Control_point_idx: message.data.id,
+            Control_point_idx: message.data.id
             // Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
-            Control_type: (message.data.type === accessPointType.TURNSTILE_ONE_SIDE) ? 0 : 1,
-            Sensor_Ready_idx: -1,
-            Sansor_Pass_idx: -1,
-            Entry_Btn_idx: -1,
-            Exit_Btn_idx: -1,
-            Alarm_In_idx: -1,
-            Entry_Rl_idx: -1,
-            Exit_Rl_idx: -1,
-            Alarm_out_idx: -1,
-            BlockEnt_Rl_idx: -1,
-            FreeEnt_Rl_idx: -1,
-            Leaving_Zone: -1,
-            Came_To_Zone: -1
         }
         if (message.data.resources) {
+            info.Control_type = (message.data.type === accessPointType.TURNSTILE_ONE_SIDE) ? 0 : 1
+            info.Sensor_Ready_idx = -1
+            info.Sansor_Pass_idx = -1
+            info.Entry_Btn_idx = -1
+            info.Exit_Btn_idx = -1
+            info.Alarm_In_idx = -1
+            info.Entry_Rl_idx = -1
+            info.Exit_Rl_idx = -1
+            info.Alarm_out_idx = -1
+            info.BlockEnt_Rl_idx = -1
+            info.FreeEnt_Rl_idx = -1
+            info.Leaving_Zone = -1
+            info.Came_To_Zone = -1
+
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
@@ -342,6 +344,13 @@ export default class ParseController {
             Came_To_Zone: -1
         }
         if (message.data.resources) {
+            info.Loop_Ready_idx = -1
+            info.Open_Btn_idx = -1
+            info.Alarm_In_idx = -1
+            info.Lock_Relay_idx = -1
+            info.Leaving_Zone = -1
+            info.Came_To_Zone = -1
+
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
@@ -465,16 +474,17 @@ export default class ParseController {
         // console.log('deviceSetMqttSettings', message)
 
         const info: any = {
-            Control_point_idx: message.data.id,
-            Door_sens_idx: -1,
-            Open_Btn_idx: -1,
-            Alarm_In_idx: -1,
-            Lock_Relay_idx: -1,
-            Alarm_out_idx: -1,
-            Leaving_Zone: -1,
-            Came_To_Zone: -1
+            Control_point_idx: message.data.id
         }
         if (message.data.resources) {
+            info.Door_sens_idx = -1
+            info.Open_Btn_idx = -1
+            info.Alarm_In_idx = -1
+            info.Lock_Relay_idx = -1
+            info.Alarm_out_idx = -1
+            info.Leaving_Zone = -1
+            info.Came_To_Zone = -1
+
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
@@ -613,6 +623,11 @@ export default class ParseController {
             Came_To_Zone: -1
         }
         if (message.data.resources) {
+            info.Alarm_In_idx = -1
+            info.Lock_Relay_idx = -1
+            info.Leaving_Zone = -1
+            info.Came_To_Zone = -1
+
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
