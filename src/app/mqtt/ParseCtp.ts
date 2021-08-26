@@ -35,7 +35,7 @@ export default class ParseController {
                             break
                         case 'Exit_button':
                             info.Button_rex_opt = element.component_source
-                            info.Button_rex_idx = element.input - 1 - 1
+                            info.Button_rex_idx = element.input - 1
                             info.Button_rex_Condition = element.condition
                             break
                         case 'Fire_Alarm_in':
@@ -491,7 +491,7 @@ export default class ParseController {
                 switch (element.name) {
                     case 'Door_sensor':
                         info.Door_sens_opt = element.component_source
-                        info.Door_sens_idx = element.input - 1 - 1
+                        info.Door_sens_idx = element.input - 1
                         info.Door_sens_Condition = element.condition
                         break
                     case 'Open_button':
