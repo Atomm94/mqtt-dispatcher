@@ -43,6 +43,7 @@ export default class ParseCardKeys {
             for (const credential of cardholder.credentials) {
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
+                key_string += `${access_point_id};`
                 key_string += `${key_len};`
                 key_string += `${credential.code};`
                 key_string += `${access_rule_id};`
@@ -111,6 +112,7 @@ export default class ParseCardKeys {
             for (const credential of cardholder.credentials) {
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
+                key_string += `${access_point_id};`
                 key_string += `${key_len};`
                 key_string += `${credential.code};`
                 key_string += `${access_rule_id};`
