@@ -42,10 +42,7 @@ export default class ParseCardKeys {
                 }
             }
             for (const credential of cardholder.credentials) {
-                const credential_facility_hex = credential.facility ? credential.facility.toString(16) : ''
-                const credential_code_hex = Number(credential.code).toString(16)
-                let key_hex = `${credential_facility_hex}${credential_code_hex}`
-                key_hex = generateHexWithBytesLength(key_hex, key_len)
+                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, key_len)
 
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
@@ -60,7 +57,7 @@ export default class ParseCardKeys {
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
                 key_string += `${anti_passback_type};` // ABP
-                key_string += `${cardholder.antipass_backs.enable_timer};` // ABP_Time
+                key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
                 key_string += '0;' // Start_date
                 key_string += '0;' // Expiration_date
                 keys.push(key_string)
@@ -116,10 +113,7 @@ export default class ParseCardKeys {
                 }
             }
             for (const credential of cardholder.credentials) {
-                const credential_facility_hex = credential.facility ? credential.facility.toString(16) : ''
-                const credential_code_hex = Number(credential.code).toString(16)
-                let key_hex = `${credential_facility_hex}${credential_code_hex}`
-                key_hex = generateHexWithBytesLength(key_hex, key_len)
+                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, key_len)
 
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
@@ -134,7 +128,7 @@ export default class ParseCardKeys {
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
                 key_string += `${anti_passback_type};` // ABP
-                key_string += `${cardholder.antipass_backs.enable_timer};` // ABP_Time
+                key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
                 key_string += '0;' // Start_date
                 key_string += '0;' // Expiration_date
                 keys.push(key_string)
