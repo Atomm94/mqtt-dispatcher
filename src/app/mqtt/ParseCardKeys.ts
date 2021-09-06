@@ -9,6 +9,7 @@ import { credentialStatus } from '../enums/credentialStatus.enum'
 import { typeAntipassBack } from '../enums/typeAntipassBack.enum'
 
 import { handleCallback, ackTimeout } from './ParseAcu'
+import { generateHexWithBytesLength } from '../functions/util'
 
 export default class ParseCardKeys {
     public static limit_for_keys_count = 25
@@ -41,20 +42,22 @@ export default class ParseCardKeys {
                 }
             }
             for (const credential of cardholder.credentials) {
+                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, key_len)
+
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
                 key_string += `${access_point_id};`
                 key_string += `${key_len};`
-                key_string += `${credential.code};`
-                key_string += `${access_rule_id};`
+                key_string += `${key_hex};`
                 key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
+                key_string += `${access_rule_id};`
                 key_string += '1;' // Kind_key
                 key_string += '0;' // Key_type
                 key_string += '-1;' // Passes
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
                 key_string += `${anti_passback_type};` // ABP
-                key_string += `${cardholder.antipass_backs.enable_timer};` // ABP_Time
+                key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
                 key_string += '0;' // Start_date
                 key_string += '0;' // Expiration_date
                 keys.push(key_string)
@@ -91,7 +94,7 @@ export default class ParseCardKeys {
         const cardholders = message.data.cardholders
         const access_point_id = access_points[0].id
         const keys: any = []
-        const key_len = 4
+        const key_len = 7
         for (const cardholder of cardholders) {
             let access_rule_id = 0
             let anti_passback_type = -1
@@ -110,20 +113,22 @@ export default class ParseCardKeys {
                 }
             }
             for (const credential of cardholder.credentials) {
+                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, key_len)
+
                 let key_string = '/'
                 key_string += `${credential.cardholder};`
                 key_string += `${access_point_id};`
                 key_string += `${key_len};`
-                key_string += `${credential.code};`
-                key_string += `${access_rule_id};`
+                key_string += `${key_hex};`
                 key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
+                key_string += `${access_rule_id};`
                 key_string += '1;' // Kind_key
                 key_string += '0;' // Key_type
                 key_string += '-1;' // Passes
                 key_string += '0;' // First_Use_Counter
                 key_string += '0;' // Last_Use_Counter
                 key_string += `${anti_passback_type};` // ABP
-                key_string += `${cardholder.antipass_backs.enable_timer};` // ABP_Time
+                key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
                 key_string += '0;' // Start_date
                 key_string += '0;' // Expiration_date
                 keys.push(key_string)
