@@ -167,7 +167,7 @@ export default class ParseCardKeys {
             session_id: message.session_id,
             message_id: message.message_id,
             info: {
-                KeysCount: message.data.all_keys_count
+                KeysCount: message.data.all_credentials_count
             }
         }
         // console.log('endCardKey send message', send_data)
