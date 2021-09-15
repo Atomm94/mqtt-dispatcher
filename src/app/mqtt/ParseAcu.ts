@@ -283,7 +283,7 @@ export default class ParseAcu {
         // console.log('devicedelExtBrd', message)
         const topic = message.topic
         const send_data = {
-            operator: OperatorType.GET_EXT_BRD,
+            operator: OperatorType.DEL_EXT_BRD,
             session_id: message.session_id,
             message_id: message.message_id,
             info: message.data
