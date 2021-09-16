@@ -21,7 +21,7 @@ export default class ParseCardKeys {
 
         const access_point_id = access_points[0].id
         const keys: any = []
-        const key_len = 4
+        const key_len = 7
         for (const cardholder of cardholders) {
             let anti_passback_type = -1
             if (cardholder.antipass_backs) {
@@ -96,17 +96,19 @@ export default class ParseCardKeys {
         const keys: any = []
         const key_len = 7
         for (const cardholder of cardholders) {
-            let access_rule_id = 0
             let anti_passback_type = -1
-            if (cardholder.antipass_backs.type === typeAntipassBack.SOFT) {
-                anti_passback_type = 0
-            } else if (cardholder.antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
-                anti_passback_type = 1
-            } else if (cardholder.antipass_backs.type === typeAntipassBack.HARD) {
-                anti_passback_type = 2
-            } else if (cardholder.antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
-                anti_passback_type = 3
+            if (cardholder.antipass_backs) {
+                if (cardholder.antipass_backs.type === typeAntipassBack.SOFT) {
+                    anti_passback_type = 0
+                } else if (cardholder.antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
+                    anti_passback_type = 1
+                } else if (cardholder.antipass_backs.type === typeAntipassBack.HARD) {
+                    anti_passback_type = 2
+                } else if (cardholder.antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
+                    anti_passback_type = 3
+                }
             }
+            let access_rule_id = 0
             for (const access_rule of cardholder.access_rights.access_rules) {
                 if (access_rule.access_point === access_point_id) {
                     access_rule_id = access_rule.id
