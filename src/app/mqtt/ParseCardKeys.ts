@@ -13,6 +13,8 @@ import { generateHexWithBytesLength } from '../functions/util'
 
 export default class ParseCardKeys {
     public static limit_for_keys_count = 25
+    public static key_len = 7
+
     public static setCardKeys (message: ICrudMqttMessaging): void {
         // console.log('setCardKeys', message)
         const access_points = message.data.access_points
@@ -21,7 +23,7 @@ export default class ParseCardKeys {
 
         const access_point_id = access_points[0].id
         const keys: any = []
-        const key_len = 7
+
         for (const cardholder of cardholders) {
             let anti_passback_type = -1
             if (cardholder.antipass_backs) {
@@ -42,12 +44,12 @@ export default class ParseCardKeys {
                 }
             }
             for (const credential of cardholder.credentials) {
-                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, key_len)
+                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
 
                 let key_string = '/'
-                key_string += `${credential.cardholder};`
+                key_string += `${credential.id};`
                 key_string += `${access_point_id};`
-                key_string += `${key_len};`
+                key_string += `${this.key_len};`
                 key_string += `${key_hex};`
                 key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
                 key_string += `${access_rule_id};`
@@ -94,7 +96,7 @@ export default class ParseCardKeys {
         const cardholders = message.data.cardholders
         const access_point_id = access_points[0].id
         const keys: any = []
-        const key_len = 7
+
         for (const cardholder of cardholders) {
             let anti_passback_type = -1
             if (cardholder.antipass_backs) {
@@ -115,12 +117,12 @@ export default class ParseCardKeys {
                 }
             }
             for (const credential of cardholder.credentials) {
-                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, key_len)
+                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
 
                 let key_string = '/'
-                key_string += `${credential.cardholder};`
+                key_string += `${credential.id};`
                 key_string += `${access_point_id};`
-                key_string += `${key_len};`
+                key_string += `${this.key_len};`
                 key_string += `${key_hex};`
                 key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
                 key_string += `${access_rule_id};`
@@ -187,8 +189,8 @@ export default class ParseCardKeys {
         const cardholders = message.data.cardholders
         for (const cardholder of cardholders) {
             for (const credential of cardholder.credentials) {
-                const code = credential.code
-                const key_len = 4
+                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
+
                 if (message.data.access_rule) {
                     const send_data = {
                         operator: OperatorType.EDIT_KEY,
@@ -196,9 +198,9 @@ export default class ParseCardKeys {
                         message_id: message.message_id,
                         info: {
                             Ctp_idx: message.data.access_rule.access_point,
-                            Key_id: code,
+                            Key_id: key_hex,
                             Schedule_id: message.data.access_rule.id,
-                            Key_len: key_len
+                            Key_len: this.key_len
                         }
                     }
                     MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
@@ -208,12 +210,12 @@ export default class ParseCardKeys {
                     for (const access_point of access_points) {
                         const info: any = {
                             Ctp_id: access_point.id,
-                            Key_id: code
+                            Key_id: key_hex
                         }
 
                         if ('vip' in cardholder) info.Key_type = cardholder.vip ? 2 : 0
                         if ('status' in credential) info.Key_status = credential.status === credentialStatus.ACTIVE ? 1 : 0
-                        info.Key_len = key_len
+                        info.Key_len = this.key_len
                         const send_data = {
                             operator: OperatorType.EDIT_KEY,
                             session_id: message.session_id,
