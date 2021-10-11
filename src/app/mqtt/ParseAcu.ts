@@ -661,6 +661,7 @@ export function ackTimeout (send_topic: any, crud_message: any, cb: any, timeout
         }
 
         MQTTBroker.publishMessage(topic, JSON.stringify(messageAck))
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
         MQTTBroker.client.removeListener('message', cb)
     }, timeout)
 }
