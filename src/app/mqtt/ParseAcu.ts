@@ -529,7 +529,7 @@ export default class ParseAcu {
 }
 
 function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
-    ackTimeout(send_topic, crud_message, cb, 20000)
+    const ack_timeout = ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
@@ -593,6 +593,7 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                 }
 
                 MQTTBroker.client.removeListener('message', cb)
+                clearTimeout(ack_timeout)
             }
         } catch (e) {
             console.log(e)
@@ -602,7 +603,7 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
 }
 
 export function handlePingCallback (send_topic: any, crud_message: any): any {
-    ackTimeout(send_topic, crud_message, cb, 10000)
+    const ack_timeout = ackTimeout(send_topic, crud_message, cb, 10000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck)
@@ -613,6 +614,7 @@ export function handlePingCallback (send_topic: any, crud_message: any): any {
 
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                 MQTTBroker.client.removeListener('message', cb)
+                clearTimeout(ack_timeout)
             }
         } catch (e) {
 
@@ -622,7 +624,7 @@ export function handlePingCallback (send_topic: any, crud_message: any): any {
 }
 
 export function handleCallback (send_topic: any, crud_message: any): any {
-    ackTimeout(send_topic, crud_message, cb, 20000)
+    const ack_timeout = ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck)
@@ -634,6 +636,7 @@ export function handleCallback (send_topic: any, crud_message: any): any {
 
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                 MQTTBroker.client.removeListener('message', cb)
+                clearTimeout(ack_timeout)
             }
         } catch (e) {
         }
@@ -648,7 +651,7 @@ export function handleCallback (send_topic: any, crud_message: any): any {
 }
 
 export function ackTimeout (send_topic: any, crud_message: any, cb: any, timeout: number = 20000): any {
-    setTimeout(() => {
+    return setTimeout(() => {
         const topic = `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`
         const messageAck = {
             operator: `${crud_message.operator}-Ack`,

@@ -274,7 +274,8 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
     // MQTTBroker.client.removeListener('message', cb)
     // }, 20000)
     // console.log(12312123)
-    ackTimeout(send_topic, crud_message, cb, 20000)
+    const ack_timeout = ackTimeout(send_topic, crud_message, cb, 20000)
+
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
@@ -300,6 +301,7 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
                 }
 
                 MQTTBroker.client.removeListener('message', cb)
+                clearTimeout(ack_timeout)
             }
         } catch (e) {
             console.log(e)
