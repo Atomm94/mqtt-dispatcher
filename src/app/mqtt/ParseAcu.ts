@@ -526,6 +526,20 @@ export default class ParseAcu {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
+
+    public static setHeartBit (message: ICrudMqttMessaging): void {
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.SET_HEART_BIT,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
 }
 
 function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {

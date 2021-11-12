@@ -46,6 +46,15 @@ export default class ParseCardKeys {
             for (const credential of cardholder.credentials) {
                 const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
 
+                const start_date =
+                    (cardholder.limitations && cardholder.limitations.valid_from)
+                        ? Math.round((new Date(cardholder.limitations.valid_from).getTime()) / 1000)
+                        : 0
+                const expiration_date =
+                    (cardholder.limitations && cardholder.limitations.valid_due)
+                        ? Math.round((new Date(cardholder.limitations.valid_due).getTime()) / 1000)
+                        : 0
+
                 let key_string = '/'
                 key_string += `${credential.id};`
                 key_string += `${access_point_id};`
@@ -60,8 +69,8 @@ export default class ParseCardKeys {
                 key_string += '0;' // Last_Use_Counter
                 key_string += `${anti_passback_type};` // ABP
                 key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
-                key_string += '0;' // Start_date
-                key_string += '0;' // Expiration_date
+                key_string += `${start_date};` // Start_date
+                key_string += `${expiration_date};` // Expiration_date
                 keys.push(key_string)
             }
         }
@@ -119,6 +128,15 @@ export default class ParseCardKeys {
             for (const credential of cardholder.credentials) {
                 const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
 
+                const start_date =
+                    (cardholder.limitations && cardholder.limitations.valid_from)
+                        ? Math.round((new Date(cardholder.limitations.valid_from).getTime()) / 1000)
+                        : 0
+                const expiration_date =
+                    (cardholder.limitations && cardholder.limitations.valid_due)
+                        ? Math.round((new Date(cardholder.limitations.valid_due).getTime()) / 1000)
+                        : 0
+
                 let key_string = '/'
                 key_string += `${credential.id};`
                 key_string += `${access_point_id};`
@@ -133,8 +151,8 @@ export default class ParseCardKeys {
                 key_string += '0;' // Last_Use_Counter
                 key_string += `${anti_passback_type};` // ABP
                 key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
-                key_string += '0;' // Start_date
-                key_string += '0;' // Expiration_date
+                key_string += `${start_date};` // Start_date
+                key_string += `${expiration_date};` // Expiration_date
                 keys.push(key_string)
             }
         }
@@ -198,7 +216,8 @@ export default class ParseCardKeys {
                         message_id: message.message_id,
                         info: {
                             Ctp_idx: message.data.access_rule.access_point,
-                            Key_id: key_hex,
+                            Key_id: credential.id,
+                            Key: key_hex,
                             Schedule_id: message.data.access_rule.id,
                             Key_len: this.key_len
                         }
@@ -210,7 +229,8 @@ export default class ParseCardKeys {
                     for (const access_point of access_points) {
                         const info: any = {
                             Ctp_id: access_point.id,
-                            Key_id: key_hex
+                            Key_id: credential.id,
+                            Key: key_hex
                         }
 
                         if ('vip' in cardholder) info.Key_type = cardholder.vip ? 2 : 0
