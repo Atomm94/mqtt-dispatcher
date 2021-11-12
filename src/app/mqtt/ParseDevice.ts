@@ -16,6 +16,9 @@ export default class ParseDevice {
             case OperatorType.EVENT:
                 this.deviceEvent(send_crud)
                 break
+            case OperatorType.HEART_BIT:
+                this.deviceHeartBit(send_crud)
+                break
             // case OperatorType.ACCEPT_ACK:
             //     this.deviceAcceptAck(topic, data)
             //     break
@@ -251,6 +254,10 @@ export default class ParseDevice {
     }
 
     public static deviceEvent (data: IMqttCrudMessaging): void {
+        MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
+    }
+
+    public static deviceHeartBit (data: IMqttCrudMessaging): void {
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
