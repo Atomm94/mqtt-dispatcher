@@ -12,7 +12,7 @@ export default class ParseController {
         // console.log('deviceSetMqttSettings', message)
 
         try {
-            const info: any = {
+            let info: any = {
                 Control_point_idx: message.data.id
             }
             if (message.data.resources) {
@@ -62,39 +62,8 @@ export default class ParseController {
                     }
                 }
             }
+            info = this.settingReaders(message.data, info)
 
-            if (message.data.readers) {
-                info.Rd0_idx = -1
-                info.Rd0_dir = -1
-                info.Rd1_idx = -1
-                info.Rd1_dir = -1
-                info.Rd2_idx = -1
-                info.Rd2_dir = -1
-                info.Rd3_idx = -1
-                info.Rd3_dir = -1
-                const readers = message.data.readers
-                readers.forEach((reader: any, i: number) => {
-                    if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
-                        info[`Rd${i}_idx`] = reader.id
-                        info[`Rd${i}_dir`] = reader.direction
-                        if (reader.direction === 0) { // Entry
-                            if (reader.leaving_zone) {
-                                info.Leaving_Zone = reader.leaving_zone
-                            }
-                            if (reader.came_to_zone) {
-                                info.Came_To_Zone = reader.came_to_zone
-                            }
-                        } else if (reader.direction === 1) { // Exit (reverse)
-                            if (reader.leaving_zone) {
-                                info.Came_To_Zone = reader.leaving_zone
-                            }
-                            if (reader.came_to_zone) {
-                                info.Leaving_Zone = reader.came_to_zone
-                            }
-                        }
-                    }
-                })
-            }
             const topic = message.topic
             const send_data: any = {
                 operator: OperatorType.SET_CTP_DOOR,
@@ -152,7 +121,7 @@ export default class ParseController {
     public static setCtpTurnstile (message: ICrudMqttMessaging): void {
         // console.log('setCtpTurnstile', message)
 
-        const info: any = {
+        let info: any = {
             Control_point_idx: message.data.id
             // Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
         }
@@ -242,38 +211,7 @@ export default class ParseController {
             }
         }
 
-        if (message.data.readers) {
-            info.Rd0_idx = -1
-            info.Rd0_dir = -1
-            info.Rd1_idx = -1
-            info.Rd1_dir = -1
-            info.Rd2_idx = -1
-            info.Rd2_dir = -1
-            info.Rd3_idx = -1
-            info.Rd3_dir = -1
-            const readers = message.data.readers
-            readers.forEach((reader: any, i: number) => {
-                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
-                    info[`Rd${i}_idx`] = reader.id
-                    info[`Rd${i}_dir`] = reader.direction
-                    if (reader.direction === 0) { // Entry
-                        if (reader.leaving_zone) {
-                            info.Leaving_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Came_To_Zone = reader.came_to_zone
-                        }
-                    } else if (reader.direction === 1) { // Exit (reverse)
-                        if (reader.leaving_zone) {
-                            info.Came_To_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Leaving_Zone = reader.came_to_zone
-                        }
-                    }
-                }
-            })
-        }
+        info = this.settingReaders(message.data, info)
         const topic = message.topic
         const send_data: any = {
             operator: OperatorType.SET_CTP_TURNSTILE,
@@ -330,7 +268,7 @@ export default class ParseController {
     public static setCtpGate (message: ICrudMqttMessaging): void {
         // console.log('setCtpGate', message)
 
-        const info: any = {
+        let info: any = {
             Control_point_idx: message.data.id,
             Loop_Ready_idx: -1,
             Open_Btn_idx: -1,
@@ -379,38 +317,7 @@ export default class ParseController {
             }
         }
 
-        if (message.data.readers) {
-            info.Rd0_idx = -1
-            info.Rd0_dir = -1
-            info.Rd1_idx = -1
-            info.Rd1_dir = -1
-            info.Rd2_idx = -1
-            info.Rd2_dir = -1
-            info.Rd3_idx = -1
-            info.Rd3_dir = -1
-            const readers = message.data.readers
-            readers.forEach((reader: any, i: number) => {
-                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
-                    info[`Rd${i}_idx`] = reader.id
-                    info[`Rd${i}_dir`] = reader.direction
-                    if (reader.direction === 0) { // Entry
-                        if (reader.leaving_zone) {
-                            info.Leaving_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Came_To_Zone = reader.came_to_zone
-                        }
-                    } else if (reader.direction === 1) { // Exit (reverse)
-                        if (reader.leaving_zone) {
-                            info.Came_To_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Leaving_Zone = reader.came_to_zone
-                        }
-                    }
-                }
-            })
-        }
+        info = this.settingReaders(message.data, info)
         const topic = message.topic
         const send_data: any = {
             operator: OperatorType.SET_CTP_GATE,
@@ -467,7 +374,7 @@ export default class ParseController {
     public static setCtpGateway (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
 
-        const info: any = {
+        let info: any = {
             Control_point_idx: message.data.id
         }
         if (message.data.resources) {
@@ -519,38 +426,7 @@ export default class ParseController {
             }
         }
 
-        if (message.data.readers) {
-            info.Rd0_idx = -1
-            info.Rd0_dir = -1
-            info.Rd1_idx = -1
-            info.Rd1_dir = -1
-            info.Rd2_idx = -1
-            info.Rd2_dir = -1
-            info.Rd3_idx = -1
-            info.Rd3_dir = -1
-            const readers = message.data.readers
-            readers.forEach((reader: any, i: number) => {
-                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
-                    info[`Rd${i}_idx`] = reader.id
-                    info[`Rd${i}_dir`] = reader.direction
-                    if (reader.direction === 0) { // Entry
-                        if (reader.leaving_zone) {
-                            info.Leaving_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Came_To_Zone = reader.came_to_zone
-                        }
-                    } else if (reader.direction === 1) { // Exit (reverse)
-                        if (reader.leaving_zone) {
-                            info.Came_To_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Leaving_Zone = reader.came_to_zone
-                        }
-                    }
-                }
-            })
-        }
+        info = this.settingReaders(message.data, info)
         const topic = message.topic
         const send_data: any = {
             operator: OperatorType.SET_CTP_GATEWAY,
@@ -607,7 +483,7 @@ export default class ParseController {
     public static setCtpFloor (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
 
-        const info: any = {
+        let info: any = {
             Control_point_idx: message.data.id,
             Alarm_In_idx: -1,
             Lock_Relay_idx: -1
@@ -641,38 +517,7 @@ export default class ParseController {
             }
         }
 
-        if (message.data.readers) {
-            info.Rd0_idx = -1
-            info.Rd0_dir = -1
-            info.Rd1_idx = -1
-            info.Rd1_dir = -1
-            info.Rd2_idx = -1
-            info.Rd2_dir = -1
-            info.Rd3_idx = -1
-            info.Rd3_dir = -1
-            const readers = message.data.readers
-            readers.forEach((reader: any, i: number) => {
-                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
-                    info[`Rd${i}_idx`] = reader.id
-                    info[`Rd${i}_dir`] = reader.direction
-                    if (reader.direction === 0) { // Entry
-                        if (reader.leaving_zone) {
-                            info.Leaving_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Came_To_Zone = reader.came_to_zone
-                        }
-                    } else if (reader.direction === 1) { // Exit (reverse)
-                        if (reader.leaving_zone) {
-                            info.Came_To_Zone = reader.leaving_zone
-                        }
-                        if (reader.came_to_zone) {
-                            info.Leaving_Zone = reader.came_to_zone
-                        }
-                    }
-                }
-            })
-        }
+        info = this.settingReaders(message.data, info)
 
         const topic = message.topic
         const send_data: any = {
@@ -725,5 +570,41 @@ export default class ParseController {
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
+    }
+
+    public static settingReaders (message: any, info: any) {
+        if (message.readers) {
+            info.Rd0_idx = -1
+            info.Rd0_dir = -1
+            info.Rd1_idx = -1
+            info.Rd1_dir = -1
+            info.Rd2_idx = -1
+            info.Rd2_dir = -1
+            info.Rd3_idx = -1
+            info.Rd3_dir = -1
+            const readers = message.readers
+            readers.forEach((reader: any, i: number) => {
+                if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
+                    info[`Rd${i}_idx`] = reader.id
+                    info[`Rd${i}_dir`] = reader.direction
+                    if (reader.direction === 0) { // Entry
+                        if (reader.leaving_zone) {
+                            info.Leaving_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Came_To_Zone = reader.came_to_zone
+                        }
+                    } else if (reader.direction === 1) { // Exit (reverse)
+                        if (reader.leaving_zone) {
+                            info.Came_To_Zone = reader.leaving_zone
+                        }
+                        if (reader.came_to_zone) {
+                            info.Leaving_Zone = reader.came_to_zone
+                        }
+                    }
+                }
+            })
+        }
+        return info
     }
 }
