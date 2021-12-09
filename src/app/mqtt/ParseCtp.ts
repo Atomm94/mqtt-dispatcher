@@ -21,8 +21,6 @@ export default class ParseController {
                 info.Alarm_In_idx = -1
                 info.Lock_Relay_idx = -1
                 info.Alarm_out_idx = -1
-                info.Leaving_Zone = -1
-                info.Came_To_Zone = -1
 
                 const resources = message.data.resources
                 for (const resource in resources) {
@@ -170,8 +168,6 @@ export default class ParseController {
             info.Alarm_out_idx = -1
             info.BlockEnt_Rl_idx = -1
             info.FreeEnt_Rl_idx = -1
-            info.Leaving_Zone = -1
-            info.Came_To_Zone = -1
 
             const resources = message.data.resources
             for (const resource in resources) {
@@ -339,9 +335,7 @@ export default class ParseController {
             Loop_Ready_idx: -1,
             Open_Btn_idx: -1,
             Alarm_In_idx: -1,
-            Lock_Relay_idx: -1,
-            Leaving_Zone: -1,
-            Came_To_Zone: -1
+            Lock_Relay_idx: -1
         }
         if (message.data.resources) {
             info.Loop_Ready_idx = -1
@@ -482,8 +476,6 @@ export default class ParseController {
             info.Alarm_In_idx = -1
             info.Lock_Relay_idx = -1
             info.Alarm_out_idx = -1
-            info.Leaving_Zone = -1
-            info.Came_To_Zone = -1
 
             const resources = message.data.resources
             for (const resource in resources) {
@@ -618,9 +610,7 @@ export default class ParseController {
         const info: any = {
             Control_point_idx: message.data.id,
             Alarm_In_idx: -1,
-            Lock_Relay_idx: -1,
-            Leaving_Zone: -1,
-            Came_To_Zone: -1
+            Lock_Relay_idx: -1
         }
         if (message.data.resources) {
             info.Alarm_In_idx = -1
