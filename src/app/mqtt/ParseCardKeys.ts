@@ -238,11 +238,7 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
                     crud_message.data.access_points.shift()
                     crud_message.data.access_point_sended = 0
                     if (crud_message.data.access_points.length) {
-                        if (crud_message.operator === OperatorType.ADD_CARD_KEY) {
-                            ParseCardKeys.setAddCardKey(crud_message, OperatorType.ADD_CARD_KEY)
-                        } else {
-                            ParseCardKeys.setAddCardKey(crud_message, OperatorType.SET_CARD_KEYS)
-                        }
+                        ParseCardKeys.setAddCardKey(crud_message, crud_message.operator as OperatorType.SET_CARD_KEYS | OperatorType.ADD_CARD_KEY)
                     } else {
                         ParseCardKeys.endCardKey(crud_message)
                     }
