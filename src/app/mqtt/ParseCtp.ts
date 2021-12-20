@@ -25,37 +25,57 @@ export default class ParseController {
                 const resources = message.data.resources
                 for (const resource in resources) {
                     const element = resources[resource]
-                    switch (element.name) {
+                    switch (resource) {
                         case 'Door_sensor':
-                            if ('component_source' in element) info.Door_sens_opt = element.component_source
-                            if ('input' in element) info.Door_sens_idx = element.input - 1
-                            if ('condition' in element) info.Door_sens_Condition = element.condition
+                            if (element === -1) {
+                                info.Door_sens_idx = -1
+                            } else {
+                                if ('component_source' in element) info.Door_sens_opt = element.component_source
+                                if ('input' in element) info.Door_sens_idx = element.input - 1
+                                if ('condition' in element) info.Door_sens_Condition = element.condition
+                            }
                             break
                         case 'Exit_button':
-                            if ('component_source' in element) info.Button_rex_opt = element.component_source
-                            if ('input' in element) info.Button_rex_idx = element.input - 1
-                            if ('condition' in element) info.Button_rex_Condition = element.condition
+                            if (element === -1) {
+                                info.Button_rex_idx = -1
+                            } else {
+                                if ('component_source' in element) info.Button_rex_opt = element.component_source
+                                if ('input' in element) info.Button_rex_idx = element.input - 1
+                                if ('condition' in element) info.Button_rex_Condition = element.condition
+                            }
                             break
                         case 'Fire_Alarm_in':
-                            if ('component_source' in element) info.Alarm_In_opt = element.component_source
-                            if ('input' in element) info.Alarm_In_idx = element.input - 1
-                            if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                            if (element === -1) {
+                                info.Alarm_In_idx = -1
+                            } else {
+                                if ('component_source' in element) info.Alarm_In_opt = element.component_source
+                                if ('input' in element) info.Alarm_In_idx = element.input - 1
+                                if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                            }
                             break
                         case 'Lock':
-                            if ('component_source' in element) info.Lock_Relay_opt = element.component_source
-                            if ('output' in element) info.Lock_Relay_idx = element.output - 1
-                            if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
-                            if ('type' in element) info.Door_Lock_type = element.type
-                            if ('impulse_time' in element) info.Door_Lock_puls = element.impulse_time
-                            if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
-                            if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
+                            if (element === -1) {
+                                info.Lock_Relay_idx = -1
+                            } else {
+                                if ('component_source' in element) info.Lock_Relay_opt = element.component_source
+                                if ('output' in element) info.Lock_Relay_idx = element.output - 1
+                                if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
+                                if ('type' in element) info.Door_Lock_type = element.type
+                                if ('impulse_time' in element) info.Door_Lock_puls = element.impulse_time
+                                if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
+                                if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
+                            }
                             break
                         case 'Alarm_out':
-                            if ('component_source' in element) info.Alarm_out_opt = element.component_source
-                            if ('output' in element) info.Alarm_out_idx = element.output - 1
-                            if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
-                            if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
-                            if ('type' in element) info.Alarm_out_mod = element.type
+                            if (element === -1) {
+                                info.Alarm_out_idx = -1
+                            } else {
+                                if ('component_source' in element) info.Alarm_out_opt = element.component_source
+                                if ('output' in element) info.Alarm_out_idx = element.output - 1
+                                if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
+                                if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
+                                if ('type' in element) info.Alarm_out_mod = element.type
+                            }
                             break
                         default:
                             break
@@ -141,68 +161,108 @@ export default class ParseController {
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
-                switch (element.name) {
+                switch (resource) {
                     case 'Turnstile_ready':
-                        if ('component_source' in element) info.Sensor_Ready_opt = element.component_source
-                        if ('input' in element) info.Sensor_Ready_idx = element.input - 1
-                        if ('condition' in element) info.Sensor_Ready_Condition = element.condition
+                        if (element === -1) {
+                            info.Sensor_Ready_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Sensor_Ready_opt = element.component_source
+                            if ('input' in element) info.Sensor_Ready_idx = element.input - 1
+                            if ('condition' in element) info.Sensor_Ready_Condition = element.condition
+                        }
                         break
                     case 'Pass_control':
-                        if ('component_source' in element) info.Sansor_Pass_opt = element.component_source
-                        if ('input' in element) info.Sansor_Pass_idx = element.input - 1
-                        if ('condition' in element) info.Sensor_Pass_Condition = element.condition
+                        if (element === -1) {
+                            info.Sansor_Pass_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Sansor_Pass_opt = element.component_source
+                            if ('input' in element) info.Sansor_Pass_idx = element.input - 1
+                            if ('condition' in element) info.Sensor_Pass_Condition = element.condition
+                        }
                         break
                     case 'Entry_button':
-                        if ('component_source' in element) info.Entry_Btn_opt = element.component_source
-                        if ('input' in element) info.Entry_Btn_idx = element.input - 1
-                        if ('condition' in element) info.Entry_Btn_Condition = element.condition
+                        if (element === -1) {
+                            info.Entry_Btn_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Entry_Btn_opt = element.component_source
+                            if ('input' in element) info.Entry_Btn_idx = element.input - 1
+                            if ('condition' in element) info.Entry_Btn_Condition = element.condition
+                        }
                         break
                     case 'Exit_button':
-                        if ('component_source' in element) info.Exit_Btn_opt = element.component_source
-                        if ('input' in element) info.Exit_Btn_idx = element.input - 1
-                        if ('condition' in element) info.Exit_Btn_Condition = element.condition
+                        if (element === -1) {
+                            info.Exit_Btn_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Exit_Btn_opt = element.component_source
+                            if ('input' in element) info.Exit_Btn_idx = element.input - 1
+                            if ('condition' in element) info.Exit_Btn_Condition = element.condition
+                        }
                         break
                     case 'Fire_Alarm_in':
-                        if ('component_source' in element) info.Alarm_In_opt = element.component_source
-                        if ('input' in element) info.Alarm_In_idx = element.input - 1
-                        if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                        if (element === -1) {
+                            info.Alarm_In_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Alarm_In_opt = element.component_source
+                            if ('input' in element) info.Alarm_In_idx = element.input - 1
+                            if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                        }
                         break
                     case 'Entry_relay':
-                        if ('component_source' in element) info.Entry_Rl_opt = element.component_source
-                        if ('input' in element) info.Entry_Rl_idx = element.input - 1
-                        if ('relay_mode' in element) info.Entry_Rl_mode = element.relay_mode
-                        if ('type' in element) info.Entry_Rl_type = element.type
-                        if ('impulse_time' in element) info.Entry_Rl_pulse = element.impulse_time
-                        if ('entry_exit_open_durations' in element) info.Entry_Delay = element.entry_exit_open_durations
+                        if (element === -1) {
+                            info.Entry_Rl_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Entry_Rl_opt = element.component_source
+                            if ('input' in element) info.Entry_Rl_idx = element.input - 1
+                            if ('relay_mode' in element) info.Entry_Rl_mode = element.relay_mode
+                            if ('type' in element) info.Entry_Rl_type = element.type
+                            if ('impulse_time' in element) info.Entry_Rl_pulse = element.impulse_time
+                            if ('entry_exit_open_durations' in element) info.Entry_Delay = element.entry_exit_open_durations
+                        }
                         break
                     case 'Exit_relay':
-                        if ('component_source' in element) info.Exit_Rl_opt = element.component_source
-                        if ('input' in element) info.Exit_Rl_idx = element.input - 1
-                        if ('relay_mode' in element) info.Exit_Rl_mode = element.relay_mode
-                        if ('type' in element) info.Exit_Rl_type = element.type
-                        if ('impulse_time' in element) info.Exit_Rl_pulse = element.impulse_time
-                        if ('entry_exit_open_durations' in element) info.Entry_Delay = element.entry_exit_open_durations
+                        if (element === -1) {
+                            info.Exit_Rl_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Exit_Rl_opt = element.component_source
+                            if ('input' in element) info.Exit_Rl_idx = element.input - 1
+                            if ('relay_mode' in element) info.Exit_Rl_mode = element.relay_mode
+                            if ('type' in element) info.Exit_Rl_type = element.type
+                            if ('impulse_time' in element) info.Exit_Rl_pulse = element.impulse_time
+                            if ('entry_exit_open_durations' in element) info.Entry_Delay = element.entry_exit_open_durations
+                        }
                         break
                     case 'Alarm_out':
-                        if ('component_source' in element) info.Alarm_out_opt = element.component_source
-                        if ('output' in element) info.Alarm_out_idx = element.output - 1
-                        if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
-                        if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
-                        if ('type' in element) info.Alarm_out_mod = element.type
+                        if (element === -1) {
+                            info.Alarm_out_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Alarm_out_opt = element.component_source
+                            if ('output' in element) info.Alarm_out_idx = element.output - 1
+                            if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
+                            if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
+                            if ('type' in element) info.Alarm_out_mod = element.type
+                        }
                         break
                     case 'Block_Turnstile':
-                        if ('component_source' in element) info.BlockEnt_Rl_opt = element.component_source
-                        if ('output' in element) info.BlockEnt_Rl_idx = element.output - 1
-                        if ('impulse_time' in element) info.BlockEnt_Rl_pulse = element.impulse_time
-                        if ('relay_mode' in element) info.BlockEnt_Rl_mode = element.relay_mode
-                        if ('type' in element) info.BlockEnt_Rl_type = element.type
+                        if (element === -1) {
+                            info.BlockEnt_Rl_idx = -1
+                        } else {
+                            if ('component_source' in element) info.BlockEnt_Rl_opt = element.component_source
+                            if ('output' in element) info.BlockEnt_Rl_idx = element.output - 1
+                            if ('impulse_time' in element) info.BlockEnt_Rl_pulse = element.impulse_time
+                            if ('relay_mode' in element) info.BlockEnt_Rl_mode = element.relay_mode
+                            if ('type' in element) info.BlockEnt_Rl_type = element.type
+                        }
                         break
                     case 'Emergency_open':
-                        if ('component_source' in element) info.FreeEnt_Rl_opt = element.component_source
-                        if ('output' in element) info.FreeEnt_Rl_idx = element.output - 1
-                        if ('impulse_time' in element) info.FreeEnt_Rl_pulse = element.impulse_time
-                        if ('relay_mode' in element) info.FreeEnt_Rl_mode = element.relay_mode
-                        if ('type' in element) info.FreeEnt_Rl_type = element.type
+                        if (element === -1) {
+                            info.FreeEnt_Rl_idx = -1
+                        } else {
+                            if ('component_source' in element) info.FreeEnt_Rl_opt = element.component_source
+                            if ('output' in element) info.FreeEnt_Rl_idx = element.output - 1
+                            if ('impulse_time' in element) info.FreeEnt_Rl_pulse = element.impulse_time
+                            if ('relay_mode' in element) info.FreeEnt_Rl_mode = element.relay_mode
+                            if ('type' in element) info.FreeEnt_Rl_type = element.type
+                        }
                         break
 
                     default:
@@ -286,30 +346,47 @@ export default class ParseController {
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
-                switch (element.name) {
+                switch (resource) {
                     case 'Loop_sensor':
-                        if ('component_source' in element) info.Loop_Ready_opt = element.component_source
-                        if ('input' in element) info.Loop_Ready_idx = element.input - 1
-                        if ('condition' in element) info.Loop_Ready_Condition = element.condition
+
+                        if (element === -1) {
+                            info.Loop_Ready_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Loop_Ready_opt = element.component_source
+                            if ('input' in element) info.Loop_Ready_idx = element.input - 1
+                            if ('condition' in element) info.Loop_Ready_Condition = element.condition
+                        }
                         break
                     case 'Open_button':
-                        if ('component_source' in element) info.Open_Btn_opt = element.component_source
-                        if ('input' in element) info.Open_Btn_idx = element.input - 1
-                        if ('condition' in element) info.Open_Btn_Condition = element.condition
+                        if (element === -1) {
+                            info.Open_Btn_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Open_Btn_opt = element.component_source
+                            if ('input' in element) info.Open_Btn_idx = element.input - 1
+                            if ('condition' in element) info.Open_Btn_Condition = element.condition
+                        }
                         break
                     case 'Fire_Alarm_in':
-                        if ('component_source' in element) info.Alarm_In_opt = element.component_source
-                        if ('input' in element) info.Alarm_In_idx = element.input - 1
-                        if ('condition' in element) info.Alarm_In_Condition = element.condition
+                        if (element === -1) {
+                            info.Alarm_In_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Alarm_In_opt = element.component_source
+                            if ('input' in element) info.Alarm_In_idx = element.input - 1
+                            if ('condition' in element) info.Alarm_In_Condition = element.condition
+                        }
                         break
                     case 'Open_relay':
-                        if ('component_source' in element) info.Lock_Relay_opt = element.component_source
-                        if ('output' in element) info.Lock_Relay_idx = element.output - 1
-                        if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
-                        if ('type' in element) info.Door_Lock_type = element.type
-                        if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
-                        if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
-                        if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
+                        if (element === -1) {
+                            info.Lock_Relay_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Lock_Relay_opt = element.component_source
+                            if ('output' in element) info.Lock_Relay_idx = element.output - 1
+                            if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
+                            if ('type' in element) info.Door_Lock_type = element.type
+                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
+                            if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
+                            if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
+                        }
                         break
                     default:
                         break
@@ -387,38 +464,57 @@ export default class ParseController {
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
-                switch (element.name) {
+                switch (resource) {
                     case 'Door_sensor':
-                        if ('component_source' in element) info.Door_sens_opt = element.component_source
-                        if ('input' in element) info.Door_sens_idx = element.input - 1
-                        if ('condition' in element) info.Door_sens_Condition = element.condition
+                        if (element === -1) {
+                            info.Door_sens_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Door_sens_opt = element.component_source
+                            if ('input' in element) info.Door_sens_idx = element.input - 1
+                            if ('condition' in element) info.Door_sens_Condition = element.condition
+                        }
                         break
                     case 'Open_button':
-                        if ('component_source' in element) info.Open_Btn_opt = element.component_source
-                        if ('input' in element) info.Open_Btn_idx = element.input - 1
-                        if ('condition' in element) info.Open_Btn_Condition = element.condition
+                        if (element === -1) {
+                            info.Open_Btn_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Open_Btn_opt = element.component_source
+                            if ('input' in element) info.Open_Btn_idx = element.input - 1
+                            if ('condition' in element) info.Open_Btn_Condition = element.condition
+                        }
                         break
                     case 'Fire_Alarm_in':
-                        if ('component_source' in element) info.Alarm_In_opt = element.component_source
-                        if ('input' in element) info.Alarm_In_idx = element.input - 1
-                        if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                        if (element === -1) {
+                            info.Alarm_In_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Alarm_In_opt = element.component_source
+                            if ('input' in element) info.Alarm_In_idx = element.input - 1
+                            if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                        }
                         break
                     case 'Lock':
-                        if ('component_source' in element) info.Lock_Relay_opt = element.component_source
-                        if ('output' in element) info.Lock_Relay_idx = element.output - 1
-                        if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
-                        if ('type' in element) info.Door_Lock_type = element.type
-                        if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
-                        if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
-                        if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
-
+                        if (element === -1) {
+                            info.Lock_Relay_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Lock_Relay_opt = element.component_source
+                            if ('output' in element) info.Lock_Relay_idx = element.output - 1
+                            if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
+                            if ('type' in element) info.Door_Lock_type = element.type
+                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
+                            if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
+                            if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
+                        }
                         break
                     case 'Alarm_out':
-                        if ('component_source' in element) info.Alarm_out_opt = element.component_source
-                        if ('output' in element) info.Alarm_out_idx = element.output - 1
-                        if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
-                        if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
-                        if ('type' in element) info.Alarm_out_mod = element.type
+                        if (element === -1) {
+                            info.Alarm_out_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Alarm_out_opt = element.component_source
+                            if ('output' in element) info.Alarm_out_idx = element.output - 1
+                            if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
+                            if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
+                            if ('type' in element) info.Alarm_out_mod = element.type
+                        }
                         break
                     default:
                         break
@@ -484,9 +580,9 @@ export default class ParseController {
         // console.log('deviceSetMqttSettings', message)
 
         let info: any = {
-            Control_point_idx: message.data.id,
-            Alarm_In_idx: -1,
-            Lock_Relay_idx: -1
+            Control_point_idx: message.data.id
+            // Alarm_In_idx: -1,
+            // Lock_Relay_idx: -1
         }
         if (message.data.resources) {
             // info.Alarm_In_idx = -1
@@ -497,19 +593,27 @@ export default class ParseController {
             const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
-                switch (element.name) {
+                switch (resource) {
                     case 'Fire_Alarm_in':
-                        if ('component_source' in element) info.Alarm_In_opt = element.component_source
-                        if ('input' in element) info.Alarm_In_idx = element.input - 1
-                        if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                        if (element === -1) {
+                            info.Alarm_In_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Alarm_In_opt = element.component_source
+                            if ('input' in element) info.Alarm_In_idx = element.input - 1
+                            if ('condition' in element) info.Allarm_Input_Condition = element.condition
+                        }
                         break
                     case 'Lock':
-                        if ('component_source' in element) info.Lock_Relay_opt = element.component_source
-                        if ('output' in element) info.Lock_Relay_idx = element.output - 1
-                        if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
-                        if ('type' in element) info.Door_Lock_type = element.type
-                        if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
-                        if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
+                        if (element === -1) {
+                            info.Lock_Relay_idx = -1
+                        } else {
+                            if ('component_source' in element) info.Lock_Relay_opt = element.component_source
+                            if ('output' in element) info.Lock_Relay_idx = element.output - 1
+                            if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
+                            if ('type' in element) info.Door_Lock_type = element.type
+                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
+                            if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
+                        }
                         break
                     default:
                         break

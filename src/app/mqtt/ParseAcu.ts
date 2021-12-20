@@ -342,6 +342,7 @@ export default class ParseAcu {
         if ('enable_crc' in reader_data) info.Rd_Enable_crc = reader_data.enable_crc
         if ('mode' in reader_data) info.Rd_mode = reader_data.mode
 
+        info.Rd_Wg_type = reader_data.wg_type
         if (Number(reader_data.wg_type) === -1) {
             if ('osdp_address' in reader_data) info.Rd_OSDP_adr = reader_data.osdp_address
             if (osdp_data) {
@@ -356,7 +357,6 @@ export default class ParseAcu {
             }
         } else {
             if ('port' in reader_data) info.Rd_Wg_idx = reader_data.port
-            info.Rd_Wg_type = reader_data.wg_type
             // Rd_WG_RG: -1,
             // Rd_WG_Red: -1,
             // Rd_WG_Green: -1,
