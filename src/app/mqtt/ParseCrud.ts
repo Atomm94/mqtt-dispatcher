@@ -142,10 +142,10 @@ export default class ParseCrud {
                 ParseAcu.single_pass(message)
                 break
             case OperatorType.SET_CARD_KEYS:
-                ParseCardKeys.setCardKeys(message)
+                ParseCardKeys.setAddCardKey(message, OperatorType.SET_CARD_KEYS)
                 break
             case OperatorType.ADD_CARD_KEY:
-                ParseCardKeys.addCardKey(message)
+                ParseCardKeys.setAddCardKey(message, OperatorType.ADD_CARD_KEY)
                 break
             case OperatorType.EDIT_KEY:
                 ParseCardKeys.editKey(message)

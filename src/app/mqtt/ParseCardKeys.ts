@@ -15,91 +15,7 @@ export default class ParseCardKeys {
     public static limit_for_keys_count = 25
     public static key_len = 7
 
-    public static setCardKeys (message: ICrudMqttMessaging): void {
-        // console.log('setCardKeys', message)
-        const access_points = message.data.access_points
-        const cardholders = message.data.cardholders
-        console.log('data', message.data)
-
-        const access_point_id = access_points[0].id
-        const keys: any = []
-
-        for (const cardholder of cardholders) {
-            let anti_passback_type = -1
-            if (cardholder.antipass_backs) {
-                if (cardholder.antipass_backs.type === typeAntipassBack.SOFT) {
-                    anti_passback_type = 0
-                } else if (cardholder.antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
-                    anti_passback_type = 1
-                } else if (cardholder.antipass_backs.type === typeAntipassBack.HARD) {
-                    anti_passback_type = 2
-                } else if (cardholder.antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
-                    anti_passback_type = 3
-                }
-            }
-            let access_rule_id = 0
-            for (const access_rule of cardholder.access_rights.access_rules) {
-                if (access_rule.access_point === access_point_id) {
-                    access_rule_id = access_rule.id
-                }
-            }
-            for (const credential of cardholder.credentials) {
-                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
-
-                const start_date =
-                    (cardholder.limitations && cardholder.limitations.valid_from)
-                        ? Math.round((new Date(cardholder.limitations.valid_from).getTime()) / 1000)
-                        : 0
-                const expiration_date =
-                    (cardholder.limitations && cardholder.limitations.valid_due)
-                        ? Math.round((new Date(cardholder.limitations.valid_due).getTime()) / 1000)
-                        : 0
-
-                let key_string = '/'
-                key_string += `${credential.id};`
-                key_string += `${access_point_id};`
-                key_string += `${this.key_len};`
-                key_string += `${key_hex};`
-                key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
-                key_string += `${access_rule_id};`
-                key_string += '1;' // Kind_key
-                key_string += '0;' // Key_type
-                key_string += '-1;' // Passes
-                key_string += '0;' // First_Use_Counter
-                key_string += '0;' // Last_Use_Counter
-                key_string += `${anti_passback_type};` // ABP
-                key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
-                key_string += `${start_date};` // Start_date
-                key_string += `${expiration_date};` // Expiration_date
-                keys.push(key_string)
-            }
-        }
-        if (!message.data.access_point_sended) message.data.access_point_sended = 0
-        if (!message.data.all_keys_count) message.data.all_keys_count = keys.length * access_points.length
-        if (!message.data.keys_count) message.data.keys_count = keys.length
-
-        const info: any = {
-            Ctp_idx: access_point_id
-        }
-        const keys_slice = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count)
-        info.Keys = keys_slice.join('') + '/'
-        info.KeysCount = keys_slice.length
-        info.KeysDataLength = info.Keys.length
-        const topic = message.topic
-        const send_data = {
-            operator: OperatorType.SET_CARD_KEYS,
-            session_id: message.session_id,
-            message_id: message.message_id,
-            info: info
-        }
-        // console.log('setCardKeys send message', send_data)
-
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
-        })
-    }
-
-    public static addCardKey (message: ICrudMqttMessaging): void {
+    public static setAddCardKey (message: ICrudMqttMessaging, operator: OperatorType.SET_CARD_KEYS | OperatorType.ADD_CARD_KEY): void {
         // console.log('AddCardKey', message)
         const access_points = message.data.access_points
         const cardholders = message.data.cardholders
@@ -125,60 +41,72 @@ export default class ParseCardKeys {
                     access_rule_id = access_rule.id
                 }
             }
-            for (const credential of cardholder.credentials) {
-                const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
 
-                const start_date =
-                    (cardholder.limitations && cardholder.limitations.valid_from)
-                        ? Math.round((new Date(cardholder.limitations.valid_from).getTime()) / 1000)
-                        : 0
-                const expiration_date =
-                    (cardholder.limitations && cardholder.limitations.valid_due)
-                        ? Math.round((new Date(cardholder.limitations.valid_due).getTime()) / 1000)
-                        : 0
+            if (access_rule_id) {
+                for (const credential of cardholder.credentials) {
+                    const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
 
-                let key_string = '/'
-                key_string += `${credential.id};`
-                key_string += `${access_point_id};`
-                key_string += `${this.key_len};`
-                key_string += `${key_hex};`
-                key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
-                key_string += `${access_rule_id};`
-                key_string += '1;' // Kind_key
-                key_string += '0;' // Key_type
-                key_string += '-1;' // Passes
-                key_string += '0;' // First_Use_Counter
-                key_string += '0;' // Last_Use_Counter
-                key_string += `${anti_passback_type};` // ABP
-                key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
-                key_string += `${start_date};` // Start_date
-                key_string += `${expiration_date};` // Expiration_date
-                keys.push(key_string)
+                    const start_date =
+                        (cardholder.limitations && cardholder.limitations.valid_from)
+                            ? Math.round((new Date(cardholder.limitations.valid_from).getTime()) / 1000)
+                            : 0
+                    const expiration_date =
+                        (cardholder.limitations && cardholder.limitations.valid_due)
+                            ? Math.round((new Date(cardholder.limitations.valid_due).getTime()) / 1000)
+                            : 0
+
+                    let key_string = '/'
+                    key_string += `${credential.id};`
+                    key_string += `${access_point_id};`
+                    key_string += `${this.key_len};`
+                    key_string += `${key_hex};`
+                    key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
+                    key_string += `${access_rule_id};`
+                    key_string += '1;' // Kind_key
+                    key_string += '0;' // Key_type
+                    key_string += '-1;' // Passes
+                    key_string += '0;' // First_Use_Counter
+                    key_string += '0;' // Last_Use_Counter
+                    key_string += `${anti_passback_type};` // ABP
+                    key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
+                    key_string += `${start_date};` // Start_date
+                    key_string += `${expiration_date};` // Expiration_date
+                    keys.push(key_string)
+                }
             }
         }
         if (!message.data.access_point_sended) message.data.access_point_sended = 0
         if (!message.data.all_keys_count) message.data.all_keys_count = keys.length * access_points.length
         if (!message.data.keys_count) message.data.keys_count = keys.length
 
-        const info: any = {
-            Ctp_idx: access_point_id
-        }
-        const keys_slice = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count)
-        info.Keys = keys_slice.join('') + '/'
-        info.KeysCount = keys_slice.length
-        info.KeysDataLength = info.Keys.length
-        const topic = message.topic
-        const send_data = {
-            operator: OperatorType.ADD_CARD_KEY,
-            session_id: message.session_id,
-            message_id: message.message_id,
-            info: info
-        }
-        // console.log('AddCardKey send message', send_data)
+        if (!keys.length) {
+            message.data.access_points.shift()
+            if (message.data.access_points.length) {
+                this.setAddCardKey(message, operator)
+            } else {
+                this.endCardKey(message)
+            }
+        } else {
+            const info: any = {
+                Ctp_idx: access_point_id
+            }
+            const keys_slice = keys.slice(message.data.access_point_sended, message.data.access_point_sended + this.limit_for_keys_count)
+            info.Keys = keys_slice.join('') + '/'
+            info.KeysCount = keys_slice.length
+            info.KeysDataLength = info.Keys.length
+            const topic = message.topic
+            const send_data = {
+                operator: operator,
+                session_id: message.session_id,
+                message_id: message.message_id,
+                info: info
+            }
+            // console.log('AddCardKey send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
-        })
+            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+            })
+        }
     }
 
     public static endCardKey (message: ICrudMqttMessaging): void {
@@ -310,11 +238,7 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
                     crud_message.data.access_points.shift()
                     crud_message.data.access_point_sended = 0
                     if (crud_message.data.access_points.length) {
-                        if (crud_message.operator === OperatorType.ADD_CARD_KEY) {
-                            ParseCardKeys.addCardKey(crud_message)
-                        } else {
-                            ParseCardKeys.setCardKeys(crud_message)
-                        }
+                        ParseCardKeys.setAddCardKey(crud_message, crud_message.operator as OperatorType.SET_CARD_KEYS | OperatorType.ADD_CARD_KEY)
                     } else {
                         ParseCardKeys.endCardKey(crud_message)
                     }

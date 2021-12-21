@@ -102,27 +102,36 @@ export default class ParseAcu {
 
     public static setNetSettings (message: ICrudMqttMessaging): void {
         const topic = message.topic
+        const info: any = {}
+        if (message.data.connection_type) info.connection_type = (message.data.connection_type === acuConnectionType.WI_FI) ? 0 : 1
+        if (message.data.dhcp) info.connection_mod = (message.data.dhcp) ? 0 : 1
+        if (message.data.ip_address) info.ip_address = message.data.ip_address
+        if (message.data.subnet_mask) info.mask = message.data.subnet_mask
+        if (message.data.gateway) info.Gate = message.data.gateway
+        if (message.data.dns_server) info.DNS1 = message.data.dns_server
+
         const send_data = {
             operator: OperatorType.SET_NET_SETTINGS,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: {
-                connection_type: (message.data.connection_type === acuConnectionType.WI_FI) ? 0 : 1,
-                connection_mod: (message.data.dhcp) ? 0 : 1,
-                // SSID: 'Office242',
-                // Pass: '12346789',
-                ip_address: message.data.ip_address,
-                mask: message.data.subnet_mask,
-                Gate: message.data.gateway,
-                DNS1: message.data.dns_server
-                // DNS2: '8.8.8.8',
-                // AP_SSID: 'LmWf123456789',
-                // AP_PASS: '123456',
-                // HideSSID: false,
-                // time_ap_on: 80,
-                // MAC_Wr: 'none',
-                // MAC_Eth: 'none'
-            }
+            info: info
+            // info: {
+            //     connection_type: (message.data.connection_type === acuConnectionType.WI_FI) ? 0 : 1,
+            //     connection_mod: (message.data.dhcp) ? 0 : 1,
+            //     // SSID: 'Office242',
+            //     // Pass: '12346789',
+            //     ip_address: message.data.ip_address,
+            //     mask: message.data.subnet_mask,
+            //     Gate: message.data.gateway,
+            //     DNS1: message.data.dns_server
+            //     // DNS2: '8.8.8.8',
+            //     // AP_SSID: 'LmWf123456789',
+            //     // AP_PASS: '123456',
+            //     // HideSSID: false,
+            //     // time_ap_on: 80,
+            //     // MAC_Wr: 'none',
+            //     // MAC_Eth: 'none'
+            // }
         }
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -162,24 +171,27 @@ export default class ParseAcu {
         //     gmt: 4
         // }
         const topic = message.topic
-        const send_data = {
-            operator: OperatorType.SET_DATE_TIME,
-            session_id: message.session_id,
-            message_id: message.message_id,
-            info: {
-                DateTime: 1583636400,
-                GMT: message.data.time.time_zone,
-                NTP1: 'pool.ntp.org',
-                NTP2: 'pool2.ntp.org:123',
-                DST_GMT: false,
-                DST_Start: 1583636400,
-                DST_End: 1604196000,
-                DST_Shift: 3600
+        const time_zone = message.data.time.time_zone
+        if (time_zone) {
+            const send_data = {
+                operator: OperatorType.SET_DATE_TIME,
+                session_id: message.session_id,
+                message_id: message.message_id,
+                info: {
+                    DateTime: 1583636400,
+                    GMT: time_zone,
+                    NTP1: 'pool.ntp.org',
+                    NTP2: 'pool2.ntp.org:123',
+                    DST_GMT: false,
+                    DST_Start: 1583636400,
+                    DST_End: 1604196000,
+                    DST_Shift: 3600
+                }
             }
+            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+            })
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
-        })
     }
 
     public static setMqttSettings (message: ICrudMqttMessaging): void {
@@ -304,32 +316,47 @@ export default class ParseAcu {
 
         const ind = message.data.answer_qty ? message.data.answer_qty : 0
         const reader_data = message.data.readers[ind]
+        let osdp_data = reader_data.osdp_data
+        if (typeof osdp_data === 'string') osdp_data = JSON.parse(osdp_data)
+
         const info: any = {
             Rd_idx: reader_data.id,
-            Rd_opt: (Number(reader_data.wg_type) !== -1) ? 1 : 2,
-            Rd_type: 0,
-            Rd_Key_endian: reader_data.reverse_byte_order,
-            Rd_RS485_idx: reader_data.port,
-            // Rd_MQTT: 'none',
-            // Rd_ind_var: 0,
-            Rd_beep: reader_data.enable_buzzer,
-            Rd_Enable_crc: reader_data.enable_crc,
-            // Rd_bt_prox: 10,
-            // Rd_sens_act: 50,
-            Rd_mode: reader_data.mode
-            // Rd_Eth: 'none',
-            // Rd_Eth_port: 0
+            Rd_opt: (Number(reader_data.wg_type) !== -1) ? 1 : 2
+            // Rd_type: 0,
+            // Rd_Key_endian: reader_data.reverse_byte_order,
+            // Rd_RS485_idx: reader_data.port,
+            // // Rd_MQTT: 'none',
+            // // Rd_ind_var: 0,
+            // Rd_beep: reader_data.enable_buzzer,
+            // Rd_Enable_crc: reader_data.enable_crc,
+            // // Rd_bt_prox: 10,
+            // // Rd_sens_act: 50,
+            // Rd_mode: reader_data.mode
+            // // Rd_Eth: 'none',
+            // // Rd_Eth_port: 0
         }
+        info.Rd_type = 0
+        if ('reverse_byte_order' in reader_data) info.Rd_Key_endian = reader_data.reverse_byte_order
+        if ('port' in reader_data) info.Rd_RS485_idx = reader_data.port
+        if ('enable_buzzer' in reader_data) info.Rd_beep = reader_data.enable_buzzer
+        if ('enable_crc' in reader_data) info.Rd_Enable_crc = reader_data.enable_crc
+        if ('mode' in reader_data) info.Rd_mode = reader_data.mode
+
+        info.Rd_Wg_type = reader_data.wg_type
         if (Number(reader_data.wg_type) === -1) {
-            info.Rd_OSDP_adr = reader_data.osdp_address
-            info.Rd_OSDP_bd = reader_data.baud_rate
-            info.Rd_OSDP_WgPuls = reader_data.card_data_format_flags
-            info.Rd_OSDP_KeyPad = reader_data.keypad_mode
-            info.Rd_OSDP_singl = reader_data.configuration
-            info.Rd_OSDP_tracing = reader_data.tracing
+            if ('osdp_address' in reader_data) info.Rd_OSDP_adr = reader_data.osdp_address
+            if (osdp_data) {
+                if ('baud_rate' in osdp_data) info.Rd_OSDP_bd = osdp_data.baud_rate
+                if ('card_data_format_flags' in osdp_data) info.Rd_OSDP_WgPuls = osdp_data.card_data_format_flags
+                if ('keypad_mode' in osdp_data) info.Rd_OSDP_KeyPad = osdp_data.keypad_mode
+                if ('configuration' in osdp_data) info.Rd_OSDP_singl = osdp_data.configuration
+                // if ('led_mode' in osdp_data) // led_mode..
+                if ('offline_mode' in osdp_data) info.Rd_Offline_mod = osdp_data.offline_mode
+                if ('enable_osdp_secure_channel' in osdp_data) info.Rd_OSDP_secure = osdp_data.enable_osdp_secure_channel
+                if ('enable_osdp_tracing' in osdp_data) info.Rd_OSDP_tracing = osdp_data.enable_osdp_tracing
+            }
         } else {
-            info.Rd_Wg_idx = reader_data.port
-            info.Rd_Wg_type = reader_data.wg_type
+            if ('port' in reader_data) info.Rd_Wg_idx = reader_data.port
             // Rd_WG_RG: -1,
             // Rd_WG_Red: -1,
             // Rd_WG_Green: -1,
