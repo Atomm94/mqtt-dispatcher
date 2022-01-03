@@ -21,6 +21,7 @@ export default class ParseCardKeys {
         const cardholders = message.data.cardholders
         const access_point_id = access_points[0].id
         const keys: any = []
+        if (!('send_end_card_key' in message.data)) message.data.send_end_card_key = false
 
         for (const cardholder of cardholders) {
             let anti_passback_type = -1
@@ -84,7 +85,9 @@ export default class ParseCardKeys {
             if (message.data.access_points.length) {
                 this.setAddCardKey(message, operator)
             } else {
-                this.endCardKey(message)
+                if (message.data.send_end_card_key) {
+                    this.endCardKey(message)
+                }
             }
         } else {
             const info: any = {
@@ -229,6 +232,7 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
             messageAck = JSON.parse(messageAck.toString())
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 messageAck.send_data = crud_message
+                crud_message.data.send_end_card_key = true
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
                 crud_message.data.access_point_sended += ParseCardKeys.limit_for_keys_count
