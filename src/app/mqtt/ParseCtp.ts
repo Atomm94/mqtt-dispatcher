@@ -15,14 +15,14 @@ export default class ParseController {
             let info: any = {
                 Control_point_idx: message.data.id
             }
-            if (message.data.resources) {
+            const resources = message.data.resourcesForSendDevice
+            if (resources) {
                 // info.Door_sens_idx = -1
                 // info.Button_rex_idx = -1
                 // info.Alarm_In_idx = -1
                 // info.Lock_Relay_idx = -1
                 // info.Alarm_out_idx = -1
 
-                const resources = message.data.resources
                 for (const resource in resources) {
                     const element = resources[resource]
                     switch (resource) {
@@ -145,7 +145,8 @@ export default class ParseController {
             Control_point_idx: message.data.id
             // Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
         }
-        if (message.data.resources) {
+        const resources = message.data.resourcesForSendDevice
+        if (resources) {
             info.Control_type = (message.data.type === accessPointType.TURNSTILE_ONE_SIDE) ? 0 : 1
             // info.Sensor_Ready_idx = -1
             // info.Sansor_Pass_idx = -1
@@ -158,7 +159,6 @@ export default class ParseController {
             // info.BlockEnt_Rl_idx = -1
             // info.FreeEnt_Rl_idx = -1
 
-            const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
                 switch (resource) {
@@ -335,7 +335,8 @@ export default class ParseController {
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
         }
-        if (message.data.resources) {
+        const resources = message.data.resourcesForSendDevice
+        if (resources) {
             // info.Loop_Ready_idx = -1
             // info.Open_Btn_idx = -1
             // info.Alarm_In_idx = -1
@@ -343,7 +344,6 @@ export default class ParseController {
             // info.Leaving_Zone = -1
             // info.Came_To_Zone = -1
 
-            const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
                 switch (resource) {
@@ -454,14 +454,14 @@ export default class ParseController {
         let info: any = {
             Control_point_idx: message.data.id
         }
-        if (message.data.resources) {
+        const resources = message.data.resourcesForSendDevice
+        if (resources) {
             // info.Door_sens_idx = -1
             // info.Open_Btn_idx = -1
             // info.Alarm_In_idx = -1
             // info.Lock_Relay_idx = -1
             // info.Alarm_out_idx = -1
 
-            const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
                 switch (resource) {
@@ -584,13 +584,13 @@ export default class ParseController {
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
         }
-        if (message.data.resources) {
+        const resources = message.data.resourcesForSendDevice
+        if (resources) {
             // info.Alarm_In_idx = -1
             // info.Lock_Relay_idx = -1
             // info.Leaving_Zone = -1
             // info.Came_To_Zone = -1
 
-            const resources = message.data.resources
             for (const resource in resources) {
                 const element = resources[resource]
                 switch (resource) {
