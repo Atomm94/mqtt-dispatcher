@@ -364,7 +364,7 @@ export default class ParseAcu {
             // Rd_WG_Green: -1,
         }
         if (Number(reader_data.wg_type) === -1) {
-            reader_data.Rd_Wg_type = 0
+            info.Rd_Wg_type = 0
         }
 
         const send_data = {
