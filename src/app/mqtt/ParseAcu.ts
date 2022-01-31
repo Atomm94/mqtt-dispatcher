@@ -321,7 +321,9 @@ export default class ParseAcu {
 
         const info: any = {
             Rd_idx: reader_data.id,
-            Rd_opt: (Number(reader_data.wg_type) !== -1) ? 1 : 2
+            Control_point_idx: reader_data.access_point,
+            Rd_opt: (Number(reader_data.wg_type) !== -1) ? 1 : 2,
+            Rd_Direction: reader_data.direction
             // Rd_type: 0,
             // Rd_Key_endian: reader_data.reverse_byte_order,
             // Rd_RS485_idx: reader_data.port,
@@ -335,7 +337,7 @@ export default class ParseAcu {
             // // Rd_Eth: 'none',
             // // Rd_Eth_port: 0
         }
-        info.Rd_type = 0
+        info.Rd_type = 1
         if ('reverse_byte_order' in reader_data) info.Rd_Key_endian = reader_data.reverse_byte_order
         if ('port' in reader_data) info.Rd_RS485_idx = reader_data.port
         if ('enable_buzzer' in reader_data) info.Rd_beep = reader_data.enable_buzzer
@@ -360,6 +362,9 @@ export default class ParseAcu {
             // Rd_WG_RG: -1,
             // Rd_WG_Red: -1,
             // Rd_WG_Green: -1,
+        }
+        if (Number(reader_data.wg_type) === -1) {
+            reader_data.wg_type = 0
         }
 
         const send_data = {
