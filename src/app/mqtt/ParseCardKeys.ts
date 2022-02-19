@@ -173,7 +173,14 @@ export default class ParseCardKeys {
                             }
 
                             if ('vip' in cardholder) info.Key_type = cardholder.vip ? 2 : 0
-                            if ('status' in credential) info.Key_status = credential.status === credentialStatus.ACTIVE ? 1 : 0
+                            if ('status' in credential) {
+                                if (credential.isDelete) {
+                                    info.Key_status = -1
+                                } else {
+                                    info.Key_status = credential.status === credentialStatus.ACTIVE ? 1 : 0
+                                }
+                            }
+
                             info.Key_len = this.key_len
                             const send_data = {
                                 operator: OperatorType.EDIT_KEY,
