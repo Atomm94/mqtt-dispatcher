@@ -164,6 +164,7 @@ export default class ParseSchedule {
                 days[time.name].TmEnd += `;${end_time}`
             }
         })
+        const day_start_time = Math.floor(new Date(message.data.start_from).getTime() / 1000)
         const send_data: any = {
             operator: OperatorType.SET_SDL_FLEXI_TIME,
             session_id: message.session_id,
@@ -171,7 +172,7 @@ export default class ParseSchedule {
             info: {
                 Shedule_id: /* (data.send_data && data.send_data.info.schedule) ? data.send_data.info.schedule : */ message.data.id,
                 Ctp_idx: /* (data.send_data && data.send_data.info.access_point) ? data.send_data.info.access_point : */ message.data.access_point,
-                DayStart: message.data.start_from,
+                DayStart: day_start_time,
                 DaysCount: Object.keys(days).length
             }
         }
