@@ -158,30 +158,40 @@ export default class ParseCardKeys {
                     })
                 } else {
                     for (const access_point of access_points) {
-                        const info: any = {
-                            Ctp_id: access_point.id,
-                            Key_id: credential.id,
-                            Key: key_hex
-                        }
-
-                        if ('vip' in cardholder) info.Key_type = cardholder.vip ? 2 : 0
-                        if ('status' in credential) {
-                            if (credential.isDelete) {
-                                info.Key_status = -1
-                            } else {
-                                info.Key_status = credential.status === credentialStatus.ACTIVE ? 1 : 0
+                        let access_rule_id = 0
+                        for (const access_rule of cardholder.access_rights.access_rules) {
+                            if (access_rule.access_point === access_point.id) {
+                                access_rule_id = access_rule.id
                             }
                         }
-                        info.Key_len = this.key_len
-                        const send_data = {
-                            operator: OperatorType.EDIT_KEY,
-                            session_id: message.session_id,
-                            message_id: message.message_id,
-                            info: info
+
+                        if (access_rule_id) {
+                            const info: any = {
+                                Ctp_id: access_point.id,
+                                Key_id: credential.id,
+                                Key: key_hex
+                            }
+
+                            if ('vip' in cardholder) info.Key_type = cardholder.vip ? 2 : 0
+                            if ('status' in credential) {
+                                if (credential.isDelete) {
+                                    info.Key_status = -1
+                                } else {
+                                    info.Key_status = credential.status === credentialStatus.ACTIVE ? 1 : 0
+                                }
+                            }
+
+                            info.Key_len = this.key_len
+                            const send_data = {
+                                operator: OperatorType.EDIT_KEY,
+                                session_id: message.session_id,
+                                message_id: message.message_id,
+                                info: info
+                            }
+                            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                                MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                            })
                         }
-                        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
-                        })
                     }
                 }
             }
