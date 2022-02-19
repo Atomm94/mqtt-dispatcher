@@ -13,14 +13,17 @@ export default class ParseSchedule {
     public static setSdlDaily (message: ICrudMqttMessaging): void {
         const topic = message.topic
         const tms: any = {
-            TmStart: 'none',
-            TmEnd: 'none'
+            TmStart: '0', // 'none'
+            TmEnd: '0' // 'none'
         }
         message.data.timeframes.forEach((time: any) => {
             const start_time = dateTimeToSeconds(time.start)
             const end_time = dateTimeToSeconds(time.end)
-            tms.TmStart = (tms.TmStart === 'none') ? start_time.toString() : `${tms.TmStart};${start_time}`
-            tms.TmEnd = (tms.TmEnd === 'none') ? end_time.toString() : `${tms.TmEnd};${end_time}`
+
+            // tms.TmStart = (tms.TmStart === 'none') ? start_time.toString() : `${tms.TmStart};${start_time}`
+            // tms.TmEnd = (tms.TmEnd === 'none') ? end_time.toString() : `${tms.TmEnd};${end_time}`
+            tms.TmStart = (tms.TmStart === '0' && tms.TmEnd === '0') ? start_time : `${tms.TmStart};${start_time}`
+            tms.TmEnd = (tms.TmEnd === '0') ? end_time : `${tms.TmEnd};${end_time}`
         })
         const send_data: any = {
             operator: OperatorType.SET_SDL_DAILY,
@@ -61,53 +64,59 @@ export default class ParseSchedule {
         const topic = message.topic
 
         const week_tms: any = {
-            Tm1_Start: 'none',
-            Tm1_End: 'none',
-            Tm2_Start: 'none',
-            Tm2_End: 'none',
-            Tm3_Start: 'none',
-            Tm3_End: 'none',
-            Tm4_Start: 'none',
-            Tm4_End: 'none',
-            Tm5_Start: 'none',
-            Tm5_End: 'none',
-            Tm6_Start: 'none',
-            Tm6_End: 'none',
-            Tm7_Start: 'none',
-            Tm7_End: 'none'
+            Tm1_Start: '0', // 'none'
+            Tm1_End: '0', // 'none'
+            Tm2_Start: '0', // 'none'
+            Tm2_End: '0', // 'none'
+            Tm3_Start: '0', // 'none'
+            Tm3_End: '0', // 'none'
+            Tm4_Start: '0', // 'none'
+            Tm4_End: '0', // 'none'
+            Tm5_Start: '0', // 'none'
+            Tm5_End: '0', // 'none'
+            Tm6_Start: '0', // 'none'
+            Tm6_End: '0', // 'none'
+            Tm7_Start: '0', // 'none'
+            Tm7_End: '0' // 'none'
         }
 
         message.data.timeframes.forEach((time: any) => {
             // console.log(time)
-            const start_time = dateTimeToSeconds(time.start)
-            const end_time = dateTimeToSeconds(time.end)
-            if (Number(time.name) === 1) {
-                week_tms.Tm1_Start = (week_tms.Tm1_Start === 'none') ? start_time.toString() : `${week_tms.Tm1_Start};${start_time}`
-                week_tms.Tm1_End = (week_tms.Tm1_End === 'none') ? end_time.toString() : `${week_tms.Tm1_End};${end_time}`
-            }
-            if (Number(time.name) === 2) {
-                week_tms.Tm2_Start = (week_tms.Tm2_Start === 'none') ? start_time.toString() : `${week_tms.Tm2_Start};${start_time}`
-                week_tms.Tm2_End = (week_tms.Tm2_End === 'none') ? end_time.toString() : `${week_tms.Tm2_End};${end_time}`
-            }
-            if (Number(time.name) === 3) {
-                week_tms.Tm3_Start = (week_tms.Tm3_Start === 'none') ? start_time.toString() : `${week_tms.Tm3_Start};${start_time}`
-                week_tms.Tm3_End = (week_tms.Tm3_End === 'none') ? end_time.toString() : `${week_tms.Tm3_End};${end_time}`
-            }
-            if (Number(time.name) === 4) {
-                week_tms.Tm4_Start = (week_tms.Tm4_Start === 'none') ? start_time.toString() : `${week_tms.Tm4_Start};${start_time}`
-                week_tms.Tm4_End = (week_tms.Tm4_End === 'none') ? end_time.toString() : `${week_tms.Tm4_End};${end_time}`
-            }
-            if (Number(time.name) === 5) {
-                week_tms.Tm5_Start = (week_tms.Tm5_Start === 'none') ? start_time.toString() : `${week_tms.Tm5_Start};${start_time}`
-                week_tms.Tm5_End = (week_tms.Tm5_End === 'none') ? end_time.toString() : `${week_tms.Tm5_End};${end_time}`
-            }
-            if (Number(time.name) === 6) {
-                week_tms.Tm6_Start = (week_tms.Tm6_Start === 'none') ? start_time.toString() : `${week_tms.Tm6_Start};${start_time}`
-                week_tms.Tm6_End = (week_tms.Tm6_End === 'none') ? end_time.toString() : `${week_tms.Tm6_End};${end_time}`
-            }
-            if (Number(time.name) === 7) {
-                week_tms.Tm7_Start = (week_tms.Tm7_Start === 'none') ? start_time.toString() : `${week_tms.Tm7_Start};${start_time}`
-                week_tms.Tm7_End = (week_tms.Tm7_End === 'none') ? end_time.toString() : `${week_tms.Tm7_End};${end_time}`
+            const start_time: string = dateTimeToSeconds(time.start)
+            const end_time: string = dateTimeToSeconds(time.end)
+            // if (Number(time.name) === 1) {
+            //     week_tms.Tm1_Start = (week_tms.Tm1_Start === 'none') ? start_time.toString() : `${week_tms.Tm1_Start};${start_time}`
+            //     week_tms.Tm1_End = (week_tms.Tm1_End === 'none') ? end_time.toString() : `${week_tms.Tm1_End};${end_time}`
+            // }
+            // if (Number(time.name) === 2) {
+            //     week_tms.Tm2_Start = (week_tms.Tm2_Start === 'none') ? start_time.toString() : `${week_tms.Tm2_Start};${start_time}`
+            //     week_tms.Tm2_End = (week_tms.Tm2_End === 'none') ? end_time.toString() : `${week_tms.Tm2_End};${end_time}`
+            // }
+            // if (Number(time.name) === 3) {
+            //     week_tms.Tm3_Start = (week_tms.Tm3_Start === 'none') ? start_time.toString() : `${week_tms.Tm3_Start};${start_time}`
+            //     week_tms.Tm3_End = (week_tms.Tm3_End === 'none') ? end_time.toString() : `${week_tms.Tm3_End};${end_time}`
+            // }
+            // if (Number(time.name) === 4) {
+            //     week_tms.Tm4_Start = (week_tms.Tm4_Start === 'none') ? start_time.toString() : `${week_tms.Tm4_Start};${start_time}`
+            //     week_tms.Tm4_End = (week_tms.Tm4_End === 'none') ? end_time.toString() : `${week_tms.Tm4_End};${end_time}`
+            // }
+            // if (Number(time.name) === 5) {
+            //     week_tms.Tm5_Start = (week_tms.Tm5_Start === 'none') ? start_time.toString() : `${week_tms.Tm5_Start};${start_time}`
+            //     week_tms.Tm5_End = (week_tms.Tm5_End === 'none') ? end_time.toString() : `${week_tms.Tm5_End};${end_time}`
+            // }
+            // if (Number(time.name) === 6) {
+            //     week_tms.Tm6_Start = (week_tms.Tm6_Start === 'none') ? start_time.toString() : `${week_tms.Tm6_Start};${start_time}`
+            //     week_tms.Tm6_End = (week_tms.Tm6_End === 'none') ? end_time.toString() : `${week_tms.Tm6_End};${end_time}`
+            // }
+            // if (Number(time.name) === 7) {
+            //     week_tms.Tm7_Start = (week_tms.Tm7_Start === 'none') ? start_time.toString() : `${week_tms.Tm7_Start};${start_time}`
+            //     week_tms.Tm7_End = (week_tms.Tm7_End === 'none') ? end_time.toString() : `${week_tms.Tm7_End};${end_time}`
+            // }
+            if (Number(time.name) >= 1 && Number(time.name) <= 7) {
+                const start_time_key = `Tm${time.name}_Start`
+                const end_time_key = `Tm${time.name}_End`
+                week_tms[start_time_key] = (week_tms[start_time_key] === '0' && week_tms[end_time_key] === '0') ? start_time : `${week_tms[start_time_key]};${start_time}`
+                week_tms[end_time_key] = (week_tms[end_time_key] === '0') ? end_time : `${week_tms[end_time_key]};${end_time}`
             }
         })
         const send_data: any = {
@@ -157,7 +166,7 @@ export default class ParseSchedule {
             if (!days[time.name]) {
                 days[time.name] = {
                     TmStart: `${start_time}`,
-                    TmEnd: `${start_time}`
+                    TmEnd: `${end_time}`
                 }
             } else {
                 days[time.name].TmStart += `;${start_time}`
@@ -279,7 +288,7 @@ export default class ParseSchedule {
             if (!days[time.name]) {
                 days[time.name] = {
                     TmStart: `${start_time}`,
-                    TmEnd: `${start_time}`
+                    TmEnd: `${end_time}`
                 }
             } else {
                 days[time.name].TmStart += `;${start_time}`
@@ -464,5 +473,5 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
 function dateTimeToSeconds (time: string) {
     const nums = time.split(':')
     const seconds = 60 * 60 * Number(nums[0]) + 60 * Number(nums[1]) + Number(nums[2])
-    return seconds
+    return seconds.toString()
 }
