@@ -7,14 +7,18 @@ import { accessPointType } from '../enums/accessPointType.enum'
 // import { scheduleType } from '../enums/scheduleType.enum'
 // import { credentialStatus } from '../enums/credentialStatus.enum'
 import { handleCallback } from './ParseAcu'
+import { typeAntipassBack } from '../enums/typeAntipassBack.enum'
 export default class ParseController {
     public static setCtpDoor (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
 
         try {
             let info: any = {
                 Control_point_idx: message.data.id
             }
+            info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
+
             const resources = message.data.resourcesForSendDevice
             if (resources) {
                 // info.Door_sens_idx = -1
@@ -84,7 +88,6 @@ export default class ParseController {
             }
             info = this.settingReaders(message.data, info)
 
-            const topic = message.topic
             const send_data: any = {
                 operator: OperatorType.SET_CTP_DOOR,
                 session_id: message.session_id,
@@ -140,11 +143,14 @@ export default class ParseController {
 
     public static setCtpTurnstile (message: ICrudMqttMessaging): void {
         // console.log('setCtpTurnstile', message)
+        const topic = message.topic
 
         let info: any = {
             Control_point_idx: message.data.id
             // Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
         }
+        info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
+
         const resources = message.data.resourcesForSendDevice
         if (resources) {
             info.Control_type = (message.data.type === accessPointType.TURNSTILE_ONE_SIDE) ? 0 : 1
@@ -272,7 +278,7 @@ export default class ParseController {
         }
 
         info = this.settingReaders(message.data, info)
-        const topic = message.topic
+
         const send_data: any = {
             operator: OperatorType.SET_CTP_TURNSTILE,
             session_id: message.session_id,
@@ -327,6 +333,7 @@ export default class ParseController {
 
     public static setCtpGate (message: ICrudMqttMessaging): void {
         // console.log('setCtpGate', message)
+        const topic = message.topic
 
         let info: any = {
             Control_point_idx: message.data.id
@@ -335,6 +342,8 @@ export default class ParseController {
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
         }
+        info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
+
         const resources = message.data.resourcesForSendDevice
         if (resources) {
             // info.Loop_Ready_idx = -1
@@ -395,7 +404,6 @@ export default class ParseController {
         }
 
         info = this.settingReaders(message.data, info)
-        const topic = message.topic
         const send_data: any = {
             operator: OperatorType.SET_CTP_GATE,
             session_id: message.session_id,
@@ -450,10 +458,13 @@ export default class ParseController {
 
     public static setCtpGateway (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
 
         let info: any = {
             Control_point_idx: message.data.id
         }
+        info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
+
         const resources = message.data.resourcesForSendDevice
         if (resources) {
             // info.Door_sens_idx = -1
@@ -523,7 +534,6 @@ export default class ParseController {
         }
 
         info = this.settingReaders(message.data, info)
-        const topic = message.topic
         const send_data: any = {
             operator: OperatorType.SET_CTP_GATEWAY,
             session_id: message.session_id,
@@ -578,12 +588,15 @@ export default class ParseController {
 
     public static setCtpFloor (message: ICrudMqttMessaging): void {
         // console.log('deviceSetMqttSettings', message)
+        const topic = message.topic
 
         let info: any = {
             Control_point_idx: message.data.id
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
         }
+        info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
+
         const resources = message.data.resourcesForSendDevice
         if (resources) {
             // info.Alarm_In_idx = -1
@@ -623,7 +636,6 @@ export default class ParseController {
 
         info = this.settingReaders(message.data, info)
 
-        const topic = message.topic
         const send_data: any = {
             operator: OperatorType.SET_CTP_FLOOR,
             session_id: message.session_id,
@@ -631,7 +643,7 @@ export default class ParseController {
             info: info
         }
 
-        // console.log('deviceSetCtpDoor send message', send_data)
+        // console.log('deviceSetCtpFloor send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -708,6 +720,37 @@ export default class ParseController {
                     }
                 }
             })
+        }
+        return info
+    }
+
+    public static setAccessPointZoneAntipassBack (access_point_zones: any, topic: string, info: any) {
+        if (access_point_zones) {
+            if (access_point_zones === -1) {
+                // info.Ctp_Apb_Group = -1
+                info.APB_Mode = -1
+                // info.APB_Time = -1
+            } else {
+                const ctp_apb_group = `${topic.split('/').slice(0, 3).join('/')}/apb/${access_point_zones.id}`
+                info.Ctp_Apb_Group = ctp_apb_group
+                const antipass_backs = access_point_zones.antipass_backs
+                if (antipass_backs) {
+                    let anti_passback_type = -1
+                    if (antipass_backs) {
+                        if (antipass_backs.type === typeAntipassBack.SOFT) {
+                            anti_passback_type = 0
+                        } else if (antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
+                            anti_passback_type = 1
+                        } else if (antipass_backs.type === typeAntipassBack.HARD) {
+                            anti_passback_type = 2
+                        } else if (antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
+                            anti_passback_type = 3
+                        }
+                    }
+                    info.APB_Mode = anti_passback_type
+                    info.APB_Time = antipass_backs.time
+                }
+            }
         }
         return info
     }

@@ -6,7 +6,6 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 // import { accessPointType } from '../enums/accessPointType.enum'
 // import { scheduleType } from '../enums/scheduleType.enum'
 import { credentialStatus } from '../enums/credentialStatus.enum'
-import { typeAntipassBack } from '../enums/typeAntipassBack.enum'
 
 import { handleCallback, ackTimeout } from './ParseAcu'
 import { generateHexWithBytesLength } from '../functions/util'
@@ -24,18 +23,18 @@ export default class ParseCardKeys {
         if (!('send_end_card_key' in message.data)) message.data.send_end_card_key = false
 
         for (const cardholder of cardholders) {
-            let anti_passback_type = -1
-            if (cardholder.antipass_backs) {
-                if (cardholder.antipass_backs.type === typeAntipassBack.SOFT) {
-                    anti_passback_type = 0
-                } else if (cardholder.antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
-                    anti_passback_type = 1
-                } else if (cardholder.antipass_backs.type === typeAntipassBack.HARD) {
-                    anti_passback_type = 2
-                } else if (cardholder.antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
-                    anti_passback_type = 3
-                }
-            }
+            // let anti_passback_type = -1
+            // if (cardholder.antipass_backs) {
+            //     if (cardholder.antipass_backs.type === typeAntipassBack.SOFT) {
+            //         anti_passback_type = 0
+            //     } else if (cardholder.antipass_backs.type === typeAntipassBack.SEMI_SOFT) {
+            //         anti_passback_type = 1
+            //     } else if (cardholder.antipass_backs.type === typeAntipassBack.HARD) {
+            //         anti_passback_type = 2
+            //     } else if (cardholder.antipass_backs.type === typeAntipassBack.EXTRA_HARD) {
+            //         anti_passback_type = 3
+            //     }
+            // }
             let access_rule_id = 0
             for (const access_rule of cardholder.access_rights.access_rules) {
                 if (access_rule.access_point === access_point_id) {
@@ -68,8 +67,8 @@ export default class ParseCardKeys {
                     key_string += '-1;' // Passes
                     key_string += '0;' // First_Use_Counter
                     key_string += '0;' // Last_Use_Counter
-                    key_string += `${anti_passback_type};` // ABP
-                    key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
+                    key_string += `${cardholder.enable_antipass_back ? 1 : 0};` // ABP
+                    // key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
                     key_string += `${start_date};` // Start_date
                     key_string += `${expiration_date};` // Expiration_date
                     keys.push(key_string)
