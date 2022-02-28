@@ -9,6 +9,7 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 import { handleCallback, ackTimeout } from './ParseAcu'
 import { scheduleType } from '../enums/scheduleType.enum'
 import { SendTopics } from './Topics'
+import { getDayOfYear } from '../functions/util'
 export default class ParseSchedule {
     public static setSdlDaily (message: ICrudMqttMessaging): void {
         const topic = message.topic
@@ -403,20 +404,24 @@ export default class ParseSchedule {
         const topic = message.topic
 
         const days: any = {}
+        let start_day: any
         message.data.timeframes.forEach((time: any) => {
             const start_time = dateTimeToSeconds(time.start)
             const end_time = dateTimeToSeconds(time.end)
-            if (!days[time.name]) {
-                days[time.name] = {
+            const day = getDayOfYear(time.name)
+            if (!start_day || day < start_day) start_day = day
+            if (!days[day]) {
+                days[day] = {
                     Tm1_Start: `${start_time}`,
                     Tm1_End: `${end_time}`
                 }
             } else {
-                days[time.name].Tm1_Start += `;${start_time}`
-                days[time.name].Tm1_End += `;${end_time}`
+                days[day].Tm1_Start += `;${start_time}`
+                days[day].Tm1_End += `;${end_time}`
             }
         })
         message.days = days
+        message.start_day = start_day
         message.days_count = Object.keys(days).length
 
         const send_data: any = {
@@ -460,6 +465,7 @@ export default class ParseSchedule {
         const topic = message.topic
 
         const days = message.data.days
+        const start_day = message.data.start_day
         const first_key = Object.keys(days)[0]
         const tms: any = days[first_key]
         delete days[first_key]
@@ -473,7 +479,7 @@ export default class ParseSchedule {
                 Shedule_id: message.data.data.id,
                 DayId: first_key, // Номер дня в расписании
                 Condition_DayWeek: true, // True  - день(число) месяца. False – День недели
-                StartDay: first_key, // Дата начала (UNIXTIME)
+                StartDay: start_day, // Дата начала (UNIXTIME)
                 ...tms
             }
         }
