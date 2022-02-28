@@ -371,8 +371,8 @@ export default class ParseSchedule {
             session_id: message.session_id,
             message_id: message.message_id,
             info: {
-                Shedule_id: message.data.id,
-                Ctp_idx: message.data.access_point
+                Shedule_id: message.data.id
+                // Ctp_idx: message.data.access_point
             }
         }
         // console.log('delSdlSpecified send message', send_data)
@@ -383,7 +383,7 @@ export default class ParseSchedule {
     }
 
     public static dellDaySpecified (message: ICrudMqttMessaging): void {
-        // console.log('EndSdlSpecified', message)
+        // console.log('dellDaySpecified', message)
         const topic = message.topic
         const send_data = {
             operator: OperatorType.DELL_DAY_SPECIFIED,
@@ -391,7 +391,109 @@ export default class ParseSchedule {
             message_id: message.message_id,
             info: message.data
         }
-        // console.log('EndSdlSpecified send message', send_data)
+        // console.log('dellDaySpecified send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static setSdlOrdinal (message: any): void {
+        // console.log('setSdlOrdinal', message)
+        const topic = message.topic
+
+        const days: any = {}
+        message.data.timeframes.forEach((time: any) => {
+            const start_time = dateTimeToSeconds(time.start)
+            const end_time = dateTimeToSeconds(time.end)
+            if (!days[time.name]) {
+                days[time.name] = {
+                    Tm1_Start: `${start_time}`,
+                    Tm1_End: `${end_time}`
+                }
+            } else {
+                days[time.name].Tm1_Start += `;${start_time}`
+                days[time.name].Tm1_End += `;${end_time}`
+            }
+        })
+        message.days = days
+        message.days_count = Object.keys(days).length
+
+        const send_data: any = {
+            operator: OperatorType.SET_SDL_ORDINAL,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Shedule_id: /* (data.send_data && data.send_data.info.schedule) ? data.send_data.info.schedule : */ message.data.id,
+                Ctp_idx: /* (data.send_data && data.send_data.info.access_point) ? data.send_data.info.access_point : */ message.data.access_point,
+                MonthPeriod: message.data.repeat_month
+            }
+        }
+        // console.log('setSdlOrdinal send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleSdlUpdateCallback(topic, message) as Function)
+        })
+    }
+
+    public static delSdlOrdinal (message: ICrudMqttMessaging): void {
+        // console.log('delSdlOrdinal', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEL_SDL_ORDINAL,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Shedule_id: message.data.id,
+                Ctp_idx: message.data.access_point
+            }
+        }
+        // console.log('delSdlOrdinal send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static setDayOrdinal (message: ICrudMqttMessaging): void {
+        // console.log('setDayOrdinal', message)
+        const topic = message.topic
+
+        const days = message.data.days
+        const first_key = Object.keys(days)[0]
+        const tms: any = days[first_key]
+        delete days[first_key]
+        message.data.days = days
+
+        const send_data = {
+            operator: OperatorType.SET_DAY_ORDINAL,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Shedule_id: message.data.data.id,
+                DayId: first_key, // Номер дня в расписании
+                Condition_DayWeek: true, // True  - день(число) месяца. False – День недели
+                StartDay: first_key, // Дата начала (UNIXTIME)
+                ...tms
+            }
+        }
+        // console.log('setDayOrdinal send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static delDayOrdinal (message: ICrudMqttMessaging): void {
+        // console.log('delDayOrdinal', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEL_DAY_ORDINAL,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+        // console.log('delDayOrdinal send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -437,6 +539,7 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
                 if (messageAck.result.errorNo === 0) {
+                    // schedule_type - type of updated schedule
                     if (crud_message.data.schedule_type === scheduleType.DAILY) {
                         crud_message.operator = OperatorType.SET_SDL_DAILY
                         delete crud_message.data.schedule_type
@@ -453,6 +556,10 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
                         crud_message.operator = OperatorType.SET_SDL_FLEXI_TIME
                         delete crud_message.data.schedule_type
                         ParseSchedule.setSdlFlexiTime(crud_message)
+                    } else if (crud_message.data.schedule_type === scheduleType.ORDINAL) {
+                        crud_message.operator = OperatorType.DEL_SDL_ORDINAL
+                        delete crud_message.data.schedule_type
+                        ParseSchedule.setSdlOrdinal(crud_message)
                     } else {
                         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                     }

@@ -198,6 +198,18 @@ export default class ParseCrud {
             case OperatorType.DELL_DAY_SPECIFIED:
                 ParseSchedule.dellDaySpecified(message)
                 break
+            case OperatorType.SET_SDL_ORDINAL:
+                ParseSchedule.setSdlOrdinal(message)
+                break
+            case OperatorType.DEL_SDL_ORDINAL:
+                ParseSchedule.delSdlOrdinal(message)
+                break
+            case OperatorType.SET_DAY_ORDINAL:
+                ParseSchedule.setDayOrdinal(message)
+                break
+            case OperatorType.DEL_DAY_ORDINAL:
+                ParseSchedule.delDayOrdinal(message)
+                break
             case OperatorType.DELL_SHEDULE:
                 ParseSchedule.dellShedule(message)
                 break
