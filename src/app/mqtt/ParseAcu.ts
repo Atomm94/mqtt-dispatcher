@@ -315,7 +315,14 @@ export default class ParseAcu {
         const topic = message.topic
 
         const ind = message.data.answer_qty ? message.data.answer_qty : 0
-        const reader_data = message.data.readers[ind]
+
+        let reader_data
+        if (message.data.elevator_mode) {
+            reader_data = message.data.reader
+        } else {
+            reader_data = message.data.readers[ind]
+        }
+
         let osdp_data = reader_data.osdp_data
         if (typeof osdp_data === 'string') osdp_data = JSON.parse(osdp_data)
 
@@ -579,62 +586,77 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
+            // console.log(1, topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`)
+            // console.log(2, crud_message.message_id === messageAck.message_id)
+            // console.log(3, messageAck.operator === `${crud_message.operator}-Ack`)
+
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 console.log('handleRdUpdateCallback', true)
-
-                if (!crud_message.data.answer_qty) crud_message.data.answer_qty = 0
 
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
 
-                crud_message.data.readers[crud_message.data.answer_qty].messageAck = cloneDeep(messageAck)
-
-                crud_message.data.answer_qty++
-
-                if (crud_message.data.answer_qty < crud_message.data.readers.length) {
-                    ParseAcu.setRd(crud_message)
-                } else {
-                    const message = {
-                        id: crud_message.data.access_point,
-                        readers: crud_message.data.readers
-                    }
-
-                    console.log('crud_message', crud_message)
-
-                    if (crud_message.data.access_point_type === accessPointType.DOOR) {
-                        console.log('crud_message.data DOOR', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_DOOR
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-
-                        ParseCtp.setCtpDoor(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
-                        console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_TURNSTILE
-                        crud_message.data.type = crud_message.data.access_point_type
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-                        ParseCtp.setCtpTurnstile(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.GATE) {
-                        console.log('crud_message.data GATE', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_GATE
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-                        ParseCtp.setCtpGate(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
-                        console.log('crud_message.data GATEWAY', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_GATEWAY
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-                        ParseCtp.setCtpGateway(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
-                        console.log('crud_message.data FLOOR', crud_message.data)
+                if (crud_message.data.elevator_mode) {
+                    const acu_reader = cloneDeep(crud_message.data.reader)
+                    acu_reader.messageAck = cloneDeep(messageAck)
+                    for (const floor_access_point of crud_message.data.access_points) {
+                        const message = {
+                            id: floor_access_point.id,
+                            readers: [acu_reader]
+                        }
                         crud_message.operator = OperatorType.SET_CTP_FLOOR
                         delete crud_message.data.access_point_type
                         crud_message.data = message
                         ParseCtp.setCtpFloor(crud_message)
+                    }
+                } else {
+                    if (!crud_message.data.answer_qty) crud_message.data.answer_qty = 0
+                    crud_message.data.readers[crud_message.data.answer_qty].messageAck = cloneDeep(messageAck)
+                    crud_message.data.answer_qty++
+
+                    if (crud_message.data.answer_qty < crud_message.data.readers.length) {
+                        ParseAcu.setRd(crud_message)
+                    } else {
+                        const message = {
+                            id: crud_message.data.access_point,
+                            readers: crud_message.data.readers
+                        }
+
+                        if (crud_message.data.access_point_type === accessPointType.DOOR) {
+                            console.log('crud_message.data DOOR', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_DOOR
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+
+                            ParseCtp.setCtpDoor(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
+                            console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_TURNSTILE
+                            crud_message.data.type = crud_message.data.access_point_type
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpTurnstile(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.GATE) {
+                            console.log('crud_message.data GATE', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_GATE
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpGate(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
+                            console.log('crud_message.data GATEWAY', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_GATEWAY
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpGateway(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
+                            console.log('crud_message.data FLOOR', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_FLOOR
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpFloor(crud_message)
+                        }
                     }
                 }
 
