@@ -16,3 +16,12 @@ export function generateHexWithBytesLength (code: string, facility: string | nul
 
     return key_hex
 }
+
+export function getDayOfYear (date: Date) {
+    const date_now = new Date(date)
+    const date_start = new Date(date_now.getFullYear(), 0, 0)
+    const diff = date_now.getTime() - date_start.getTime()
+    const oneDay = 1000 * 60 * 60 * 24
+    const day_of_year = Math.floor(diff / oneDay)
+    return day_of_year
+}
