@@ -16,6 +16,9 @@ import { extBrdProtocol } from '../enums/extBrdProtocol.enum'
 import { extBrdInterface } from '../enums/extBrdInterface.enum'
 import { cloneDeep } from 'lodash'
 
+import { dateTimeToSeconds } from './ParseSchedule'
+import { autotaskEventDirection } from '../enums/autotaskEventDirection.enum'
+import { autoTaskRepeat } from '../enums/autotaskrepeat.enum'
 export default class ParseAcu {
     public static ping (message: ICrudMqttMessaging): void {
         const topic = message.topic
@@ -315,7 +318,14 @@ export default class ParseAcu {
         const topic = message.topic
 
         const ind = message.data.answer_qty ? message.data.answer_qty : 0
-        const reader_data = message.data.readers[ind]
+
+        let reader_data
+        if (message.data.elevator_mode) {
+            reader_data = message.data.reader
+        } else {
+            reader_data = message.data.readers[ind]
+        }
+
         let osdp_data = reader_data.osdp_data
         if (typeof osdp_data === 'string') osdp_data = JSON.parse(osdp_data)
 
@@ -543,16 +553,73 @@ export default class ParseAcu {
         })
     }
 
-    public static devTest (message: ICrudMqttMessaging): void {
-        // console.log('DellShedule', message)
+    public static deviceSetTask (message: ICrudMqttMessaging): void {
         const topic = message.topic
+        let events_condition = 0
+        let day_of_week = 0
+        let direction = -1
+        let repeat = autoTaskRepeat.NO_REPLY
+        let conditions = message.data.conditions
+        if (typeof conditions === 'string') conditions = JSON.parse(conditions)
+
+        if (conditions.EventsCondition) {
+            events_condition = conditions.EventsCondition.join(';')
+        }
+        if (conditions.DaysOfWeek) {
+            day_of_week = conditions.DaysOfWeek.join(';')
+        }
+
+        if (conditions.EventsDirection === autotaskEventDirection.ENTRY) {
+            direction = autotaskEventDirection.ENTRY
+        } else {
+            if (conditions.EventsDirection === autotaskEventDirection.EXIT) {
+                direction = autotaskEventDirection.EXIT
+            }
+        }
+        if (conditions.EventsDirection === autoTaskRepeat.REPLY) {
+            repeat = autoTaskRepeat.REPLY
+        } else {
+            if (conditions.EventsDirection === autoTaskRepeat.GRAPHIK) {
+                repeat = autoTaskRepeat.GRAPHIK
+            }
+        }
+
+        const info = {
+            Task_idx: message.data.id,
+            Ctp_idx: message.data.access_point,
+            Enable: message.data.enable,
+            TimeCondition: !!(conditions.TmBeginCondition),
+            EventsCondition: events_condition,
+            EventsDirection: direction,
+            Repeat: repeat,
+            TmBeginCondition: dateTimeToSeconds(conditions.TmBeginCondition),
+            TmEndCondition: dateTimeToSeconds(conditions.TmEndCondition),
+            DaysOfWeek: day_of_week,
+            Reaction: message.data.reaction
+        }
         const send_data = {
-            operator: OperatorType.DEV_TEST,
+            operator: OperatorType.SET_TASK,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
-        // console.log('DellShedule send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static deviceResetApb (message: ICrudMqttMessaging): void {
+        const topic = message.topic
+        const info = {
+            Ctp_id: message.data.access_point
+        }
+        const send_data = {
+            operator: OperatorType.RESET_APB,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -572,6 +639,22 @@ export default class ParseAcu {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
     }
+
+    public static devTest (message: ICrudMqttMessaging): void {
+        // console.log('DellShedule', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEV_TEST,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+        // console.log('DellShedule send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
 }
 
 function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
@@ -579,62 +662,77 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
     function cb (topicAck: any, messageAck: any) {
         try {
             messageAck = JSON.parse(messageAck.toString())
+            // console.log(1, topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`)
+            // console.log(2, crud_message.message_id === messageAck.message_id)
+            // console.log(3, messageAck.operator === `${crud_message.operator}-Ack`)
+
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 console.log('handleRdUpdateCallback', true)
-
-                if (!crud_message.data.answer_qty) crud_message.data.answer_qty = 0
 
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
 
-                crud_message.data.readers[crud_message.data.answer_qty].messageAck = cloneDeep(messageAck)
-
-                crud_message.data.answer_qty++
-
-                if (crud_message.data.answer_qty < crud_message.data.readers.length) {
-                    ParseAcu.setRd(crud_message)
-                } else {
-                    const message = {
-                        id: crud_message.data.access_point,
-                        readers: crud_message.data.readers
-                    }
-
-                    console.log('crud_message', crud_message)
-
-                    if (crud_message.data.access_point_type === accessPointType.DOOR) {
-                        console.log('crud_message.data DOOR', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_DOOR
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-
-                        ParseCtp.setCtpDoor(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
-                        console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_TURNSTILE
-                        crud_message.data.type = crud_message.data.access_point_type
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-                        ParseCtp.setCtpTurnstile(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.GATE) {
-                        console.log('crud_message.data GATE', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_GATE
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-                        ParseCtp.setCtpGate(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
-                        console.log('crud_message.data GATEWAY', crud_message.data)
-                        crud_message.operator = OperatorType.SET_CTP_GATEWAY
-                        delete crud_message.data.access_point_type
-                        crud_message.data = message
-                        ParseCtp.setCtpGateway(crud_message)
-                    } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
-                        console.log('crud_message.data FLOOR', crud_message.data)
+                if (crud_message.data.elevator_mode) {
+                    const acu_reader = cloneDeep(crud_message.data.reader)
+                    acu_reader.messageAck = cloneDeep(messageAck)
+                    for (const floor_access_point of crud_message.data.access_points) {
+                        const message = {
+                            id: floor_access_point.id,
+                            readers: [acu_reader]
+                        }
                         crud_message.operator = OperatorType.SET_CTP_FLOOR
                         delete crud_message.data.access_point_type
                         crud_message.data = message
                         ParseCtp.setCtpFloor(crud_message)
+                    }
+                } else {
+                    if (!crud_message.data.answer_qty) crud_message.data.answer_qty = 0
+                    crud_message.data.readers[crud_message.data.answer_qty].messageAck = cloneDeep(messageAck)
+                    crud_message.data.answer_qty++
+
+                    if (crud_message.data.answer_qty < crud_message.data.readers.length) {
+                        ParseAcu.setRd(crud_message)
+                    } else {
+                        const message = {
+                            id: crud_message.data.access_point,
+                            readers: crud_message.data.readers
+                        }
+
+                        if (crud_message.data.access_point_type === accessPointType.DOOR) {
+                            console.log('crud_message.data DOOR', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_DOOR
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+
+                            ParseCtp.setCtpDoor(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
+                            console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_TURNSTILE
+                            crud_message.data.type = crud_message.data.access_point_type
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpTurnstile(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.GATE) {
+                            console.log('crud_message.data GATE', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_GATE
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpGate(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
+                            console.log('crud_message.data GATEWAY', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_GATEWAY
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpGateway(crud_message)
+                        } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
+                            console.log('crud_message.data FLOOR', crud_message.data)
+                            crud_message.operator = OperatorType.SET_CTP_FLOOR
+                            delete crud_message.data.access_point_type
+                            crud_message.data = message
+                            ParseCtp.setCtpFloor(crud_message)
+                        }
                     }
                 }
 

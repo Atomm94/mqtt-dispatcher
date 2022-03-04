@@ -17,6 +17,9 @@ export default class ParseController {
             let info: any = {
                 Control_point_idx: message.data.id
             }
+            if ('work_mode' in message.data) {
+                info.Work_Mode = message.data.work_mode
+            }
             info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
             const resources = message.data.resourcesForSendDevice
@@ -148,6 +151,10 @@ export default class ParseController {
         let info: any = {
             Control_point_idx: message.data.id
             // Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
+        }
+
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
         }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
@@ -342,6 +349,10 @@ export default class ParseController {
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
         }
+
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
+        }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
         const resources = message.data.resourcesForSendDevice
@@ -462,6 +473,9 @@ export default class ParseController {
 
         let info: any = {
             Control_point_idx: message.data.id
+        }
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
         }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
@@ -595,6 +609,10 @@ export default class ParseController {
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
         }
+
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
+        }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
         const resources = message.data.resourcesForSendDevice
@@ -625,7 +643,11 @@ export default class ParseController {
                             if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
                             if ('type' in element) info.Door_Lock_type = element.type
                             if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
-                            if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
+                            if ('entry_exit_open_durations' in element) {
+                                info.Door_Delay = element.entry_exit_open_durations
+                            } else {
+                                info.Door_Delay = 15
+                            }
                         }
                         break
                     default:
@@ -689,7 +711,8 @@ export default class ParseController {
     }
 
     public static settingReaders (message: any, info: any) {
-        if (message.readers) {
+        const readers = message.readers
+        if (readers) {
             info.Rd0_idx = -1
             info.Rd0_dir = -1
             info.Rd1_idx = -1
@@ -698,7 +721,7 @@ export default class ParseController {
             info.Rd2_dir = -1
             info.Rd3_idx = -1
             info.Rd3_dir = -1
-            const readers = message.readers
+
             readers.forEach((reader: any, i: number) => {
                 if (reader.messageAck && reader.messageAck.result.errorNo === 0) {
                     info[`Rd${i}_idx`] = reader.id
