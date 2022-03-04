@@ -204,7 +204,12 @@ export default class ParseCrud {
             case OperatorType.DEV_TEST:
                 ParseAcu.devTest(message)
                 break
-
+            case OperatorType.SET_TASK:
+                ParseAcu.deviceSetTask(message)
+                break
+            case OperatorType.RESET_APB:
+                ParseAcu.deviceResetApb(message)
+                break
             default:
                 break
         }

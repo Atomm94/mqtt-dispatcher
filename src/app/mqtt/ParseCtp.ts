@@ -17,6 +17,9 @@ export default class ParseController {
             let info: any = {
                 Control_point_idx: message.data.id
             }
+            if ('work_mode' in message.data) {
+                info.Work_Mode = message.data.work_mode
+            }
             info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
             const resources = message.data.resourcesForSendDevice
@@ -148,6 +151,10 @@ export default class ParseController {
         let info: any = {
             Control_point_idx: message.data.id
             // Control_point_idx: message.data.info.Control_point_idx, /// ///for testing
+        }
+
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
         }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
@@ -342,6 +349,10 @@ export default class ParseController {
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
         }
+
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
+        }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
         const resources = message.data.resourcesForSendDevice
@@ -462,6 +473,9 @@ export default class ParseController {
 
         let info: any = {
             Control_point_idx: message.data.id
+        }
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
         }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 
@@ -594,6 +608,10 @@ export default class ParseController {
             Control_point_idx: message.data.id
             // Alarm_In_idx: -1,
             // Lock_Relay_idx: -1
+        }
+
+        if ('work_mode' in message.data) {
+            info.Work_Mode = message.data.work_mode
         }
         info = this.setAccessPointZoneAntipassBack(message.data.access_point_zones, topic, info)
 

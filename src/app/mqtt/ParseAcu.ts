@@ -16,6 +16,9 @@ import { extBrdProtocol } from '../enums/extBrdProtocol.enum'
 import { extBrdInterface } from '../enums/extBrdInterface.enum'
 import { cloneDeep } from 'lodash'
 
+import { dateTimeToSeconds } from './ParseSchedule'
+import { autotaskEventDirection } from '../enums/autotaskEventDirection.enum'
+import { autoTaskRepeat } from '../enums/autotaskrepeat.enum'
 export default class ParseAcu {
     public static ping (message: ICrudMqttMessaging): void {
         const topic = message.topic
@@ -543,16 +546,73 @@ export default class ParseAcu {
         })
     }
 
-    public static devTest (message: ICrudMqttMessaging): void {
-        // console.log('DellShedule', message)
+    public static deviceSetTask (message: ICrudMqttMessaging): void {
         const topic = message.topic
+        let events_condition = 0
+        let day_of_week = 0
+        let direction = -1
+        let repeat = autoTaskRepeat.NO_REPLY
+        let conditions = message.data.conditions
+        if (typeof conditions === 'string') conditions = JSON.parse(conditions)
+
+        if (conditions.EventsCondition) {
+            events_condition = conditions.EventsCondition.join(';')
+        }
+        if (conditions.DaysOfWeek) {
+            day_of_week = conditions.DaysOfWeek.join(';')
+        }
+
+        if (conditions.EventsDirection === autotaskEventDirection.ENTRY) {
+            direction = autotaskEventDirection.ENTRY
+        } else {
+            if (conditions.EventsDirection === autotaskEventDirection.EXIT) {
+                direction = autotaskEventDirection.EXIT
+            }
+        }
+        if (conditions.EventsDirection === autoTaskRepeat.REPLY) {
+            repeat = autoTaskRepeat.REPLY
+        } else {
+            if (conditions.EventsDirection === autoTaskRepeat.GRAPHIK) {
+                repeat = autoTaskRepeat.GRAPHIK
+            }
+        }
+
+        const info = {
+            Task_idx: message.data.id,
+            Ctp_idx: message.data.access_point,
+            Enable: message.data.enable,
+            TimeCondition: !!(conditions.TmBeginCondition),
+            EventsCondition: events_condition,
+            EventsDirection: direction,
+            Repeat: repeat,
+            TmBeginCondition: dateTimeToSeconds(conditions.TmBeginCondition),
+            TmEndCondition: dateTimeToSeconds(conditions.TmEndCondition),
+            DaysOfWeek: day_of_week,
+            Reaction: message.data.reaction
+        }
         const send_data = {
-            operator: OperatorType.DEV_TEST,
+            operator: OperatorType.SET_TASK,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: message.data
+            info: info
         }
-        // console.log('DellShedule send message', send_data)
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static deviceResetApb (message: ICrudMqttMessaging): void {
+        const topic = message.topic
+        const info = {
+            Ctp_id: message.data.access_point
+        }
+        const send_data = {
+            operator: OperatorType.RESET_APB,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -567,6 +627,22 @@ export default class ParseAcu {
             message_id: message.message_id,
             info: message.data
         }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static devTest (message: ICrudMqttMessaging): void {
+        // console.log('DellShedule', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.DEV_TEST,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+        // console.log('DellShedule send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
