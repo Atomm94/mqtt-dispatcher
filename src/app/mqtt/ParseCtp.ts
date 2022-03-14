@@ -6,7 +6,7 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 import { accessPointType } from '../enums/accessPointType.enum'
 // import { scheduleType } from '../enums/scheduleType.enum'
 // import { credentialStatus } from '../enums/credentialStatus.enum'
-import { handleCallback } from './ParseAcu'
+import { handleCallback, handleCredentialActivateCallback } from './ParseAcu'
 import { typeAntipassBack } from '../enums/typeAntipassBack.enum'
 export default class ParseController {
     public static setCtpDoor (message: ICrudMqttMessaging): void {
@@ -707,6 +707,24 @@ export default class ParseController {
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
+    public static activateCredential (message: ICrudMqttMessaging) {
+        // console.log('activateCredential', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.ACTIVATE_CREDENTIAL,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                WaitingTime: 30,
+                Ctp_id: message.data.access_point_id
+            }
+        }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCredentialActivateCallback(topic, message) as Function)
         })
     }
 

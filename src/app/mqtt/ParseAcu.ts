@@ -767,6 +767,41 @@ export function handlePingCallback (send_topic: any, crud_message: any): any {
     return cb
 }
 
+export function handleCredentialActivateCallback (send_topic: any, crud_message: any): any {
+    const ack_timeout = ackTimeout(send_topic, crud_message, cb, 2 * 60 * 1000)
+    function cb (topicAck: any, messageAck: any) {
+        try {
+            messageAck = JSON.parse(messageAck)
+            if (messageAck.operator === OperatorType.EVENT) {
+                if (messageAck.info && messageAck.info.Event_id === 16 &&
+                    messageAck.info.Ctp_idx === crud_message.data.access_point_id &&
+                    messageAck.info.Key_HEX
+                ) {
+                    const event_data = cloneDeep(messageAck)
+                    messageAck.operator = OperatorType.ACTIVATE_CREDENTIAL_ACK
+                    messageAck.device_topic = `${send_topic.split('/').slice(0, -2).join('/')}/Ack/`
+                    messageAck.result = {
+                        errorNo: 0,
+                        time: Math.floor(new Date().getTime() / 1000)
+                    }
+                    messageAck.send_data = crud_message
+                    messageAck.event_data = event_data
+                    MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+                    MQTTBroker.client.removeListener('message', cb)
+                    clearTimeout(ack_timeout)
+                }
+            } else if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
+                if (messageAck.result.errorNo !== 0) {
+                    // MQTTBroker.client.removeListener('message', cb)
+                    // clearTimeout(ack_timeout)
+                }
+            }
+        } catch (e) {
+        }
+    }
+    return cb
+}
+
 export function handleCallback (send_topic: any, crud_message: any): any {
     const ack_timeout = ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
