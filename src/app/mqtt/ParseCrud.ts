@@ -122,6 +122,9 @@ export default class ParseCrud {
             case OperatorType.GET_CTP_FLOOR:
                 ParseCtp.getCtpFloor(message)
                 break
+            case OperatorType.ACTIVATE_CREDENTIAL:
+                ParseCtp.activateCredential(message)
+                break
 
             case OperatorType.SET_EVENTS_MOD:
                 ParseEvents.setEventsMod(message)

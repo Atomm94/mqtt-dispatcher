@@ -120,15 +120,20 @@ export default class ParseSchedule {
                 week_tms[end_time_key] = (week_tms[end_time_key] === '0') ? end_time : `${week_tms[end_time_key]};${end_time}`
             }
         })
+        const info = {
+            Shedule_id: message.data.id,
+            Ctp_idx: message.data.access_point,
+            ...week_tms
+        }
+
+        if (message.data.start_date) info.Start_date = message.data.start_date
+        if (message.data.end_date) info.Expiration_date = message.data.end_date
+
         const send_data: any = {
             operator: OperatorType.SET_SDL_WEEKLY,
             session_id: message.session_id,
             message_id: message.message_id,
-            info: {
-                Shedule_id: message.data.id,
-                Ctp_idx: message.data.access_point,
-                ...week_tms
-            }
+            info: info
         }
         // console.log('SetSdlWeekly send message', send_data)
 
