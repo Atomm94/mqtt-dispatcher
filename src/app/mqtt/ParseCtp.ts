@@ -68,7 +68,7 @@ export default class ParseController {
                                 if ('output' in element) info.Lock_Relay_idx = element.output - 1
                                 if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
                                 if ('type' in element) info.Door_Lock_type = element.type
-                                if ('impulse_time' in element) info.Door_Lock_puls = element.impulse_time
+                                if ('impulse_time' in element) info.Door_Lock_puls = element.impulse_time * 1000
                                 if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
                                 if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
                             }
@@ -79,7 +79,7 @@ export default class ParseController {
                             } else {
                                 if ('component_source' in element) info.Alarm_out_opt = element.component_source
                                 if ('output' in element) info.Alarm_out_idx = element.output - 1
-                                if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
+                                if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time * 1000
                                 if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
                                 if ('type' in element) info.Alarm_out_mod = element.type
                             }
@@ -228,7 +228,7 @@ export default class ParseController {
                             if ('input' in element) info.Entry_Rl_idx = element.input - 1
                             if ('relay_mode' in element) info.Entry_Rl_mode = element.relay_mode
                             if ('type' in element) info.Entry_Rl_type = element.type
-                            if ('impulse_time' in element) info.Entry_Rl_pulse = element.impulse_time
+                            if ('impulse_time' in element) info.Entry_Rl_pulse = element.impulse_time * 1000
                             if ('entry_exit_open_durations' in element) info.Entry_Delay = element.entry_exit_open_durations
                         }
                         break
@@ -240,7 +240,7 @@ export default class ParseController {
                             if ('input' in element) info.Exit_Rl_idx = element.input - 1
                             if ('relay_mode' in element) info.Exit_Rl_mode = element.relay_mode
                             if ('type' in element) info.Exit_Rl_type = element.type
-                            if ('impulse_time' in element) info.Exit_Rl_pulse = element.impulse_time
+                            if ('impulse_time' in element) info.Exit_Rl_pulse = element.impulse_time * 1000
                             if ('entry_exit_open_durations' in element) info.Entry_Delay = element.entry_exit_open_durations
                         }
                         break
@@ -250,7 +250,7 @@ export default class ParseController {
                         } else {
                             if ('component_source' in element) info.Alarm_out_opt = element.component_source
                             if ('output' in element) info.Alarm_out_idx = element.output - 1
-                            if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
+                            if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time * 1000
                             if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
                             if ('type' in element) info.Alarm_out_mod = element.type
                         }
@@ -261,7 +261,7 @@ export default class ParseController {
                         } else {
                             if ('component_source' in element) info.BlockEnt_Rl_opt = element.component_source
                             if ('output' in element) info.BlockEnt_Rl_idx = element.output - 1
-                            if ('impulse_time' in element) info.BlockEnt_Rl_pulse = element.impulse_time
+                            if ('impulse_time' in element) info.BlockEnt_Rl_pulse = element.impulse_time * 1000
                             if ('relay_mode' in element) info.BlockEnt_Rl_mode = element.relay_mode
                             if ('type' in element) info.BlockEnt_Rl_type = element.type
                         }
@@ -272,7 +272,7 @@ export default class ParseController {
                         } else {
                             if ('component_source' in element) info.FreeEnt_Rl_opt = element.component_source
                             if ('output' in element) info.FreeEnt_Rl_idx = element.output - 1
-                            if ('impulse_time' in element) info.FreeEnt_Rl_pulse = element.impulse_time
+                            if ('impulse_time' in element) info.FreeEnt_Rl_pulse = element.impulse_time * 1000
                             if ('relay_mode' in element) info.FreeEnt_Rl_mode = element.relay_mode
                             if ('type' in element) info.FreeEnt_Rl_type = element.type
                         }
@@ -403,7 +403,7 @@ export default class ParseController {
                             if ('output' in element) info.Lock_Relay_idx = element.output - 1
                             if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
                             if ('type' in element) info.Door_Lock_type = element.type
-                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
+                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time * 1000
                             if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
                             if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
                         }
@@ -525,7 +525,7 @@ export default class ParseController {
                             if ('output' in element) info.Lock_Relay_idx = element.output - 1
                             if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
                             if ('type' in element) info.Door_Lock_type = element.type
-                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
+                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time * 1000
                             if ('entry_exit_open_durations' in element) info.Door_Delay = element.entry_exit_open_durations
                             if ('door_sensor_autolock' in element) info.Door_Sens_Autolock = element.door_sensor_autolock
                         }
@@ -536,7 +536,7 @@ export default class ParseController {
                         } else {
                             if ('component_source' in element) info.Alarm_out_opt = element.component_source
                             if ('output' in element) info.Alarm_out_idx = element.output - 1
-                            if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time
+                            if ('impulse_time' in element) info.Alarm_out_tm = element.impulse_time * 1000
                             if ('relay_mode' in element) info.Alarm_mod = element.relay_mode
                             if ('type' in element) info.Alarm_out_mod = element.type
                         }
@@ -642,7 +642,7 @@ export default class ParseController {
                             if ('output' in element) info.Lock_Relay_idx = element.output - 1
                             if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
                             if ('type' in element) info.Door_Lock_type = element.type
-                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time
+                            if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time * 1000
                             if ('entry_exit_open_durations' in element) {
                                 info.Door_Delay = element.entry_exit_open_durations
                             } else {
