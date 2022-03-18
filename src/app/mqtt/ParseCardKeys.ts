@@ -200,22 +200,29 @@ export default class ParseCardKeys {
     public static dellKeys (message: ICrudMqttMessaging): void {
         // console.log('DellKeys', message)
         const topic = message.topic
-        const keys = `/${message.data.id}/`
-        const send_data = {
-            operator: OperatorType.DELL_KEYS,
-            session_id: message.session_id,
-            message_id: message.message_id,
-            info: {
-                KeysDataLength: keys.length,
-                Keys_count: 1,
-                Keys_id: keys
+        const cardholders = message.data
+        const cardholders_length = cardholders.length
+        if (cardholders_length) {
+            let keys = '/'
+            for (const cardholder of message.data) {
+                keys = `${cardholder.id}/`
             }
-        }
-        // console.log('DellKeys send message', send_data)
+            const send_data = {
+                operator: OperatorType.DELL_KEYS,
+                session_id: message.session_id,
+                message_id: message.message_id,
+                info: {
+                    KeysDataLength: keys.length,
+                    Keys_count: cardholders_length,
+                    Keys_id: keys
+                }
+            }
+            // console.log('DellKeys send message', send_data)
 
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
-        })
+            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+            })
+        }
     }
 
     public static dellAllKeys (message: ICrudMqttMessaging): void {
