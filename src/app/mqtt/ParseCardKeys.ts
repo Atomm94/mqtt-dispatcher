@@ -1,14 +1,8 @@
 import MQTTBroker from './mqtt'
 import { OperatorType } from './Operators'
-// import { SendTopics } from './Topics'
 import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
-// import { acuConnectionType } from '../enums/acuConnectionType.enum'
-// import { accessPointType } from '../enums/accessPointType.enum'
-// import { scheduleType } from '../enums/scheduleType.enum'
-import { credentialStatus } from '../enums/credentialStatus.enum'
-
 import { handleCallback, ackTimeout } from './ParseAcu'
-import { generateHexWithBytesLength } from '../functions/util'
+import { generateHexWithBytesLength, getCredentialStatus } from '../functions/util'
 
 export default class ParseCardKeys {
     public static limit_for_keys_count = 25
@@ -60,7 +54,7 @@ export default class ParseCardKeys {
                     key_string += `${access_point_id};`
                     key_string += `${this.key_len};`
                     key_string += `${key_hex};`
-                    key_string += `${(credential.status === credentialStatus.ACTIVE) ? 1 : 0};`
+                    key_string += `${getCredentialStatus(credential.status)};`
                     key_string += `${access_rule_id};`
                     key_string += '1;' // Kind_key
                     key_string += '0;' // Key_type
@@ -176,7 +170,7 @@ export default class ParseCardKeys {
                                 if (credential.isDelete) {
                                     info.Key_status = -1
                                 } else {
-                                    info.Key_status = credential.status === credentialStatus.ACTIVE ? 1 : 0
+                                    info.Key_status = getCredentialStatus(credential.status)
                                 }
                             }
 
