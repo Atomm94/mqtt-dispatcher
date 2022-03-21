@@ -1,3 +1,4 @@
+import { credentialStatus } from '../enums/credentialStatus.enum'
 
 export function generateHexWithBytesLength (code: string, facility: string | null, bytes_length: number) {
     let credential_facility_hex = facility ? Number(facility).toString(16) : ''
@@ -24,4 +25,19 @@ export function getDayOfYear (date: Date) {
     const oneDay = 1000 * 60 * 60 * 24
     const day_of_year = Math.floor(diff / oneDay)
     return day_of_year
+}
+
+export function getCredentialStatus (credential_status: credentialStatus) {
+    switch (credential_status) {
+        case credentialStatus.INACTIVE:
+            return 0
+        case credentialStatus.ACTIVE:
+            return 1
+        case credentialStatus.STOLEN:
+            return 2
+        case credentialStatus.LOST:
+            return 3
+        default:
+            return 0
+    }
 }
