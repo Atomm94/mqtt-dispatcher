@@ -672,6 +672,10 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 
+                if (!crud_message.data.answer_qty) crud_message.data.answer_qty = 0
+                crud_message.data.readers[crud_message.data.answer_qty].messageAck = cloneDeep(messageAck)
+                crud_message.data.answer_qty++
+
                 MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
 
                 if (crud_message.data.elevator_mode) {
@@ -688,10 +692,6 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                         ParseCtp.setCtpFloor(crud_message)
                     }
                 } else {
-                    if (!crud_message.data.answer_qty) crud_message.data.answer_qty = 0
-                    crud_message.data.readers[crud_message.data.answer_qty].messageAck = cloneDeep(messageAck)
-                    crud_message.data.answer_qty++
-
                     if (crud_message.data.answer_qty < crud_message.data.readers.length) {
                         ParseAcu.setRd(crud_message)
                     } else {
