@@ -684,7 +684,8 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     for (const floor_access_point of crud_message.data.access_points) {
                         const message = {
                             id: floor_access_point.id,
-                            readers: [acu_reader]
+                            readers: [acu_reader],
+                            access_point_zones: crud_message.data.access_point_zones
                         }
                         crud_message.operator = OperatorType.SET_CTP_FLOOR
                         delete crud_message.data.access_point_type
@@ -697,7 +698,8 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                     } else {
                         const message = {
                             id: crud_message.data.access_point,
-                            readers: crud_message.data.readers
+                            readers: crud_message.data.readers,
+                            access_point_zones: crud_message.data.access_point_zones
                         }
 
                         if (crud_message.data.access_point_type === accessPointType.DOOR) {
