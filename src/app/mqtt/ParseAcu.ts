@@ -322,6 +322,7 @@ export default class ParseAcu {
         let reader_data
         if (message.data.elevator_mode) {
             reader_data = message.data.reader
+            reader_data.access_point = 0
         } else {
             reader_data = message.data.readers[ind]
         }
