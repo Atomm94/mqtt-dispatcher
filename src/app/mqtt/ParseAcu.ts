@@ -842,7 +842,7 @@ export function ackTimeout (send_topic: any, crud_message: any, cb: any, timeout
             result: {
                 errorNo: 777
             },
-            // send_data: crud_message,
+            send_data: crud_message,
             device_topic: topic
         }
 
