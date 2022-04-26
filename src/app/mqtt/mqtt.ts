@@ -8,6 +8,7 @@ export default class MQTTBroker {
     public static client: MqttClient
     public static async init () {
         this.client = connect(config.mqtt)
+        this.client.setMaxListeners(Number(config.maxListeners))
         return await new Promise((resolve, reject) => {
             this.client.on('connect', (status: any) => {
                 logger.info('MQTT server connected successfully!')
@@ -31,7 +32,7 @@ export default class MQTTBroker {
     }
 
     public static publishMessage (topic: string, msg: string, cb?: Function): void {
-        console.log('publishMessage topic', topic, msg)
+        // console.log('publishMessage topic', topic, msg)
         this.client.publish(topic, msg, (error: any) => {
             if (error) { logger.error('publish error', error) } else {
                 if (cb) {

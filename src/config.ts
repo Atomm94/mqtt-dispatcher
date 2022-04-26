@@ -24,8 +24,8 @@ export interface IConfig {
         host: string,
         port: number | boolean
     };
-    logs:{
-        url:string
+    logs: {
+        url: string
     };
     cors: {
         origin: string,
@@ -48,6 +48,7 @@ export interface IConfig {
     isTest: boolean;
     isProduction: boolean;
     isDevelopment: boolean;
+    maxListeners: number
 
 }
 
@@ -86,7 +87,8 @@ const config: IConfig = {
     nodeEnv: process.env.NODE_ENV,
     isTest: !!(process.env.NODE_ENV === 'test' && process.env.NODE_TEST),
     isDevelopment: process.env.NODE_ENV === 'development',
-    isProduction: process.env.NODE_ENV === 'production'
+    isProduction: process.env.NODE_ENV === 'production',
+    maxListeners: _.defaultTo(Number(process.env.MAX_LISTENERS), 1000)
 }
 
 /**
