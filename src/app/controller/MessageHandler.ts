@@ -10,11 +10,11 @@ import LogMessageHandler from './LogMessagesHandler'
 export default class MessageHandler {
     constructor () {
         MQTTBroker.getMessage((topic: string, message: string) => {
-            console.log('getMessage topic', topic, message)
+            // console.log('getMessage topic', topic, message)
             var data
             switch (topic) {
                 case 'PING':
-                    console.log(topic, '-', message)
+                    // console.log(topic, '-', message)
                     break
                 case ReceiveTopics.CRUD_MQTT:
                     data = JSON.parse(message)
