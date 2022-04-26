@@ -681,6 +681,7 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                 }
 
                 if (crud_message.data.elevator_mode) {
+                    MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
                     const acu_reader = cloneDeep(crud_message.data.reader)
                     acu_reader.messageAck = cloneDeep(messageAck)
                     for (const floor_access_point of crud_message.data.access_points) {
