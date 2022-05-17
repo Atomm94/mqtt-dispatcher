@@ -33,6 +33,7 @@ export default class ParseCardKeys {
             for (const access_rule of cardholder.access_rights.access_rules) {
                 if (access_rule.access_point === access_point_id) {
                     access_rule_id = access_rule.id
+                    break
                 }
             }
 
@@ -257,11 +258,11 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
                 if (crud_message.data.access_point_sended >= crud_message.data.keys_count) {
                     crud_message.data.access_points.shift()
                     crud_message.data.access_point_sended = 0
-                    if (crud_message.data.access_points.length) {
-                        ParseCardKeys.setAddCardKey(crud_message, crud_message.operator as OperatorType.SET_CARD_KEYS | OperatorType.ADD_CARD_KEY)
-                    } else {
-                        ParseCardKeys.endCardKey(crud_message)
-                    }
+                }
+                if (crud_message.data.access_points.length) {
+                    ParseCardKeys.setAddCardKey(crud_message, crud_message.operator as OperatorType.SET_CARD_KEYS | OperatorType.ADD_CARD_KEY)
+                } else {
+                    ParseCardKeys.endCardKey(crud_message)
                 }
 
                 MQTTBroker.client.removeListener('message', cb)
