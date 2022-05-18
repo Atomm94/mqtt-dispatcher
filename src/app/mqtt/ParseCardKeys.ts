@@ -72,7 +72,8 @@ export default class ParseCardKeys {
         }
         if (!message.data.access_point_sended) message.data.access_point_sended = 0
         if (!message.data.all_keys_count) message.data.all_keys_count = keys.length * access_points.length
-        if (!message.data.keys_count) message.data.keys_count = keys.length
+        // if (!message.data.keys_count) message.data.keys_count = keys.length
+        message.data.keys_count = keys.length
 
         if (!keys.length) {
             message.data.access_points.shift()
