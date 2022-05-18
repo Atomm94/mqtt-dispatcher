@@ -14,7 +14,7 @@ export default class ParseCardKeys {
         const cardholders = message.data.cardholders
         if (access_points.slice(-1)[0].id !== 0) access_points.push({ id: 0 })
         const access_point_id = access_points[0].id
-        const access_point_acu = access_points[0].acu
+        const check_access_point_in_this_acu = (access_points[0].acu === message.data.acu_id)
         let keys: any = []
         if (!('send_end_card_key' in message.data)) message.data.send_end_card_key = false
         if (!message.data.keys_from_other_devices) message.data.keys_from_other_devices = {}
@@ -58,11 +58,11 @@ export default class ParseCardKeys {
 
                         let key_string = '/'
                         key_string += `${credential.id};`
-                        key_string += `${access_point_id};`
+                        key_string += `${check_access_point_in_this_acu ? access_point_id : 0};`
                         key_string += `${this.key_len};`
                         key_string += `${key_hex};`
                         key_string += `${getCredentialStatus(credential.status)};`
-                        key_string += `${access_rule_id};`
+                        key_string += `${check_access_point_in_this_acu ? access_rule_id : 0};`
                         key_string += '1;' // Kind_key
                         key_string += '0;' // Key_type
                         key_string += '-1;' // Passes
@@ -73,7 +73,7 @@ export default class ParseCardKeys {
                         key_string += `${start_date};` // Start_date
                         key_string += `${expiration_date};` // Expiration_date
 
-                        if (access_point_acu === message.data.acu_id) {
+                        if (check_access_point_in_this_acu) {
                             keys.push(key_string)
                         } else {
                             message.data.keys_from_other_devices[key_hex] = key_string
@@ -143,6 +143,7 @@ export default class ParseCardKeys {
         // console.log('EditKey send message', send_data)
         const access_points = message.data.access_points
         const cardholders = message.data.cardholders
+        const keys_from_other_devices: any = {}
         for (const cardholder of cardholders) {
             for (const credential of cardholder.credentials) {
                 const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
@@ -165,6 +166,7 @@ export default class ParseCardKeys {
                     })
                 } else {
                     for (const access_point of access_points) {
+                        const check_access_point_in_this_acu = (access_point.id === message.data.acu_id)
                         let access_rule_id = 0
                         for (const access_rule of cardholder.access_rights.access_rules) {
                             if (access_rule.access_point === access_point.id) {
@@ -174,7 +176,7 @@ export default class ParseCardKeys {
 
                         if (access_rule_id) {
                             const info: any = {
-                                Ctp_id: access_point.id,
+                                Ctp_id: check_access_point_in_this_acu ? access_point.id : 0,
                                 Key_id: credential.id,
                                 Key: key_hex
                             }
@@ -189,16 +191,32 @@ export default class ParseCardKeys {
                             }
 
                             info.Key_len = this.key_len
-                            const send_data = {
-                                operator: OperatorType.EDIT_KEY,
-                                session_id: message.session_id,
-                                message_id: message.message_id,
-                                info: info
+
+                            if (check_access_point_in_this_acu) {
+                                const send_data = {
+                                    operator: OperatorType.EDIT_KEY,
+                                    session_id: message.session_id,
+                                    message_id: message.message_id,
+                                    info: info
+                                }
+                                MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                                    MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                                })
+                            } else {
+                                keys_from_other_devices[key_hex] = info
                             }
-                            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                                MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
-                            })
                         }
+                    }
+                    for (const send_with_ctp_id_0 of Object.values(keys_from_other_devices)) {
+                        const send_data = {
+                            operator: OperatorType.EDIT_KEY,
+                            session_id: message.session_id,
+                            message_id: message.message_id,
+                            info: send_with_ctp_id_0
+                        }
+                        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                        })
                     }
                 }
             }
