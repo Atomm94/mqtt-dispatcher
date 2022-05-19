@@ -18,6 +18,7 @@ export default class ParseCardKeys {
         let keys: any = []
         if (!('send_end_card_key' in message.data)) message.data.send_end_card_key = false
         if (!message.data.keys_from_other_devices) message.data.keys_from_other_devices = {}
+        if (!message.data.keys_count_for_end_card_key) message.data.keys_count_for_end_card_key = 0
 
         if (access_point_id === 0) {
             keys = Object.values(message.data.keys_from_other_devices)
@@ -112,6 +113,7 @@ export default class ParseCardKeys {
                 info: info
             }
             // console.log('AddCardKey send message', send_data)
+            message.data.KeysCount = info.KeysCount
 
             MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
                 MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
@@ -127,7 +129,8 @@ export default class ParseCardKeys {
             session_id: message.session_id,
             message_id: message.message_id,
             info: {
-                KeysCount: message.data.all_credentials_count
+                // KeysCount: message.data.all_credentials_count
+                KeysCount: message.data.keys_count_for_end_card_key
             }
         }
         // console.log('endCardKey send message', send_data)
@@ -285,6 +288,7 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
                 messageAck.device_topic = topicAck
                 crud_message.data.access_point_sended += ParseCardKeys.limit_for_keys_count
                 console.log('crud_message', crud_message)
+                crud_message.data.keys_count_for_end_card_key += crud_message.data.KeysCount
 
                 if (crud_message.data.access_point_sended >= crud_message.data.keys_count) {
                     crud_message.data.access_points.shift()
