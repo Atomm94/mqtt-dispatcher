@@ -103,6 +103,20 @@ export default class ParseAcu {
         })
     }
 
+    public static maintain (message: ICrudMqttMessaging): void {
+        // console.log('setPass', message)
+        const topic = message.topic
+        const send_data = {
+            operator: OperatorType.SET_PASS,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: message.data
+        }
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setNetSettings (message: ICrudMqttMessaging): void {
         const topic = message.topic
         const info: any = {}
@@ -174,15 +188,16 @@ export default class ParseAcu {
         //     gmt: 4
         // }
         const topic = message.topic
-        const time_zone = message.data.time_zone
-        if (time_zone) {
+        // const time_zone = message.data.time_zone
+        const time_zone_unix = message.data.time_zone_unix
+        if (time_zone_unix) {
             const send_data = {
                 operator: OperatorType.SET_DATE_TIME,
                 session_id: message.session_id,
                 message_id: message.message_id,
                 info: {
                     DateTime: 1583636400,
-                    GMT: time_zone,
+                    GMT: time_zone_unix,
                     NTP1: 'pool.ntp.org',
                     NTP2: 'pool2.ntp.org:123',
                     DST_GMT: false,
