@@ -174,7 +174,7 @@ export default class ParseAcu {
         //     gmt: 4
         // }
         const topic = message.topic
-        const time_zone = message.data.time.time_zone
+        const time_zone = message.data.time_zone
         if (time_zone) {
             const send_data = {
                 operator: OperatorType.SET_DATE_TIME,
