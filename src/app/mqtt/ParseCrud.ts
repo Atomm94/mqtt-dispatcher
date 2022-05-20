@@ -29,6 +29,9 @@ export default class ParseCrud {
             case OperatorType.SET_PASS:
                 ParseAcu.setPass(message)
                 break
+            case OperatorType.MAIN_TAIN:
+                ParseAcu.mainTain(message)
+                break
             case OperatorType.SET_NET_SETTINGS:
                 ParseAcu.setNetSettings(message)
                 break

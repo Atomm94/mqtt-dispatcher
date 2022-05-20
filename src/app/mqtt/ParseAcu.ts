@@ -19,6 +19,7 @@ import { cloneDeep } from 'lodash'
 import { dateTimeToSeconds } from './ParseSchedule'
 import { autotaskEventDirection } from '../enums/autotaskEventDirection.enum'
 import { autoTaskRepeat } from '../enums/autotaskrepeat.enum'
+import { acuMainTain } from '../enums/acuMainTain.enum'
 export default class ParseAcu {
     public static ping (message: ICrudMqttMessaging): void {
         const topic = message.topic
@@ -103,18 +104,40 @@ export default class ParseAcu {
         })
     }
 
-    public static maintain (message: ICrudMqttMessaging): void {
+    public static mainTain (message: ICrudMqttMessaging): void {
         // console.log('setPass', message)
         const topic = message.topic
-        const send_data = {
-            operator: OperatorType.SET_PASS,
-            session_id: message.session_id,
-            message_id: message.message_id,
-            info: message.data
+        const main_tain = message.data.main_tain
+        let reset_cmd
+        switch (main_tain) {
+            case acuMainTain.RESTART:
+                reset_cmd = 1
+                break
+            case acuMainTain.DEACTIVATE:
+                reset_cmd = 2
+                break
+            case acuMainTain.RESET:
+                reset_cmd = 3
+                break
+            case acuMainTain.RESET_TO_FACTORY:
+                reset_cmd = 4
+                break
+            default:
+                break
         }
-        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
-        })
+        if (reset_cmd) {
+            const send_data = {
+                operator: OperatorType.MAIN_TAIN,
+                session_id: message.session_id,
+                message_id: message.message_id,
+                info: {
+                    ResetCmd: reset_cmd
+                }
+            }
+            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+            })
+        }
     }
 
     public static setNetSettings (message: ICrudMqttMessaging): void {
@@ -190,6 +213,8 @@ export default class ParseAcu {
         const topic = message.topic
         // const time_zone = message.data.time_zone
         const time_zone_unix = message.data.time_zone_unix
+        const enable_daylight_saving_time = message.data.enable_daylight_saving_time
+
         if (time_zone_unix) {
             const send_data = {
                 operator: OperatorType.SET_DATE_TIME,
@@ -200,7 +225,7 @@ export default class ParseAcu {
                     GMT: time_zone_unix,
                     NTP1: 'pool.ntp.org',
                     NTP2: 'pool2.ntp.org:123',
-                    DST_GMT: false,
+                    DST_GMT: enable_daylight_saving_time,
                     DST_Start: 1583636400,
                     DST_End: 1604196000,
                     DST_Shift: 3600
