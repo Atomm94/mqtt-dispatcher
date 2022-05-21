@@ -214,20 +214,24 @@ export default class ParseAcu {
         // const time_zone = message.data.time_zone
         const time_zone_unix = message.data.time_zone_unix
         const enable_daylight_saving_time = message.data.enable_daylight_saving_time
+        console.log('666', time_zone_unix)
 
         if (time_zone_unix) {
+            const splited_time = time_zone_unix.split(':')
+            const unix_time = (time_zone_unix.split('-').length > 1) ? (Number(splited_time[0]) * 60 * 60 - Number(splited_time[1]) * 60) : (Number(splited_time[0]) * 60 * 60 + Number(splited_time[1]) * 60)
+
             const send_data = {
                 operator: OperatorType.SET_DATE_TIME,
                 session_id: message.session_id,
                 message_id: message.message_id,
                 info: {
                     DateTime: 1583636400,
-                    GMT: time_zone_unix,
+                    GMT: unix_time,
                     NTP1: 'pool.ntp.org',
                     NTP2: 'pool2.ntp.org:123',
                     DST_GMT: enable_daylight_saving_time,
-                    DST_Start: 1583636400,
-                    DST_End: 1604196000,
+                    // DST_Start: 1583636400,
+                    // DST_End: 1604196000,
                     DST_Shift: 3600
                 }
             }
