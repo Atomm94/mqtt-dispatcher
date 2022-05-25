@@ -15,13 +15,19 @@ export default class ParseCardKeys {
         if (access_points.slice(-1)[0].id !== 0) access_points.push({ id: 0 })
         const access_point_id = access_points[0].id
         const check_access_point_in_this_acu = (access_points[0].acu === message.data.acu_id)
-        let keys: any = []
+        const keys: any = []
         if (!('send_end_card_key' in message.data)) message.data.send_end_card_key = false
         if (!message.data.keys_from_other_devices) message.data.keys_from_other_devices = {}
+        if (!message.data.keys_sended_for_this_device) message.data.keys_sended_for_this_device = {}
         if (!message.data.keys_count_for_end_card_key) message.data.keys_count_for_end_card_key = 0
 
         if (access_point_id === 0) {
-            keys = Object.values(message.data.keys_from_other_devices)
+            for (const key_from_other_devices in message.data.keys_from_other_devices) {
+                if (!message.data.keys_sended_for_this_device[key_from_other_devices]) {
+                    keys.push(message.data.keys_from_other_devices[key_from_other_devices])
+                }
+            }
+            // keys = Object.values(message.data.keys_from_other_devices)
         } else {
             for (const cardholder of cardholders) {
                 // let anti_passback_type = -1
@@ -76,6 +82,7 @@ export default class ParseCardKeys {
 
                         if (check_access_point_in_this_acu) {
                             keys.push(key_string)
+                            message.data.keys_sended_for_this_device[key_hex] = true
                         } else {
                             message.data.keys_from_other_devices[key_hex] = key_string
                         }
@@ -147,6 +154,7 @@ export default class ParseCardKeys {
         const access_points = message.data.access_points
         const cardholders = message.data.cardholders
         const keys_from_other_devices: any = {}
+        const keys_sended_for_this_device: any = {}
         for (const cardholder of cardholders) {
             for (const credential of cardholder.credentials) {
                 const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
@@ -205,21 +213,25 @@ export default class ParseCardKeys {
                                 MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
                                     MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
                                 })
+                                keys_sended_for_this_device[key_hex] = true
                             } else {
                                 keys_from_other_devices[key_hex] = info
                             }
                         }
                     }
-                    for (const send_with_ctp_id_0 of Object.values(keys_from_other_devices)) {
-                        const send_data = {
-                            operator: OperatorType.EDIT_KEY,
-                            session_id: message.session_id,
-                            message_id: message.message_id,
-                            info: send_with_ctp_id_0
+                    for (const key_from_other_devices in keys_from_other_devices) {
+                        if (!keys_sended_for_this_device[key_from_other_devices]) {
+                            const send_with_ctp_id_0 = keys_from_other_devices[key_from_other_devices]
+                            const send_data = {
+                                operator: OperatorType.EDIT_KEY,
+                                session_id: message.session_id,
+                                message_id: message.message_id,
+                                info: send_with_ctp_id_0
+                            }
+                            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                                MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                            })
                         }
-                        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                            MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
-                        })
                     }
                 }
             }
