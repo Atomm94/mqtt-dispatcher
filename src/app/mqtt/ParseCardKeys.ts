@@ -246,7 +246,9 @@ export default class ParseCardKeys {
         if (cardholders_length) {
             let keys = '/'
             for (const cardholder of message.data) {
-                keys += `${cardholder.id}/`
+                for (const credential of cardholder.credentials) {
+                    keys += `${credential.id}/`
+                }
             }
             const send_data = {
                 operator: OperatorType.DELL_KEYS,
