@@ -654,6 +654,23 @@ export default class ParseAcu {
         })
     }
 
+    public static deviceDelTask (message: ICrudMqttMessaging): void {
+        const topic = message.topic
+        const info = {
+            Task_idx: message.data.id
+        }
+        const send_data = {
+            operator: OperatorType.DEL_TASK,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: info
+        }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static deviceResetApb (message: ICrudMqttMessaging): void {
         const topic = message.topic
         const info = {
