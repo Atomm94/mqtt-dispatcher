@@ -645,9 +645,10 @@ export default class ParseController {
                             if ('impulse_time' in element) info.Door_Lock_pulse = element.impulse_time * 1000
                             if ('entry_exit_open_durations' in element) {
                                 info.Door_Delay = element.entry_exit_open_durations
-                            } else {
-                                info.Door_Delay = 15
                             }
+                            // else {
+                            //     info.Door_Delay = 15
+                            // }
                         }
                         break
                     default:
