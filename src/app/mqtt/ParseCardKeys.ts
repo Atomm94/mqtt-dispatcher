@@ -140,6 +140,7 @@ export default class ParseCardKeys {
                 KeysCount: message.data.keys_count_for_end_card_key
             }
         }
+        message.operator = OperatorType.END_CARD_KEY
         // console.log('endCardKey send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
