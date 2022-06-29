@@ -549,7 +549,7 @@ function handleSdlUpdateCallback (send_topic: any, crud_message: ICrudMqttMessag
                 messageAck.send_data = crud_message
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
-                if (messageAck.result.errorNo === 0) {
+                if (messageAck.result.errorNo === 0 || messageAck.result.errorNo === 11) {
                     // schedule_type - type of updated schedule
                     if (crud_message.data.schedule_type === scheduleType.DAILY) {
                         crud_message.operator = OperatorType.SET_SDL_DAILY
