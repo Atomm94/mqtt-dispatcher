@@ -629,7 +629,8 @@ export default class ParseController {
                         if (element === -1) {
                             info.Alarm_In_idx = -1
                         } else {
-                            if ('component_source' in element) info.Alarm_In_opt = element.component_source
+                            // if ('component_source' in element) info.Alarm_In_opt = element.component_source
+                            if ('ext_device_address' in element) info.Alarm_In_opt = element.ext_device_address
                             if ('input' in element) info.Alarm_In_idx = element.input - 1
                             if ('condition' in element) info.Allarm_Input_Condition = element.condition
                         }
@@ -638,7 +639,8 @@ export default class ParseController {
                         if (element === -1) {
                             info.Lock_Relay_idx = -1
                         } else {
-                            if ('component_source' in element) info.Lock_Relay_opt = element.component_source
+                            // if ('component_source' in element) info.Lock_Relay_opt = element.component_source
+                            if ('ext_device_address' in element) info.Lock_Relay_opt = element.ext_device_address
                             if ('output' in element) info.Lock_Relay_idx = element.output - 1
                             if ('relay_mode' in element) info.Door_Lock_mode = element.relay_mode
                             if ('type' in element) info.Door_Lock_type = element.type
