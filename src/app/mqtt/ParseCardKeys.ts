@@ -230,7 +230,7 @@ export default class ParseCardKeys {
                                 info: send_with_ctp_id_0
                             }
                             MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                                MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                                MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
                             })
                         }
                     }

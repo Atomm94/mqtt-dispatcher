@@ -143,12 +143,12 @@ export default class ParseAcu {
     public static setNetSettings (message: ICrudMqttMessaging): void {
         const topic = message.topic
         const info: any = {}
-        if (message.data.connection_type) info.connection_type = (message.data.connection_type === acuConnectionType.WI_FI) ? 0 : 1
-        if (message.data.dhcp) info.connection_mod = (message.data.dhcp) ? 0 : 1
-        if (message.data.ip_address) info.ip_address = message.data.ip_address
-        if (message.data.subnet_mask) info.mask = message.data.subnet_mask
-        if (message.data.gateway) info.Gate = message.data.gateway
-        if (message.data.dns_server) info.DNS1 = message.data.dns_server
+        if ('connection_type' in message.data.network) info.connection_type = (message.data.network.connection_type === acuConnectionType.WI_FI) ? 0 : 1
+        if ('dhcp' in message.data.network) info.connection_mod = (message.data.network.dhcp) ? 0 : 1
+        if ('ip_address' in message.data.network) info.ip_address = message.data.network.ip_address
+        if ('subnet_mask' in message.data.network) info.mask = message.data.network.subnet_mask
+        if ('gateway' in message.data.network) info.Gate = message.data.network.gateway
+        if ('dns_server' in message.data.network) info.DNS1 = message.data.network.dns_server
 
         const send_data = {
             operator: OperatorType.SET_NET_SETTINGS,
