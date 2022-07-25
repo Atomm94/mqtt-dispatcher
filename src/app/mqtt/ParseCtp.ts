@@ -225,7 +225,7 @@ export default class ParseController {
                             info.Entry_Rl_idx = -1
                         } else {
                             if ('component_source' in element) info.Entry_Rl_opt = element.ext_device_address
-                            if ('output' in element) info.Entry_Rl_idx = element.input - 1
+                            if ('output' in element) info.Entry_Rl_idx = element.output - 1
                             if ('relay_mode' in element) info.Entry_Rl_mode = element.relay_mode
                             if ('type' in element) info.Entry_Rl_type = element.type
                             if ('impulse_time' in element) info.Entry_Rl_pulse = element.impulse_time * 1000
@@ -237,7 +237,7 @@ export default class ParseController {
                             info.Exit_Rl_idx = -1
                         } else {
                             if ('component_source' in element) info.Exit_Rl_opt = element.ext_device_address
-                            if ('output' in element) info.Exit_Rl_idx = element.input - 1
+                            if ('output' in element) info.Exit_Rl_idx = element.output - 1
                             if ('relay_mode' in element) info.Exit_Rl_mode = element.relay_mode
                             if ('type' in element) info.Exit_Rl_type = element.type
                             if ('impulse_time' in element) info.Exit_Rl_pulse = element.impulse_time * 1000
