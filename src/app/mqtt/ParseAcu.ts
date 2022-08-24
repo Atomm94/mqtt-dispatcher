@@ -629,7 +629,7 @@ export default class ParseAcu {
             }
         }
 
-        const info = {
+        const info: any = {
             Task_idx: message.data.id,
             Ctp_idx: message.data.access_point,
             Enable: message.data.enable,
@@ -637,11 +637,14 @@ export default class ParseAcu {
             EventsCondition: events_condition,
             EventsDirection: direction,
             Repeat: repeat,
-            TmBeginCondition: dateTimeToSeconds(conditions.TmBeginCondition),
-            TmEndCondition: dateTimeToSeconds(conditions.TmEndCondition),
+            // TmBeginCondition: dateTimeToSeconds(conditions.TmBeginCondition),
+            // TmEndCondition: dateTimeToSeconds(conditions.TmEndCondition),
             DaysOfWeek: day_of_week,
             Reaction: message.data.reaction
         }
+        if (conditions.TmBeginCondition) info.TmBeginCondition = dateTimeToSeconds(conditions.TmBeginCondition)
+        if (conditions.TmEndCondition) info.TmEndCondition = dateTimeToSeconds(conditions.TmEndCondition)
+
         const send_data = {
             operator: OperatorType.SET_TASK,
             session_id: message.session_id,
