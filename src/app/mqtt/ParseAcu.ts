@@ -9,6 +9,7 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 import { acuConnectionType } from '../enums/acuConnectionType.enum'
 import { accessPointType } from '../enums/accessPointType.enum'
 import { accessPointDirection } from '../enums/accessPointDirection.enum'
+import { accessPointMode } from '../enums/accessPointMode.enum'
 
 import ParseCtp from './ParseCtp'
 import { SendTopics } from './Topics'
@@ -564,8 +565,12 @@ export default class ParseAcu {
             Control_point_idx: message.data.id
         }
         if (message.data.type === accessPointType.TURNSTILE_TWO_SIDE) {
-            if (message.data.mode) info.Work_Mode_Entry = message.data.mode
-            if (message.data.exit_mode) info.Work_Mode_Exit = message.data.exit_mode
+            if (message.data.mode === accessPointMode.ANTIPANIC) {
+                info.Access_mode = message.data.mode
+            } else {
+                if (message.data.mode) info.Work_Mode_Entry = message.data.mode
+                if (message.data.exit_mode) info.Work_Mode_Exit = message.data.exit_mode
+            }
         } else {
             info.Access_mode = message.data.mode
         }
