@@ -51,6 +51,29 @@ export default class ParseCardKeys {
                 }
 
                 if (access_rule_id) {
+                    let passes = 0
+                    let first_use_counter = 0
+                    let last_use_counter = 0
+                    if (cardholder.limitations) {
+                        if (!cardholder.limitations.pass_counter_enable) {
+                            passes = -1
+                        } else if (cardholder.limitations.pass_counter_passes) {
+                            passes = cardholder.limitations.pass_counter_passes
+                        }
+
+                        if (!cardholder.limitations.first_use_counter_enable) {
+                            first_use_counter = -1
+                        } else if (cardholder.limitations.first_use_counter_days) {
+                            first_use_counter = cardholder.limitations.first_use_counter_days
+                        }
+
+                        if (!cardholder.limitations.last_use_counter_enable) {
+                            last_use_counter = -1
+                        } else if (cardholder.limitations.last_use_counter_days) {
+                            last_use_counter = cardholder.limitations.last_use_counter_days
+                        }
+                    }
+
                     for (const credential of cardholder.credentials) {
                         const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
 
@@ -72,9 +95,9 @@ export default class ParseCardKeys {
                         key_string += `${check_access_point_in_this_acu ? access_rule_id : 0};`
                         key_string += '1;' // Kind_key
                         key_string += '0;' // Key_type
-                        key_string += '-1;' // Passes
-                        key_string += '0;' // First_Use_Counter
-                        key_string += '0;' // Last_Use_Counter
+                        key_string += `${passes};` // Passes
+                        key_string += `${first_use_counter};` // First_Use_Counter
+                        key_string += `${last_use_counter};` // Last_Use_Counter
                         key_string += `${cardholder.enable_antipass_back ? 1 : 0};` // ABP
                         // key_string += `${cardholder.antipass_backs.time || 0};` // ABP_Time
                         key_string += `${start_date};` // Start_date
