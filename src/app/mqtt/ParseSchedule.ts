@@ -126,8 +126,8 @@ export default class ParseSchedule {
             ...week_tms
         }
 
-        if (message.data.start_date) info.Start_date = message.data.start_date
-        if (message.data.end_date) info.Expiration_date = message.data.end_date
+        if (message.data.start_date) info.Start_date = new Date(message.data.start_date).getTime() / 1000
+        if (message.data.end_date) info.Expiration_date = new Date(message.data.end_date).getTime() / 1000
 
         const send_data: any = {
             operator: OperatorType.SET_SDL_WEEKLY,
