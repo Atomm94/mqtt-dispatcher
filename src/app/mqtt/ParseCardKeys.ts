@@ -3,6 +3,10 @@ import { OperatorType } from './Operators'
 import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 import { handleCallback, ackTimeout } from './ParseAcu'
 import { generateHexWithBytesLength, getCredentialStatus } from '../functions/util'
+import { keyType } from '../enums/keyType.enum'
+import { guestKeyType } from '../enums/guestKeyType.enum'
+import { guestPeriod } from '../enums/guestPeriod.enum'
+import moment from 'moment'
 
 export default class ParseCardKeys {
     public static limit_for_keys_count = 25
@@ -74,17 +78,35 @@ export default class ParseCardKeys {
                         }
                     }
 
+                    let start_date =
+                        (cardholder.limitations && cardholder.limitations.valid_from)
+                            ? Math.round((new Date(cardholder.limitations.valid_from).getTime()) / 1000)
+                            : 0
+                    let expiration_date =
+                        (cardholder.limitations && cardholder.limitations.valid_due)
+                            ? Math.round((new Date(cardholder.limitations.valid_due).getTime()) / 1000)
+                            : 0
+
+                    let key_type = keyType.REGULAR_KEY
+                    if (cardholder.guest) {
+                        if (cardholder.key_type === guestKeyType.TEMPORARY) {
+                            key_type = keyType.GUEST_TEMPORARY_KEY
+                            const startDate = `${moment(cardholder.start_date).format('YYYY-MM-DD')} ${cardholder.start_time}`
+                            start_date = expiration_date = Math.round(new Date(startDate).getTime() / 1000)
+                            if (cardholder.period === guestPeriod.HOURS) {
+                                const end_date_timestamp = new Date(startDate).getTime() + cardholder.duration * 60 * 1000
+                                expiration_date = Math.round(end_date_timestamp / 1000)
+                            } else {
+                                const endDate = `${moment(cardholder.end_date).format('YYYY-MM-DD')} ${cardholder.end_time}`
+                                expiration_date = Math.round(new Date(endDate).getTime() / 1000)
+                            }
+                        } else if (cardholder.key_type === guestKeyType.PERMANENT) {
+                            key_type = keyType.GUEST_PERMANENT_KEY
+                        }
+                    }
+
                     for (const credential of cardholder.credentials) {
                         const key_hex = generateHexWithBytesLength(credential.code, credential.facility, this.key_len)
-
-                        const start_date =
-                            (cardholder.limitations && cardholder.limitations.valid_from)
-                                ? Math.round((new Date(cardholder.limitations.valid_from).getTime()) / 1000)
-                                : 0
-                        const expiration_date =
-                            (cardholder.limitations && cardholder.limitations.valid_due)
-                                ? Math.round((new Date(cardholder.limitations.valid_due).getTime()) / 1000)
-                                : 0
 
                         let key_string = '/'
                         key_string += `${credential.id};`
@@ -94,7 +116,7 @@ export default class ParseCardKeys {
                         key_string += `${getCredentialStatus(credential.status)};`
                         key_string += `${check_access_point_in_this_acu ? access_rule_id : 0};`
                         key_string += '1;' // Kind_key
-                        key_string += '0;' // Key_type
+                        key_string += `${key_type};` // Key_type
                         key_string += `${passes};` // Passes
                         key_string += `${first_use_counter};` // First_Use_Counter
                         key_string += `${last_use_counter};` // Last_Use_Counter
