@@ -226,7 +226,7 @@ export default class ParseAcu {
                 session_id: message.session_id,
                 message_id: message.message_id,
                 info: {
-                    DateTime: 1583636400,
+                    DateTime: Math.floor(new Date().getTime() / 1000),
                     GMT: unix_time,
                     NTP1: 'pool.ntp.org',
                     NTP2: 'pool2.ntp.org:123',
