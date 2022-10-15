@@ -302,15 +302,16 @@ export default class ParseCardKeys {
                 message.data.keys_count = keys.length
 
                 const keys_slice = keys.slice(message.data.keys_sended, message.data.keys_sended + this.limit_for_keys_count)
+                const keys_str = keys_slice.join('') + '/'
 
                 const send_data = {
                     operator: OperatorType.DELL_KEYS,
                     session_id: message.session_id,
                     message_id: message.message_id,
                     info: {
-                        KeysDataLength: keys.length,
-                        Keys_count: cardholders_length,
-                        Keys_id: keys_slice.join('') + '/'
+                        KeysDataLength: keys_str.length,
+                        Keys_count: keys_slice.length,
+                        Keys_id: keys_str
                     }
                 }
                 // console.log('DellKeys send message', send_data)
