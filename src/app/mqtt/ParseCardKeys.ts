@@ -168,7 +168,7 @@ export default class ParseCardKeys {
             message.data.KeysCount = info.KeysCount
 
             MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                MQTTBroker.client.on('message', handleSetAddCardKeyCallback(topic, message) as Function)
             })
         }
     }
@@ -219,7 +219,7 @@ export default class ParseCardKeys {
                         }
                     }
                     MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                        MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                        MQTTBroker.client.on('message', handleSetAddCardKeyCallback(topic, message) as Function)
                     })
                 } else {
                     for (const access_point of access_points) {
@@ -257,7 +257,7 @@ export default class ParseCardKeys {
                                     info: info
                                 }
                                 MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                                    MQTTBroker.client.on('message', handleCardKeyCallback(topic, message) as Function)
+                                    MQTTBroker.client.on('message', handleSetAddCardKeyCallback(topic, message) as Function)
                                 })
                                 keys_sended_for_this_device[key_hex] = true
                             } else {
@@ -290,27 +290,35 @@ export default class ParseCardKeys {
         const cardholders = message.data
         const cardholders_length = cardholders.length
         if (cardholders_length) {
-            let keys = '/'
+            const keys = []
             for (const cardholder of message.data) {
                 for (const credential of cardholder.credentials) {
-                    keys += `${credential.id}/`
+                    keys.push(`/${credential.id}`)
                 }
             }
-            const send_data = {
-                operator: OperatorType.DELL_KEYS,
-                session_id: message.session_id,
-                message_id: message.message_id,
-                info: {
-                    KeysDataLength: keys.length,
-                    Keys_count: cardholders_length,
-                    Keys_id: keys
-                }
-            }
-            // console.log('DellKeys send message', send_data)
 
-            MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
-            })
+            if (keys.length) {
+                if (!message.data.keys_sended) message.data.keys_sended = 0
+                message.data.keys_count = keys.length
+
+                const keys_slice = keys.slice(message.data.keys_sended, message.data.keys_sended + this.limit_for_keys_count)
+
+                const send_data = {
+                    operator: OperatorType.DELL_KEYS,
+                    session_id: message.session_id,
+                    message_id: message.message_id,
+                    info: {
+                        KeysDataLength: keys.length,
+                        Keys_count: cardholders_length,
+                        Keys_id: keys_slice.join('') + '/'
+                    }
+                }
+                // console.log('DellKeys send message', send_data)
+
+                MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+                    MQTTBroker.client.on('message', handleDellKeysCallback(topic, message) as Function)
+                })
+            }
         }
     }
 
@@ -331,7 +339,7 @@ export default class ParseCardKeys {
     }
 }
 
-function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
+function handleSetAddCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
     // setTimeout(() => {
     // MQTTBroker.client.removeListener('message', cb)
     // }, 20000)
@@ -358,6 +366,33 @@ function handleCardKeyCallback (send_topic: any, crud_message: ICrudMqttMessagin
                     ParseCardKeys.setAddCardKey(crud_message, crud_message.operator as OperatorType.SET_CARD_KEYS | OperatorType.ADD_CARD_KEY)
                 } else {
                     ParseCardKeys.endCardKey(crud_message)
+                }
+
+                MQTTBroker.client.removeListener('message', cb)
+                clearTimeout(ack_timeout)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    return cb
+}
+
+function handleDellKeysCallback (send_topic: any, crud_message: ICrudMqttMessaging): any {
+    const ack_timeout = ackTimeout(send_topic, crud_message, cb, 20000)
+
+    function cb (topicAck: any, messageAck: any) {
+        try {
+            messageAck = JSON.parse(messageAck.toString())
+            if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
+                messageAck.send_data = crud_message
+                // messageAck.crud_message = crud_message
+                messageAck.device_topic = topicAck
+                crud_message.data.keys_sended += ParseCardKeys.limit_for_keys_count
+                console.log('handleDellKeysCallback crud_message', crud_message)
+
+                if (crud_message.data.keys_sended < crud_message.data.keys_count) {
+                    ParseCardKeys.dellKeys(crud_message)
                 }
 
                 MQTTBroker.client.removeListener('message', cb)
