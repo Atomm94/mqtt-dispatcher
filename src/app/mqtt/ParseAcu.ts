@@ -647,8 +647,16 @@ export default class ParseAcu {
             DaysOfWeek: day_of_week,
             Reaction: message.data.reaction
         }
-        if (conditions.TmBeginCondition) info.TmBeginCondition = dateTimeToSeconds(conditions.TmBeginCondition)
-        if (conditions.TmEndCondition) info.TmEndCondition = dateTimeToSeconds(conditions.TmEndCondition)
+        if (conditions.TmBeginCondition) {
+            info.TmBeginCondition = dateTimeToSeconds(conditions.TmBeginCondition)
+        } else {
+            info.TmBeginCondition = 0
+        }
+        if (conditions.TmEndCondition) {
+            info.TmEndCondition = dateTimeToSeconds(conditions.TmEndCondition)
+        } else {
+            info.TmEndCondition = 0
+        }
 
         const send_data = {
             operator: OperatorType.SET_TASK,
