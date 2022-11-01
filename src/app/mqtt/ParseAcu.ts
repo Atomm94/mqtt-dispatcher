@@ -21,6 +21,7 @@ import { dateTimeToSeconds } from './ParseSchedule'
 import { autotaskEventDirection } from '../enums/autotaskEventDirection.enum'
 import { autoTaskRepeat } from '../enums/autotaskrepeat.enum'
 import { acuMainTain } from '../enums/acuMainTain.enum'
+import time_zone_posix from '../functions/time_zone_posix.json'
 export default class ParseAcu {
     public static ping (message: ICrudMqttMessaging): void {
         const topic = message.topic
@@ -202,6 +203,7 @@ export default class ParseAcu {
     }
 
     public static setDateTime (message: ICrudMqttMessaging): void {
+        const time_zones: any = time_zone_posix
         // message from crud
         // {
         //     operator: 'SetDateTime',
@@ -215,22 +217,26 @@ export default class ParseAcu {
         // const time_zone = message.data.time_zone
         const time_zone_unix = message.data.time_zone_unix
         const enable_daylight_saving_time = message.data.enable_daylight_saving_time
-        console.log('666', time_zone_unix)
-
+        let time_zone = ''
         if (time_zone_unix) {
             const splited_time = time_zone_unix.split(':')
             const unix_time = (time_zone_unix.split('-').length > 1) ? (Number(splited_time[0]) * 60 * 60 - Number(splited_time[1]) * 60) : (Number(splited_time[0]) * 60 * 60 + Number(splited_time[1]) * 60)
-
+            if (message.data.time_zone) {
+                if (Object.keys(time_zones).includes(message.data.time_zone)) {
+                    time_zone = time_zones[message.data.time_zone]
+                }
+            }
             const send_data = {
                 operator: OperatorType.SET_DATE_TIME,
                 session_id: message.session_id,
                 message_id: message.message_id,
                 info: {
-                    DateTime: 1583636400,
+                    DateTime: Math.floor(new Date().getTime() / 1000),
                     GMT: unix_time,
                     NTP1: 'pool.ntp.org',
                     NTP2: 'pool2.ntp.org:123',
                     DST_GMT: enable_daylight_saving_time,
+                    tz: time_zone,
                     // DST_Start: 1583636400,
                     // DST_End: 1604196000,
                     DST_Shift: 3600
@@ -647,8 +653,16 @@ export default class ParseAcu {
             DaysOfWeek: day_of_week,
             Reaction: message.data.reaction
         }
-        if (conditions.TmBeginCondition) info.TmBeginCondition = dateTimeToSeconds(conditions.TmBeginCondition)
-        if (conditions.TmEndCondition) info.TmEndCondition = dateTimeToSeconds(conditions.TmEndCondition)
+        if (conditions.TmBeginCondition) {
+            info.TmBeginCondition = dateTimeToSeconds(conditions.TmBeginCondition)
+        } else {
+            info.TmBeginCondition = 0
+        }
+        if (conditions.TmEndCondition) {
+            info.TmEndCondition = dateTimeToSeconds(conditions.TmEndCondition)
+        } else {
+            info.TmEndCondition = 0
+        }
 
         const send_data = {
             operator: OperatorType.SET_TASK,
