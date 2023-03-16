@@ -223,7 +223,7 @@ export default class ParseCardKeys {
                     })
                 } else {
                     for (const access_point of access_points) {
-                        const check_access_point_in_this_acu = (access_point.id === message.data.acu_id)
+                        const check_access_point_in_this_acu = (access_point.acu === message.data.acu_id)
                         let access_rule_id = 0
                         for (const access_rule of cardholder.access_rights.access_rules) {
                             if (access_rule.access_point === access_point.id) {
