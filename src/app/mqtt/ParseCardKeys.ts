@@ -219,7 +219,7 @@ export default class ParseCardKeys {
                         }
                     }
                     MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                        MQTTBroker.client.on('message', handleSetAddCardKeyCallback(topic, message) as Function)
+                        MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
                     })
                 } else {
                     for (const access_point of access_points) {
@@ -257,7 +257,7 @@ export default class ParseCardKeys {
                                     info: info
                                 }
                                 MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-                                    MQTTBroker.client.on('message', handleSetAddCardKeyCallback(topic, message) as Function)
+                                    MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
                                 })
                                 keys_sended_for_this_device[key_hex] = true
                             } else {
