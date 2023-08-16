@@ -1,9 +1,9 @@
 import { credentialStatus } from '../enums/credentialStatus.enum'
 
 export function generateHexWithBytesLength (code: string, facility: string | null, bytes_length: number) {
-    let credential_facility_hex = facility ? Number(facility).toString(16) : ''
+    let credential_facility_hex = facility ? BigInt(facility).toString(16) : ''
     if (credential_facility_hex.length % 2 === 1) credential_facility_hex = `0${credential_facility_hex}`
-    let credential_code_hex = Number(code).toString(16)
+    let credential_code_hex = BigInt(code).toString(16)
     if (credential_code_hex.length % 2 === 1) credential_code_hex = `0${credential_code_hex}`
 
     let key_hex = `${credential_facility_hex}${credential_code_hex}`
