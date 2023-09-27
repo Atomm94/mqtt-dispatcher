@@ -16,7 +16,8 @@
         // "noUnusedParameters": true,
         "allowUnusedLabels": true,
         "alwaysStrict": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
     },
     "includes": ["src/**/*.ts"],
     "exclude": ["node_modules", "dist"]
