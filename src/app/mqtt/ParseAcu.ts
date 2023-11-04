@@ -578,7 +578,8 @@ export default class ParseAcu {
                 if (message.data.exit_mode) info.Work_Mode_Exit = message.data.exit_mode
             }
         } else {
-            info.Access_mode = message.data.mode
+            if (message.data.mode) info.Access_mode = message.data.mode
+            if (message.data.exit_mode) info.Access_mode = message.data.exit_mode
         }
         const send_data = {
             operator: OperatorType.SET_ACCESS_MODE,
