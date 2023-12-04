@@ -32,6 +32,9 @@ export default class ParseCrud {
             case OperatorType.MAIN_TAIN:
                 ParseAcu.mainTain(message)
                 break
+            case OperatorType.WEB_PASS:
+                ParseAcu.webPass(message)
+                break
             case OperatorType.SET_NET_SETTINGS:
                 ParseAcu.setNetSettings(message)
                 break

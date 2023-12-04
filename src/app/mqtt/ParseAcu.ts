@@ -142,6 +142,25 @@ export default class ParseAcu {
         }
     }
 
+    public static webPass (message: ICrudMqttMessaging): void {
+        // console.log('setPass', message)
+        const topic = message.topic
+
+        const send_data = {
+            operator: OperatorType.WEB_PASS,
+            session_id: message.session_id,
+            message_id: message.message_id,
+            info: {
+                Control_point_idx: message.data.Control_point_idx,
+                userKeyId: message.data.userKeyId
+            }
+        }
+
+        MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
+            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+        })
+    }
+
     public static setNetSettings (message: ICrudMqttMessaging): void {
         const topic = message.topic
         const info: any = {}
@@ -578,7 +597,8 @@ export default class ParseAcu {
                 if (message.data.exit_mode) info.Work_Mode_Exit = message.data.exit_mode
             }
         } else {
-            info.Access_mode = message.data.mode
+            if (message.data.mode) info.Access_mode = message.data.mode
+            if (message.data.exit_mode) info.Access_mode = message.data.exit_mode
         }
         const send_data = {
             operator: OperatorType.SET_ACCESS_MODE,
