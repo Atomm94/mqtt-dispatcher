@@ -379,8 +379,8 @@ export default class ParseSchedule {
             session_id: message.session_id,
             message_id: message.message_id,
             info: {
-                Shedule_id: message.data.id
-                // Ctp_idx: message.data.access_point
+                Shedule_id: message.data.id,
+                Ctp_idx: message.data.access_point
             }
         }
         // console.log('delSdlSpecified send message', send_data)
