@@ -160,14 +160,14 @@ export default class ParseDevice {
 
     public static deviceLoginAck (topic: string, data: any): void {
         data.topic = topic
-        console.log('datalogin', data)
+        // console.log('datalogin', data)
 
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
 
     public static deviceLogOutAck (topic: string, data: any): void {
         data.topic = topic
-        console.log('datalogout', data)
+        // console.log('datalogout', data)
 
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }
@@ -178,7 +178,7 @@ export default class ParseDevice {
 
     public static deviceSetPassAck (topic: string, data: any): void {
         data.topic = topic
-        console.log('deviceSetPassAck', data)
+        // console.log('deviceSetPassAck', data)
 
         MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(data))
     }

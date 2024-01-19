@@ -376,8 +376,6 @@ export default class ParseAcu {
             }
         }
 
-        console.log('devicedelExtBrd send message', send_data)
-
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
         })
@@ -488,8 +486,6 @@ export default class ParseAcu {
             message_id: message.message_id,
             info: info
         }
-
-        console.log('devicedelRd send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
             MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
@@ -771,8 +767,6 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
             // console.log(3, messageAck.operator === `${crud_message.operator}-Ack`)
 
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
-                console.log('handleRdUpdateCallback', true)
-
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 
@@ -809,33 +803,33 @@ function handleRdUpdateCallback (send_topic: any, crud_message: ICrudMqttMessagi
                         }
 
                         if (crud_message.data.access_point_type === accessPointType.DOOR) {
-                            console.log('crud_message.data DOOR', crud_message.data)
+                            // console.log('crud_message.data DOOR', crud_message.data)
                             crud_message.operator = OperatorType.SET_CTP_DOOR
                             delete crud_message.data.access_point_type
                             crud_message.data = message
 
                             ParseCtp.setCtpDoor(crud_message)
                         } else if (crud_message.data.access_point_type === accessPointType.TURNSTILE_ONE_SIDE || crud_message.data.access_point_type === accessPointType.TURNSTILE_TWO_SIDE) {
-                            console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
+                            // console.log('crud_message.data TURNSTILE_ONE_SIDE', crud_message.data)
                             crud_message.operator = OperatorType.SET_CTP_TURNSTILE
                             crud_message.data.type = crud_message.data.access_point_type
                             delete crud_message.data.access_point_type
                             crud_message.data = message
                             ParseCtp.setCtpTurnstile(crud_message)
                         } else if (crud_message.data.access_point_type === accessPointType.GATE) {
-                            console.log('crud_message.data GATE', crud_message.data)
+                            // console.log('crud_message.data GATE', crud_message.data)
                             crud_message.operator = OperatorType.SET_CTP_GATE
                             delete crud_message.data.access_point_type
                             crud_message.data = message
                             ParseCtp.setCtpGate(crud_message)
                         } else if (crud_message.data.access_point_type === accessPointType.GATEWAY) {
-                            console.log('crud_message.data GATEWAY', crud_message.data)
+                            // console.log('crud_message.data GATEWAY', crud_message.data)
                             crud_message.operator = OperatorType.SET_CTP_GATEWAY
                             delete crud_message.data.access_point_type
                             crud_message.data = message
                             ParseCtp.setCtpGateway(crud_message)
                         } else if (crud_message.data.access_point_type === accessPointType.FLOOR) {
-                            console.log('crud_message.data FLOOR', crud_message.data)
+                            // console.log('crud_message.data FLOOR', crud_message.data)
                             crud_message.operator = OperatorType.SET_CTP_FLOOR
                             delete crud_message.data.access_point_type
                             crud_message.data = message
@@ -860,7 +854,7 @@ export function handlePingCallback (send_topic: any, crud_message: any): any {
         try {
             messageAck = JSON.parse(messageAck)
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
-                console.log('handlePingCallback', true)
+                // console.log('handlePingCallback', true)
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 
