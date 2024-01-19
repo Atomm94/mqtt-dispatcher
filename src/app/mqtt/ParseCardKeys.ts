@@ -356,7 +356,7 @@ function handleSetAddCardKeyCallback (send_topic: any, crud_message: ICrudMqttMe
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
                 crud_message.data.access_point_sended += ParseCardKeys.limit_for_keys_count
-                console.log('crud_message', crud_message)
+                // console.log('crud_message', crud_message)
                 crud_message.data.keys_count_for_end_card_key += crud_message.data.KeysCount
 
                 if (crud_message.data.access_point_sended >= crud_message.data.keys_count) {
@@ -390,7 +390,7 @@ function handleDellKeysCallback (send_topic: any, crud_message: ICrudMqttMessagi
                 // messageAck.crud_message = crud_message
                 messageAck.device_topic = topicAck
                 crud_message.data.keys_sended += ParseCardKeys.limit_for_keys_count
-                console.log('handleDellKeysCallback crud_message', crud_message)
+                // console.log('handleDellKeysCallback crud_message', crud_message)
 
                 if (crud_message.data.keys_sended < crud_message.data.keys_count) {
                     ParseCardKeys.dellKeys(crud_message)
