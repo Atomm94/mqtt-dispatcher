@@ -65,7 +65,7 @@ const config: IConfig = {
         port: normalizePort(_.defaultTo(process.env.MQTT_PORT, 5432)),
         username: _.defaultTo(process.env.MQTT_USERNAME, 'unimacs'),
         password: _.defaultTo(process.env.MQTT_PASSWORD, '123456'),
-        clientId: _.defaultTo(process.env.MQTT_CLIENT_ID, 'mqtt-dispatcher'+Math.random().toString(16).substr(2, 8)),
+        clientId: _.defaultTo(process.env.MQTT_CLIENT_ID, 'mqtt-dispatcher' + Math.random().toString(16).substr(2, 8)),
         clean: false
     },
     logs: {
