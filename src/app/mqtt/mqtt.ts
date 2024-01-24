@@ -6,7 +6,7 @@ import MessageHandler from '../controller/MessageHandler'
 
 export default class MQTTBroker {
     public static client: MqttClient
-    public static async init () {
+    public static async init() {
         this.client = connect(config.mqtt)
         this.client.setMaxListeners(Number(config.maxListeners))
         return await new Promise((resolve, reject) => {
@@ -31,7 +31,7 @@ export default class MQTTBroker {
         })
     }
 
-    public static publishMessage (topic: string, msg: string, cb?: Function): void {
+    public static publishMessage(topic: string, msg: string, cb?: Function): void {
         // console.log('publishMessage topic', topic, msg)
         this.client.publish(topic, msg, (error: any) => {
             if (error) { logger.error('publish error', error) } else {
@@ -43,19 +43,20 @@ export default class MQTTBroker {
         })
     }
 
-    public static subscribe (topic: string | number) {
-        this.client.subscribe(topic as string, (err: any) => {
+    public static subscribe(topic: string | number, options: any = {}) {
+        this.client.subscribe(topic as string, options, (err: any, granted: any) => {
             if (err) logger.error('subscribe error', err)
+            console.log(granted)
         })
     }
 
-    public static unsubscribe (topic: string | number) {
+    public static unsubscribe(topic: string | number) {
         this.client.unsubscribe(topic as string, (err: any) => {
             if (err) logger.error('subscribe error', err)
         })
     }
 
-    public static getMessage (callback: Function) {
+    public static getMessage(callback: Function) {
         this.client.on('message', function (topic: string, message: string) {
             if (topic && message) {
                 return callback(topic, message.toString())
@@ -63,14 +64,16 @@ export default class MQTTBroker {
         })
     }
 
-    private static subscribeAll () {
+    private static subscribeAll() {
         // const topicList = Object.values(TopicCodes)
         // for (let i = 0; i < topicList.length; i++) {
         //     const topic = topicList[i]
         //     this.subscribe('topic')
         // }
 
-        this.subscribe('#')
+        this.subscribe('+/+/registration/#', { qos: 2 })
+        this.subscribe('mqtt_crud', { qos: 0 })
+
         // eslint-disable-next-line no-new
         new MessageHandler()
     }
