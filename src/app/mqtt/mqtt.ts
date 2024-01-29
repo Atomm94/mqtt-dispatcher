@@ -43,9 +43,10 @@ export default class MQTTBroker {
         })
     }
 
-    public static subscribe (topic: string | number) {
-        this.client.subscribe(topic as string, (err: any) => {
+    public static subscribe (topic: string | number, options: any = {}) {
+        this.client.subscribe(topic as string, options, (err: any, granted: any) => {
             if (err) logger.error('subscribe error', err)
+            console.log(granted)
         })
     }
 
@@ -70,7 +71,9 @@ export default class MQTTBroker {
         //     this.subscribe('topic')
         // }
 
-        this.subscribe('#')
+        this.subscribe('+/+/registration/#', { qos: 2 })
+        this.subscribe('mqtt_crud', { qos: 0 })
+
         // eslint-disable-next-line no-new
         new MessageHandler()
     }

@@ -23,6 +23,8 @@ export interface IConfig {
         password: string,
         host: string,
         port: number | boolean
+        clientId: string
+        clean: boolean
     };
     logs: {
         url: string
@@ -62,7 +64,9 @@ const config: IConfig = {
         host: _.defaultTo(process.env.MQTT_HOST, 'localhost'),
         port: normalizePort(_.defaultTo(process.env.MQTT_PORT, 5432)),
         username: _.defaultTo(process.env.MQTT_USERNAME, 'unimacs'),
-        password: _.defaultTo(process.env.MQTT_PASSWORD, '123456')
+        password: _.defaultTo(process.env.MQTT_PASSWORD, '123456'),
+        clientId: _.defaultTo(process.env.MQTT_CLIENT_ID, 'mqtt-dispatcher' + Math.random().toString(16).substr(2, 8)),
+        clean: false
     },
     logs: {
         url: _.defaultTo(process.env.LOG_SERVER_HOST, 'http://localhost:4142')
