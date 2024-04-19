@@ -72,7 +72,8 @@ export default class MQTTBroker {
         // }
 
         this.subscribe('+/+/registration/#', { qos: 2 })
-        this.subscribe('mqtt_crud', { qos: 0 })
+        this.subscribe('crud_mqtt', { qos: 0 })
+        this.subscribe('log', { qos: 0 })
 
         // eslint-disable-next-line no-new
         new MessageHandler()
