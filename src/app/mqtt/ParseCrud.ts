@@ -139,7 +139,7 @@ export default class ParseCrud {
                 ParseEvents.getEventsMod(message)
                 break
             case OperatorType.GET_EVENTS:
-                // ParseEvents.getEvents(message)
+                ParseEvents.getEvents(message)
                 break
             case OperatorType.SET_ACCESS_MODE:
                 ParseAcu.setAccessMode(message)

@@ -17,6 +17,8 @@ import { extBrdProtocol } from '../enums/extBrdProtocol.enum'
 import { extBrdInterface } from '../enums/extBrdInterface.enum'
 import { cloneDeep } from 'lodash'
 
+import { x } from '../../ok'
+
 import { dateTimeToSeconds } from './ParseSchedule'
 import { autotaskEventDirection } from '../enums/autotaskEventDirection.enum'
 import { autoTaskRepeat } from '../enums/autotaskrepeat.enum'
@@ -904,14 +906,48 @@ export function handleCredentialActivateCallback (send_topic: any, crud_message:
     return cb
 }
 
+let count = 0
+let eventsMsgCount = 0
+let events = ''
+export function handleEventsCallback (send_topic: any, crud_message: any): any {
+    const ack_timeout = ackTimeout(send_topic, crud_message, cb, 2000000)
+    function cb (topicAck: any, messageAck: any) {
+        try {
+            // messageAck = JSON.parse(messageAck)
+            // topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` &&
+            messageAck = x[count]
+            count++
+
+            eventsMsgCount += messageAck.info.Events_count_in_msg
+            events += messageAck.info.Events
+
+            // && crud_message.message_id === messageAck.message_id
+            if (messageAck.operator === `${crud_message.operator}-Ack`) {
+                // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
+
+                messageAck.send_data = crud_message
+                // messageAck.device_topic = topicAck
+                messageAck.device_topic = '305/220/registration/6234024/Operate/'
+                messageAck.info.Events = events
+
+                MQTTBroker.publishMessage(SendTopics.MQTT_CRUD, JSON.stringify(messageAck))
+                if (eventsMsgCount === messageAck.info.Events_count) {
+                    MQTTBroker.client.removeListener('message', cb)
+                }
+                clearTimeout(ack_timeout)
+            }
+        } catch (e) {
+        }
+    }
+    return cb
+}
+
 export function handleCallback (send_topic: any, crud_message: any): any {
     const ack_timeout = ackTimeout(send_topic, crud_message, cb, 20000)
     function cb (topicAck: any, messageAck: any) {
         try {
-            messageAck = JSON.parse(messageAck)
             if (topicAck === `${send_topic.split('/').slice(0, -2).join('/')}/Ack/` && crud_message.message_id === messageAck.message_id && messageAck.operator === `${crud_message.operator}-Ack`) {
                 // if (topicAck === `${send_topic}Ack/` && send_data.message_id === messageAck.message_id && messageAck.operator === `${send_data.operator}-Ack`) {
-
                 messageAck.send_data = crud_message
                 messageAck.device_topic = topicAck
 

@@ -6,7 +6,7 @@ import { ICrudMqttMessaging } from '../interfaces/messaging.interface'
 // import { accessPointType } from '../enums/accessPointType.enum'
 // import { scheduleType } from '../enums/scheduleType.enum'
 // import { credentialStatus } from '../enums/credentialStatus.enum'
-import { handleCallback } from './ParseAcu'
+import { handleCallback, handleEventsCallback } from './ParseAcu'
 
 export default class ParseEvents {
     public static setEventsMod (message: ICrudMqttMessaging): void {
@@ -53,7 +53,7 @@ export default class ParseEvents {
         // console.log('GetEvents send message', send_data)
 
         MQTTBroker.publishMessage(topic, JSON.stringify(send_data), (topic: any, send_message: any) => {
-            MQTTBroker.client.on('message', handleCallback(topic, message) as Function)
+            MQTTBroker.client.on('message', handleEventsCallback(topic, message) as Function)
         })
     }
 }
